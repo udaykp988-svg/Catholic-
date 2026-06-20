@@ -1,0 +1,94 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,450&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-heading: "Cinzel", serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Hallow-Inspired Deep Liturgical Colors override */
+  --color-stone-950: #0b090f; /* Pitch Midnight Hallow BG */
+  --color-stone-900: #13111c; /* Elegant Votive Card */
+  --color-stone-850: #211e2e; /* Premium warm charcoal-purple border */
+  --color-stone-800: #2a253a; /* Highlight border */
+  --color-stone-700: #423b59; /* Active states */
+  --color-stone-50: #faf9f6;  /* Cozy eggshell-cream font/background */
+
+  --color-amber-500: #d4af37; /* Burnished Royal Gold / Candle Core */
+  --color-amber-600: #b89326; /* Sacred Vintage Gold */
+  --color-amber-400: #e5c353; /* Bright celestial halo */
+}
+
+/* Custom scrollbars for a neat look */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(212, 175, 55, 0.15);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(212, 175, 55, 0.35);
+}
+
+/* Light / Dark Mode root base rules */
+html, body {
+  transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  background-color: #0b090f; /* Default to gorgeous dark chapel */
+}
+
+/* Atmospheric Starfield Backdrop Animation */
+.hallow-stars {
+  background-image: 
+    radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px),
+    radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 30px),
+    radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 40px);
+  background-size: 550px 550px, 350px 350px, 250px 250px;
+  background-position: 0 0, 40px 60px, 130px 270px;
+  animation: starBlink 120s linear infinite;
+}
+
+@keyframes starBlink {
+  0% { background-position: 0 0, 40px 60px, 130px 270px; }
+  100% { background-position: 550px 550px, 390px 410px, 380px 820px; }
+}
+
+/* Angelic glow animations */
+@keyframes candleFlicker {
+  0%, 100% { transform: scale(1) rotate(-1deg); opacity: 0.95; filter: drop-shadow(0 0 6px rgba(212, 175, 55, 0.6)); }
+  50% { transform: scale(1.08) rotate(1deg); opacity: 1; filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.9)); }
+}
+
+.candle-glow {
+  animation: candleFlicker 2s infinite ease-in-out;
+}
+
+/* Aurora visual glow rings */
+.aurora-glow-1 {
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.08) 0%, transparent 65%);
+}
+
+.aurora-glow-2 {
+  background: radial-gradient(circle, rgba(147, 51, 234, 0.06) 0%, transparent 70%);
+}
+
+/* Card Flip 3D Utilities */
+.perspective-1000 {
+  perspective: 1000px;
+}
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+

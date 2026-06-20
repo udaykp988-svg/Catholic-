@@ -1,0 +1,6 @@
+{
+  "name": "Catholic Prayer App",
+  "description": "A comforting, distraction-free companion for daily prayers, liturgical calendar tracking, audio rosaries, novenas, and community prayer requests.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
