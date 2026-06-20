@@ -1088,7 +1088,7 @@ export default function App() {
                   <span className="font-sans">O</span>
                 </div>
 
-                <div className="flex items-center gap-2 mb-2">
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mb-2 pr-14 md:pr-16">
                   <span className="text-[10px] font-mono uppercase bg-amber-50 dark:bg-amber-950/45 text-amber-700 dark:text-amber-400 px-2.5 py-0.5 rounded-full font-bold">
                     Daily Reflection
                   </span>
@@ -1553,11 +1553,13 @@ export default function App() {
           )}
 
           {/* TAB 2: INTERACTIVE AUDIO ROSARY */}
-          {activeTab === "rosary" && (
-            <div className="space-y-4">
-              <AudioRosary onRosaryComplete={incrementPrayerStats} />
-            </div>
-          )}
+          <div className={activeTab === "rosary" ? "space-y-4" : "hidden"}>
+            <AudioRosary 
+              onRosaryComplete={incrementPrayerStats} 
+              isTabActive={activeTab === "rosary"}
+              setActiveTab={setActiveTab}
+            />
+          </div>
 
           {/* TAB 3: LITURGICAL CALENDAR FEAST DAYS */}
           {activeTab === "calendar" && (
