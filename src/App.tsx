@@ -3,11 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { 
   Flame, BookOpen, Heart, Compass, Calendar, Moon, Sun, Bell, 
   Send, Plus, Trash, Check, Sparkles, RefreshCw, Info, HelpCircle, 
-  CheckCircle, ChevronRight, BookMarked, UserCheck, Eye, ShieldAlert, WifiOff, Wifi, Award
+  CheckCircle, ChevronRight, ChevronDown, BookMarked, UserCheck, Eye, ShieldAlert, WifiOff, Wifi, Award,
+  ClipboardCheck, Edit, X, Volume2, VolumeX
 } from "lucide-react";
 import { AudioRosary } from "./components/AudioRosary";
 import { FEAST_DAYS, TRADITIONAL_PRAYERS, NOVENAS, SCRIPTURE_READINGS, TraditionalPrayer } from "./data/liturgy";
@@ -17,6 +18,11 @@ import { RoutinesTab } from "./components/RoutinesTab";
 import { TrendingTab } from "./components/TrendingTab";
 import { SleepStoriesTab } from "./components/SleepStoriesTab";
 import BibleFlashcardsTab from "./components/BibleFlashcardsTab";
+import SaintsCatalogTab from "./components/SaintsCatalogTab";
+import { LITURGICAL_SAINTS } from "./data/saints";
+import { ConfessionPrepTab } from "./components/ConfessionPrepTab";
+import { CathedralSoundscape } from "./components/CathedralSoundscape";
+import { motion, AnimatePresence } from "motion/react";
 
 const CrossIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
@@ -31,6 +37,26 @@ const CrossIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <path d="M12 2v20M7 8h10" />
   </svg>
 );
+
+
+const ENCOURAGING_VERSES = [
+  { text: "Fear not, for I am with you; be not dismayed, for I am your God; I will strengthen you, I will help you.", reference: "Isaiah 41:10" },
+  { text: "Come to me, all who labor and are heavy laden, and I will give you rest.", reference: "Matthew 11:28" },
+  { text: "The Lord is my shepherd; there is nothing I lack. In green pastures he makes me lie down; to still waters he leads me.", reference: "Psalm 23:1-2" },
+  { text: "Cast all your anxiety on him because he cares for you.", reference: "1 Peter 5:7" },
+  { text: "Peace I leave with you; my peace I give to you. Not as the world gives do I give to you. Let not your hearts be troubled.", reference: "John 14:27" },
+  { text: "I can do all things through him who strengthens me.", reference: "Philippians 4:13" },
+  { text: "Be strong and courageous. Do not fear or be in dread of them, for it is the Lord your God who goes with you.", reference: "Deuteronomy 31:6" },
+  { text: "For I know the plans I have for you, plans for welfare and not for evil, to give you a future and a hope.", reference: "Jeremiah 29:11" },
+  { text: "The Lord is near to the brokenhearted and saves the crushed in spirit.", reference: "Psalm 34:18" },
+  { text: "But they who wait for the Lord shall renew their strength; they shall mount up with wings like eagles.", reference: "Isaiah 40:31" },
+  { text: "God is our refuge and strength, a very present help in trouble.", reference: "Psalm 46:1" },
+  { text: "For God gave us a spirit not of fear but of power and love and self-control.", reference: "2 Timothy 1:7" },
+  { text: "The Lord your God is in your midst, a mighty one who will save; he will rejoice over you with gladness.", reference: "Zephaniah 3:17" },
+  { text: "Blessed is the man who remains steadfast under trial.", reference: "James 1:12" },
+  { text: "Let all that you do be done in love.", reference: "1 Corinthians 16:14" },
+  { text: "We know that for those who love God all things work together for good.", reference: "Romans 8:28" }
+];
 
 export const INTENTION_CATEGORIES = [
   { id: "penance", name: "Penance & Repentance", color: "violet", badge: "bg-violet-500/10 text-violet-700 dark:text-violet-300 border border-violet-200/30", glow: "from-violet-500/20 to-violet-950/20 shadow-violet-500/30 text-violet-600 dark:text-violet-400 hover:shadow-violet-500/50 ring-violet-500/40", hex: "#8B5CF6", description: "Violet: Preparedness, sacrifice, conversion of heart" },
@@ -50,7 +76,7 @@ export const getCategoryConfig = (categoryId?: string) => {
 
 export default function App() {
   // --- STATE ---
-  const [activeTab, setActiveTab] = useState<"reflections" | "rosary" | "calendar" | "novenas" | "intentions" | "wall" | "routines" | "trending" | "sleep_stories" | "design_studio" | "flashcards">("reflections");
+  const [activeTab, setActiveTab] = useState<"reflections" | "rosary" | "calendar" | "novenas" | "intentions" | "wall" | "routines" | "trending" | "sleep_stories" | "design_studio" | "flashcards" | "saints" | "confession">("reflections");
   const [navStyle, setNavStyle] = useState<"floating_pill" | "monastic_sidebar" | "cathedral_rail">(() => {
     const saved = localStorage.getItem("sanctuary_nav_style");
     return (saved as any) || "cathedral_rail";
@@ -75,8 +101,62 @@ export default function App() {
     liturgicalSeason: LiturgicalSeason;
     simulated?: boolean;
     error?: string;
-  } | null>(null);
+  } | null>(() => {
+    const saved = localStorage.getItem("sanctuary_affirmation_data");
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  });
   const [isGeneratingAffirmation, setIsGeneratingAffirmation] = useState<boolean>(false);
+
+  // User Profile States
+  const [favoriteSaint, setFavoriteSaint] = useState<string>(() => {
+    return localStorage.getItem("sanctuary_favorite_saint") || "s-teresa-calcutta";
+  });
+  const [profileName, setProfileName] = useState<string>(() => {
+    return localStorage.getItem("sanctuary_profile_name") || "Faithful Pilgrim";
+  });
+  const [favoriteSaintCustomText, setFavoriteSaintCustomText] = useState<string>(() => {
+    return localStorage.getItem("sanctuary_favorite_saint_custom") || "";
+  });
+
+  // Edit Profile Modal draft states
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState<boolean>(false);
+  const [isBioOpen, setIsBioOpen] = useState<boolean>(false);
+  const [isQuickActionsOpen, setIsQuickActionsOpen] = useState<boolean>(false);
+  const [tempProfileName, setTempProfileName] = useState<string>("");
+  const [tempFavoriteSaint, setTempFavoriteSaint] = useState<string>("");
+  const [tempFavoriteSaintCustomText, setTempFavoriteSaintCustomText] = useState<string>("");
+  const [saintsSearchQuery, setSaintsSearchQuery] = useState<string>("");
+
+  useEffect(() => {
+    localStorage.setItem("sanctuary_favorite_saint", favoriteSaint);
+  }, [favoriteSaint]);
+
+  useEffect(() => {
+    localStorage.setItem("sanctuary_profile_name", profileName);
+  }, [profileName]);
+
+  useEffect(() => {
+    localStorage.setItem("sanctuary_favorite_saint_custom", favoriteSaintCustomText);
+  }, [favoriteSaintCustomText]);
+
+  useEffect(() => {
+    if (!isQuickActionsOpen) return;
+    const handleOutsideClick = (e: MouseEvent) => {
+      const container = document.getElementById("profile-quick-actions-container");
+      if (container && !container.contains(e.target as Node)) {
+        setIsQuickActionsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, [isQuickActionsOpen]);
 
   // Custom devotional generator states
   const [devotionalMood, setDevotionalMood] = useState<string>("trusting");
@@ -122,9 +202,94 @@ export default function App() {
   // Settings & notifications simulation states
   const [notificationsEnabled, setNotificationsEnabled] = useState<boolean>(true);
   const [simulatedNotifications, setSimulatedNotifications] = useState<{ id: string; msg: string; time: string }[]>([]);
+  const [selectedFeastId, setSelectedFeastId] = useState<string>(FEAST_DAYS[0]?.id || "");
   
   // Traditional prayer modal for general searching
   const [searchPrayerQuery, setSearchPrayerQuery] = useState<string>("");
+
+  // Sanctuary Focus Mode integration
+  const [isFocusMode, setIsFocusMode] = useState<boolean>(false);
+  const [focusBackground, setFocusBackground] = useState<"golden" | "stained_glass" | "twilight">("golden");
+  const [isCathedralSoundActive, setIsCathedralSoundActive] = useState<boolean>(false);
+  const cathedralSoundRef = useRef<CathedralSoundscape | null>(null);
+
+  // Scripture Overlay Feature states
+  const [isScriptureOverlayActive, setIsScriptureOverlayActive] = useState<boolean>(false);
+  const [currentVerseIdx, setCurrentVerseIdx] = useState<number>(0);
+  const [isVerseVisible, setIsVerseVisible] = useState<boolean>(true);
+
+  useEffect(() => {
+    // Stop sound and scripture overlay if focus mode is deactivated
+    if (!isFocusMode) {
+      if (isCathedralSoundActive) {
+        setIsCathedralSoundActive(false);
+      }
+      if (isScriptureOverlayActive) {
+        setIsScriptureOverlayActive(false);
+      }
+    }
+  }, [isFocusMode, isCathedralSoundActive, isScriptureOverlayActive]);
+
+  useEffect(() => {
+    if (isScriptureOverlayActive) {
+      // Pick a random verse to start when activated
+      setCurrentVerseIdx(Math.floor(Math.random() * ENCOURAGING_VERSES.length));
+      setIsVerseVisible(true);
+
+      // Change verse every 30 seconds with a clean crossfade
+      const interval = setInterval(() => {
+        // Step 1: Fade out
+        setIsVerseVisible(false);
+        
+        // Step 2: Swap the scripture reference while fully invisible, then fade back in
+        setTimeout(() => {
+          setCurrentVerseIdx(prev => {
+            let nextIdx = Math.floor(Math.random() * ENCOURAGING_VERSES.length);
+            if (nextIdx === prev && ENCOURAGING_VERSES.length > 1) {
+              nextIdx = (nextIdx + 1) % ENCOURAGING_VERSES.length;
+            }
+            return nextIdx;
+          });
+          setIsVerseVisible(true);
+        }, 1500); // 1.5s exit duration matched with CSS/Spring transition
+      }, 30000);
+
+      return () => clearInterval(interval);
+    }
+  }, [isScriptureOverlayActive]);
+
+  useEffect(() => {
+    if (isCathedralSoundActive) {
+      if (!cathedralSoundRef.current) {
+        cathedralSoundRef.current = new CathedralSoundscape();
+      }
+      cathedralSoundRef.current.start();
+    } else {
+      if (cathedralSoundRef.current) {
+        cathedralSoundRef.current.stop();
+      }
+    }
+  }, [isCathedralSoundActive]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (cathedralSoundRef.current) {
+        cathedralSoundRef.current.stop();
+      }
+    };
+  }, []);
+
+  // ESC key handler to exit Focus Mode
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsFocusMode(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   // --- LOCAL PERSISTENCE LOADS ---
   useEffect(() => {
@@ -288,26 +453,317 @@ export default function App() {
     return 'Ordinary Time';
   };
 
-  const fetchAffirmation = async (season: LiturgicalSeason) => {
+  const getLiturgicalSeasonBadgeStyles = (season: LiturgicalSeason) => {
+    switch (season) {
+      case 'Lent':
+        return {
+          bg: "bg-purple-50/70 dark:bg-purple-950/20 border-purple-200/50 dark:border-purple-850/30 text-purple-700 dark:text-purple-300",
+          pill: "bg-purple-500/15 text-purple-800 dark:text-purple-300 border-purple-200/50",
+          glow: "shadow-[0_0_12px_rgba(168,85,247,0.12)]",
+          iconColor: "text-purple-600 dark:text-purple-400",
+          label: "Lent"
+        };
+      case 'Advent':
+        return {
+          bg: "bg-violet-50/70 dark:bg-violet-950/20 border-violet-200/50 dark:border-violet-850/30 text-violet-700 dark:text-violet-300",
+          pill: "bg-violet-500/15 text-violet-800 dark:text-violet-300 border-violet-200/50",
+          glow: "shadow-[0_0_12px_rgba(139,92,246,0.12)]",
+          iconColor: "text-violet-600 dark:text-violet-400",
+          label: "Advent"
+        };
+      case 'Easter':
+        return {
+          bg: "bg-amber-50/70 dark:bg-amber-950/15 border-amber-200/50 dark:border-amber-850/30 text-amber-700 dark:text-amber-400",
+          pill: "bg-amber-500/15 text-amber-800 dark:text-amber-300 border-amber-250/50",
+          glow: "shadow-[0_0_12px_rgba(245,158,11,0.15)]",
+          iconColor: "text-amber-600 dark:text-amber-400",
+          label: "Easter"
+        };
+      case 'Christmas':
+        return {
+          bg: "bg-blue-50/70 dark:bg-blue-950/15 border-blue-200/50 dark:border-blue-900/30 text-blue-700 dark:text-blue-300",
+          pill: "bg-blue-500/15 text-blue-800 dark:text-blue-300 border-blue-200/50",
+          glow: "shadow-[0_0_12px_rgba(59,130,246,0.15)]",
+          iconColor: "text-blue-600 dark:text-blue-400",
+          label: "Christmas"
+        };
+      case 'Ordinary Time':
+      default:
+        return {
+          bg: "bg-emerald-50/70 dark:bg-emerald-950/15 border-emerald-200/50 dark:border-emerald-900/30 text-emerald-700 dark:text-emerald-400",
+          pill: "bg-emerald-500/15 text-emerald-800 dark:text-emerald-400 border-emerald-250/50",
+          glow: "shadow-[0_0_12px_rgba(16,185,129,0.12)]",
+          iconColor: "text-emerald-600 dark:text-emerald-400",
+          label: "Ordinary Time"
+        };
+    }
+  };
+
+  const getUpcomingFeastForFavoriteSaint = () => {
+    // Determine search terms based on saint selection
+    let searchTerms: string[] = [];
+    let saintKey = favoriteSaint;
+
+    if (saintKey === "s-peter") {
+      searchTerms = ["peter"];
+    } else if (saintKey === "s-paul") {
+      searchTerms = ["paul"];
+    } else if (saintKey === "s-mary") {
+      searchTerms = ["mary", "our lady", "virgin mary", "immaculate"];
+    } else if (saintKey === "s-john-baptist") {
+      searchTerms = ["john the baptist"];
+    } else if (saintKey === "s-francis") {
+      searchTerms = ["francis"];
+    } else if (saintKey === "s-augustine") {
+      searchTerms = ["augustine"];
+    } else if (saintKey === "s-padre-pio") {
+      searchTerms = ["padre pio", "pio"];
+    } else if (saintKey === "s-ignatius") {
+      searchTerms = ["ignatius"];
+    } else if (saintKey === "s-therese") {
+      searchTerms = ["thérèse", "therese"];
+    } else if (saintKey === "s-teresa-calcutta") {
+      searchTerms = ["teresa"];
+    } else if (saintKey === "custom" && favoriteSaintCustomText) {
+      searchTerms = favoriteSaintCustomText.toLowerCase()
+        .replace(/saint/g, "")
+        .replace(/st\./g, "")
+        .split(/\s+/)
+        .filter(w => w.length > 2);
+    }
+
+    // If no search terms, use standard fallback
+    if (searchTerms.length === 0) {
+      searchTerms = ["teresa"]; // default is Teresa of Calcutta
+    }
+
+    // Filter FEAST_DAYS to find matches
+    const matches = FEAST_DAYS.filter(fd => {
+      const titleLower = fd.title.toLowerCase();
+      const descLower = fd.description.toLowerCase();
+      const briefLower = (fd.saintBrief || "").toLowerCase();
+      return searchTerms.some(term => 
+        titleLower.includes(term) || 
+        descLower.includes(term) || 
+        briefLower.includes(term)
+      );
+    });
+
+    // If no matches, return a default general upcoming feast day or the first one
+    const pool = matches.length > 0 ? matches : FEAST_DAYS;
+
+    // Find the next one relative to today
+    const today = new Date();
+    const currentYear = today.getFullYear();
+
+    const feastWithDates = pool.map(fd => {
+      const [mStr, dStr] = fd.date.split("-");
+      const month = parseInt(mStr, 10) - 1;
+      const day = parseInt(dStr, 10);
+      
+      // Construct date for this year
+      let feastDate = new Date(currentYear, month, day);
+      // If it's already passed today, check next year
+      if (feastDate < today) {
+        feastDate = new Date(currentYear + 1, month, day);
+      }
+      return { feast: fd, nextDate: feastDate };
+    });
+
+    // Sort by closest date
+    feastWithDates.sort((a, b) => a.nextDate.getTime() - b.nextDate.getTime());
+
+    return feastWithDates[0];
+  };
+
+  const getFavoriteSaintDetails = () => {
+    // 1. Identify the matching LITURGICAL_SAINTS entry
+    const saintMatch = LITURGICAL_SAINTS.find(s => s.id === favoriteSaint);
+    
+    // 2. Identify the matching FEAST_DAYS entry via the closest matching logic
+    const upcomingMatchObj = getUpcomingFeastForFavoriteSaint();
+    const feastMatch = upcomingMatchObj?.feast;
+
+    // Define fallback strings
+    const name = favoriteSaint === "custom" 
+      ? (favoriteSaintCustomText || "Custom Patron Saint") 
+      : (saintMatch?.name || "Saint Teresa of Calcutta");
+      
+    const title = saintMatch?.title || "Patron Saint Intercessor";
+    const patronage = saintMatch?.patronage || "Spiritual pilgrim journeys and prayers";
+    const era = saintMatch?.era || "Christian History";
+    const virtues = saintMatch?.virtues || ["Faithfulness", "Prayer", "Devotion"];
+    const traditionalPrayer = saintMatch?.traditionalPrayer || "Heavenly Father, through the intercession of this holy patron saint, grant us the strength to walk in righteousness, follow the footsteps of Christ, and bear witness to Your love daily. Amen.";
+    
+    // Sourced from FEAST_DAYS
+    const feastTitle = feastMatch ? feastMatch.title : "Saint's Feast Day";
+    const feastDateFormatted = upcomingMatchObj 
+      ? upcomingMatchObj.nextDate.toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })
+      : "Calendar Feast Day";
+    const feastDescription = feastMatch ? feastMatch.description : "A day dedicated to commemorating the life and holy deeds of this patron intercessor.";
+    const saintBrief = feastMatch ? feastMatch.saintBrief : (saintMatch?.biography ? saintMatch.biography.split('.')[0] + '.' : "A holy helper in the Communion of Saints.");
+    const biography = saintMatch?.biography || "No detailed historical biography stored in default catalog. You can write your custom saint name to align with the dynamic daily teachings, seeking their continuous spiritual intercession on your daily covenant path.";
+
+    return {
+      name,
+      title,
+      patronage,
+      era,
+      virtues,
+      traditionalPrayer,
+      feastTitle,
+      feastDateFormatted,
+      feastDescription,
+      saintBrief,
+      biography,
+      color: saintMatch?.color || "amber"
+    };
+  };
+
+  const handleQuickLightVotive = () => {
+    const details = getFavoriteSaintDetails();
+    const patronSaintName = details.name;
+
+    const newInt: PersonalIntention = {
+      id: "inst-votive-" + Date.now(),
+      title: `Votive for ${patronSaintName}`,
+      description: `Offered for holy intercession from our patron ${patronSaintName}.`,
+      createdAt: new Date().toISOString(),
+      answered: false,
+      reminderEnabled: false,
+      sharedToWall: false,
+      category: "healing"
+    };
+
+    const updated = [newInt, ...personalIntentions];
+    saveIntentionsToStorage(updated);
+    incrementPrayerStats();
+    triggerNotificationSound();
+
+    setSimulatedNotifications(prev => [
+      {
+        id: "notif-" + Date.now(),
+        msg: `🕯️ A sacred votive flame has been ignited for the intercession of ${patronSaintName}! See it glowing on your Sanctuary Altar.`,
+        time: "Just Now"
+      },
+      ...prev
+    ]);
+  };
+
+  const handleToggleReminders = () => {
+    const nextVal = !notificationsEnabled;
+    setNotificationsEnabled(nextVal);
+    triggerNotificationSound();
+
+    setSimulatedNotifications(prev => [
+      {
+        id: "notif-" + Date.now(),
+        msg: nextVal 
+          ? "🔔 Daily Liturgical Reminders and morning verses have been enabled."
+          : "🔕 Daily Liturgical Reminders have been silenced.",
+        time: "Just Now"
+      },
+      ...prev
+    ]);
+  };
+
+  const fetchAffirmation = async (season: LiturgicalSeason, customSaintOverride?: { favSaint: string; customText: string }) => {
     setIsGeneratingAffirmation(true);
     try {
+      const activeFavSaint = customSaintOverride ? customSaintOverride.favSaint : favoriteSaint;
+      const activeCustomText = customSaintOverride ? customSaintOverride.customText : favoriteSaintCustomText;
+
+      let paramSaint = "";
+      if (activeFavSaint === "custom") {
+        paramSaint = activeCustomText || "Saint Augustine";
+      } else {
+        paramSaint = activeFavSaint;
+      }
+
       const response = await fetch("/api/generate-affirmation", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ season }),
+        body: JSON.stringify({ 
+          season,
+          favoriteSaint: paramSaint
+        }),
       });
       const data = await response.json();
       setAffirmationData(data);
+      localStorage.setItem("sanctuary_affirmation_data", JSON.stringify(data));
     } catch (err) {
       console.error("Error generating seasonal affirmation:", err);
-      setAffirmationData({
-        quote: "Do ordinary things with extraordinary love.",
-        saintName: "Saint Teresa of Calcutta",
-        affirmation: "I will seek God in the small, seemingly mundane moments of this ordinary day, transforming my routine tasks into acts of deep prayer and love.",
-        contemplation: "God does not ask of us great deeds, but rather great love in the midst of our normal responsibilities. Let the green of this liturgical season remind you of steady, quiet spiritual growth.",
+      
+      const activeFavSaint = customSaintOverride ? customSaintOverride.favSaint : favoriteSaint;
+      const activeCustomText = customSaintOverride ? customSaintOverride.customText : favoriteSaintCustomText;
+
+      let finalSaintName = "Saint Teresa of Calcutta";
+      let finalQuote = "Do ordinary things with extraordinary love.";
+      let finalAffirmation = "I will seek God in the small, seemingly mundane moments of this ordinary day, transforming my routine tasks into acts of deep prayer and love.";
+      let finalContemplation = "God does not ask of us great deeds, but rather great love in the midst of our normal responsibilities. Let the green of this liturgical season remind you of steady, quiet spiritual growth.";
+
+      if (activeFavSaint === "s-peter") {
+        finalSaintName = "Saint Peter the Apostle";
+        finalQuote = "Lord, you know all things; you know that I love you.";
+        finalAffirmation = "Even in moments of doubt or high pressure, I will declare my deep love for Jesus and trust that His grace will rebuild and strengthen my resolve.";
+        finalContemplation = "Saint Peter teaches us that our human flaws do not disqualify us from our sacred purpose. Speak your loving surrender and trust to the Good Shepherd today.";
+      } else if (activeFavSaint === "s-paul") {
+        finalSaintName = "Saint Paul the Apostle";
+        finalQuote = "I can do all things through Christ who strengthens me.";
+        finalAffirmation = "I will press forward with holy zeal today, confident that Christ's strength is made perfect in my ultimate weakness.";
+        finalContemplation = "Reflect on Saint Paul's boundless energy to proclaim hope. Ask for apostolic fortitude and trust that no obstacle is too great when Christ guides your steps.";
+      } else if (activeFavSaint === "s-mary") {
+        finalSaintName = "Blessed Virgin Mary";
+        finalQuote = "My soul proclaims the greatness of the Lord; my spirit rejoices in God my Savior.";
+        finalAffirmation = "I offer my positive, joyful 'Fiat' to God's holy path today, allowing Him to work wonders through my humble, quiet heart.";
+        finalContemplation = "Our Lady's absolute obedience is the masterclass in spiritual trust. In quiet composure, offer your daily contributions to God as a pleasing sacrifice of prayer.";
+      } else if (activeFavSaint === "s-john-baptist") {
+        finalSaintName = "Saint John the Baptist";
+        finalQuote = "He must increase, but I must decrease.";
+        finalAffirmation = "I will humble my pride today, seeking to point others to the Lamb of God so that Christ may shine more brightly through my actions.";
+        finalContemplation = "Saint John dedicated his life to preparing the way. Stepping back from temporal self-glory allows God's loving light to occupy the center stage.";
+      } else if (activeFavSaint === "s-therese") {
+        finalSaintName = "Saint Thérèse of Lisieux";
+        finalQuote = "My vocation is love! In the heart of the Church, my Mother, I will be love.";
+        finalAffirmation = "I will scatter small details of active love and patience today, walking the 'Little Way' of profound trust and simple surrender.";
+        finalContemplation = "The Little Flower showed us that holiness is found in doing ordinary deeds with supreme supernatural charity. See each minor irritation as a golden intercession.";
+      } else if (activeFavSaint === "s-francis") {
+        finalSaintName = "Saint Francis of Assisi";
+        finalQuote = "Lord, make me an instrument of your peace.";
+        finalAffirmation = "I choose the path of peace, simple living, and deep reverence for all of God's creation, bringing light where there is darkness.";
+        finalContemplation = "Saint Francis embraced holy simplicity and immediate trust in God's providence. Let go of material anxieties and rest in the abundance of Fatherly love.";
+      } else if (activeFavSaint === "s-augustine") {
+        finalSaintName = "Saint Augustine of Hippo";
+        finalQuote = "You have made us for yourself, O Lord, and our heart is restless until it rests in You.";
+        finalAffirmation = "I will quiet my restless, wandering thoughts today, seeking my true rest and home only in the merciful embrace of God.";
+        finalContemplation = "Saint Augustine found after many years that God is closer to us than we are to ourselves. Lift your eyes, surrender restlessness, and breathe peace.";
+      } else if (activeFavSaint === "s-padre-pio") {
+        finalSaintName = "Saint Padre Pio of Pietrelcina";
+        finalQuote = "Pray, hope, and don't worry. Worry is useless. God is merciful and will hear your prayer.";
+        finalAffirmation = "Today, I choose to pray, hope, and refuse to worry, resting in the absolute confidence of God's merciful listening ear.";
+        finalContemplation = "Padre Pio was an ultimate advocate of serene trust. Do not allow tomorrow's unknown to rob you of today's prayerful peace. God runs the future.";
+      } else if (activeFavSaint === "s-ignatius") {
+        finalSaintName = "Saint Ignatius of Loyola";
+        finalQuote = "Receive, Lord, all my liberty, my memory, my understanding, and my whole will. All that I have or cherish You have given me.";
+        finalAffirmation = "I surrender all my wishes, plans, and liberties to God today, asking only for His love and grace, which is fully sufficient for me.";
+        finalContemplation = "Saint Ignatius designed the Spiritual Exercises to align our wills perfectly with God. Seek to find God in all things and work everything for His greater glory.";
+      } else if (activeFavSaint === "custom" && activeCustomText) {
+        finalSaintName = activeCustomText;
+        finalQuote = "Seek standard purity of heart and trust God with daily dedication.";
+        finalAffirmation = `I choose to walk with devotion today, drawing hope from the teachings of ${activeCustomText} to align my routine tasks with God's peace.`;
+        finalContemplation = `Letting the theological insights of ${activeCustomText} steer your choices will inspire a serene day of prayerful service.`;
+      }
+
+      const fallbackData = {
+        quote: finalQuote,
+        saintName: finalSaintName,
+        affirmation: finalAffirmation,
+        contemplation: finalContemplation,
         liturgicalSeason: season,
         simulated: true
-      });
+      };
+      setAffirmationData(fallbackData);
+      localStorage.setItem("sanctuary_affirmation_data", JSON.stringify(fallbackData));
     } finally {
       setIsGeneratingAffirmation(false);
     }
@@ -316,8 +772,29 @@ export default function App() {
   useEffect(() => {
     const currentSeason = getAutoLiturgicalSeason();
     setSelectedAffirmationSeason(currentSeason);
+    
+    // Attempt to use cached liturgical affirmation to preserve API quota
+    const saved = localStorage.getItem("sanctuary_affirmation_data");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        const details = getFavoriteSaintDetails();
+        
+        if (
+          parsed &&
+          parsed.liturgicalSeason === currentSeason &&
+          (parsed.saintName?.toLowerCase().includes(details.name.toLowerCase()) || 
+           details.name.toLowerCase().includes(parsed.saintName?.toLowerCase()))
+        ) {
+          console.log("Preserving daily Gemini API quota. Loaded cached liturgical affirmation:", parsed.saintName);
+          return;
+        }
+      } catch (e) {
+        // parsing error, fetch fresh
+      }
+    }
     fetchAffirmation(currentSeason);
-  }, []);
+  }, [favoriteSaint, favoriteSaintCustomText]);
 
   useEffect(() => {
     fetchTodayReflection();
@@ -327,6 +804,35 @@ export default function App() {
   // Push notifications simulation runner
   useEffect(() => {
     if (!notificationsEnabled) return;
+
+    // Simulate liturgical feast day memorial daily notification alert
+    const timerFeast = setTimeout(() => {
+      const nowObj = new Date();
+      const currentMonth = String(nowObj.getMonth() + 1).padStart(2, '0');
+      const currentDay = String(nowObj.getDate()).padStart(2, '0');
+      const todayMMDD = `${currentMonth}-${currentDay}`;
+
+      // Check exact match
+      const exactMatch = FEAST_DAYS.find(f => f.date === todayMMDD);
+      let message = "";
+      if (exactMatch) {
+        message = `✨ Today's Daily Feast: ${exactMatch.title} (${exactMatch.feastLevel}) is celebrated today! Color: ${exactMatch.color.toUpperCase()}. ${exactMatch.description}`;
+      } else {
+        const sorted = [...FEAST_DAYS].sort((a, b) => a.date.localeCompare(b.date));
+        const upcoming = sorted.find(f => f.date >= todayMMDD) || sorted[0];
+        message = `📅 Daily Liturgical Companion: Upcoming ${upcoming.feastLevel} — ${upcoming.title} is approaching on ${upcoming.date}. ${upcoming.description}`;
+      }
+
+      triggerNotificationSound();
+      setSimulatedNotifications(prev => [
+        {
+          id: "feast-daily-" + Date.now(),
+          msg: message,
+          time: "Just now"
+        },
+        ...prev
+      ]);
+    }, 2800);
 
     // Simulate morning verse notifications popping in on first mount after 4 seconds
     const timer1 = setTimeout(() => {
@@ -354,6 +860,7 @@ export default function App() {
     }, 18000);
 
     return () => {
+      clearTimeout(timerFeast);
       clearTimeout(timer1);
       clearTimeout(timer2);
     };
@@ -649,8 +1156,55 @@ export default function App() {
   );
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? "bg-stone-950 text-stone-100 hallow-stars" : "bg-[#f9f7f3] text-stone-900"} font-sans transition-colors duration-300 flex flex-col relative overflow-hidden`}>
-      {isDarkMode && (
+    <div className={`min-h-screen ${isFocusMode ? "bg-[#0a0712] text-stone-100" : isDarkMode ? "bg-stone-950 text-stone-100 hallow-stars" : "bg-[#f9f7f3] text-stone-900"} font-sans transition-colors duration-500 flex flex-col relative overflow-hidden`}>
+      
+      {/* Tranquil Blurred Background for Focus Mode */}
+      {isFocusMode && (
+        <div className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-hidden animate-fadeIn">
+          {focusBackground === "golden" && (
+            <>
+              {/* Soft, deep amber radial glow representing prayer candles in a dim cathedral sanctuary */}
+              <div className="absolute inset-0 bg-gradient-to-b from-[#1c1813] via-[#0f0c0a] to-[#080605]" />
+              <div className="absolute top-[20%] left-[30%] w-[350px] h-[350px] rounded-full bg-amber-500/25 blur-[130px] animate-pulse duration-10000" />
+              <div className="absolute bottom-[30%] right-[25%] w-[450px] h-[450px] rounded-full bg-yellow-600/20 blur-[150px] animate-pulse duration-12000" />
+              <div className="absolute top-[60%] left-[10%] w-[250px] h-[250px] rounded-full bg-amber-700/15 blur-[110px] animate-pulse duration-8000" />
+              {/* Fine candle flicker animation overlay */}
+              <div className="absolute inset-0 bg-black/5 mix-blend-overlay opacity-30 animate-pulse duration-3000" />
+            </>
+          )}
+          
+          {focusBackground === "stained_glass" && (
+            <>
+              {/* Sacred medieval stained-glass colors: deep ruby reds, Marian sapphires, Emerald greens, Gold yellows, all heavily blurred */}
+              <div className="absolute inset-0 bg-[#0d0a14]" />
+              {/* Marian Sapphire Blue */}
+              <div className="absolute top-[10%] left-[15%] w-[400px] h-[400px] rounded-full bg-blue-600/20 blur-[125px] animate-pulse duration-10000" />
+              {/* Deep Ruby Red */}
+              <div className="absolute bottom-[15%] right-[20%] w-[450px] h-[450px] rounded-full bg-red-650/15 blur-[140px] animate-pulse duration-12000" />
+              {/* Sacred Gold */}
+              <div className="absolute top-[40%] right-[15%] w-[350px] h-[350px] rounded-full bg-amber-500/15 blur-[120px] animate-pulse duration-9000" />
+              {/* Liturgical Violet / Emerald */}
+              <div className="absolute bottom-[20%] left-[10%] w-[300px] h-[300px] rounded-full bg-violet-600/18 blur-[105px] animate-pulse duration-11000" />
+              {/* Subtle repeating grid/arch shapes behind the blur to give a stained glass gothic cathedral window texture */}
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.6)_100%)]" />
+            </>
+          )}
+          
+          {focusBackground === "twilight" && (
+            <>
+              {/* A silent, deep evening purple and dark blue liturgical space */}
+              <div className="absolute inset-0 bg-gradient-to-b from-[#0a0712] via-[#050409] to-[#010103]" />
+              <div className="absolute top-[15%] right-[25%] w-[500px] h-[500px] rounded-full bg-indigo-550/15 blur-[160px] animate-pulse duration-11000" />
+              <div className="absolute bottom-[25%] left-[20%] w-[400px] h-[400px] rounded-full bg-purple-600/12 blur-[130px] animate-pulse duration-9000" />
+              <div className="absolute top-[50%] left-[45%] w-[300px] h-[300px] rounded-full bg-blue-500/10 blur-[110px] animate-pulse duration-[13000ms]" />
+            </>
+          )}
+          {/* Subtle dark vignette overlay to frame the center prayer content */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0)_15%,rgba(0,0,0,0.7)_90%)]" />
+        </div>
+      )}
+
+      {!isFocusMode && isDarkMode && (
         <>
           <div className="absolute top-20 left-10 w-[500px] h-[500px] rounded-full aurora-glow-1 pointer-events-none z-0" />
           <div className="absolute bottom-40 right-10 w-[600px] h-[600px] rounded-full aurora-glow-2 pointer-events-none z-0" />
@@ -659,8 +1213,113 @@ export default function App() {
       
       {!user && <AuthOverlay onSuccess={(loggedInUser) => setUser(loggedInUser)} />}
       
+      {/* 1. FOCUS SANCTUARY NAV CONTROLS */}
+      {isFocusMode && (
+        <header className="border-b border-stone-850 px-4 md:px-8 py-3.5 flex items-center justify-between shadow-sm bg-black/45 backdrop-blur-md sticky top-0 z-50 text-stone-100">
+          <div className="flex items-center gap-3">
+            <div className="bg-amber-500 text-stone-950 p-2.5 rounded-xl shadow-md cursor-pointer hover:rotate-12 transition-transform">
+              <CrossIcon className="h-5.5 w-5.5" />
+            </div>
+            <div>
+              <h1 className="text-sm md:text-base font-heading font-bold text-[#d4af37] tracking-wider uppercase flex items-center gap-2">
+                Sanctuary Focus Mode
+              </h1>
+              <span className="text-[10px] font-mono tracking-widest text-stone-400 font-normal uppercase">
+                Distraction-free prayer meditation
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            {/* Background design switcher */}
+            <div className="hidden sm:flex items-center gap-1.5 bg-stone-900/60 p-1 rounded-xl border border-stone-800">
+              <span className="text-[9px] font-mono text-stone-400 pl-2 uppercase pr-1">Atmosphere:</span>
+              {(["golden", "stained_glass", "twilight"] as const).map(style => (
+                <button
+                  key={style}
+                  onClick={() => {
+                    setFocusBackground(style);
+                    triggerNotificationSound();
+                  }}
+                  className={`text-[9px] font-mono uppercase px-2.5 py-1 rounded-lg cursor-pointer transition-colors ${
+                    focusBackground === style 
+                      ? "bg-amber-500 text-stone-950 font-bold" 
+                      : "text-stone-450 hover:text-stone-200 hover:bg-stone-800/40"
+                  }`}
+                >
+                  {style.replace("_", " ")}
+                </button>
+              ))}
+            </div>
+
+            {/* Ambient Soundscapes Toggle */}
+            <button
+              onClick={() => {
+                setIsCathedralSoundActive(!isCathedralSoundActive);
+                triggerNotificationSound();
+              }}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border transition-all text-xs font-mono font-bold cursor-pointer active:scale-[0.98] ${
+                isCathedralSoundActive 
+                  ? "bg-amber-500/25 border-amber-500/45 text-amber-300 shadow-sm" 
+                  : "bg-stone-900/60 border-stone-800 text-stone-400 hover:text-stone-200 hover:bg-stone-800/50"
+              }`}
+              title="Toggle looping, low-volume ambient 'cathedral' soundscape with distant Gregorian chords and echoing wind"
+            >
+              {isCathedralSoundActive ? (
+                <>
+                  <Volume2 className="h-3.5 w-3.5 text-amber-400 animate-pulse" />
+                  <span className="text-[10px] md:text-xs">Cathedral Chants: ON</span>
+                </>
+              ) : (
+                <>
+                  <VolumeX className="h-3.5 w-3.5" />
+                  <span className="text-[10px] md:text-xs text-stone-450">Cathedral Chants: OFF</span>
+                </>
+              )}
+            </button>
+
+            {/* Scripture Overlay Toggle */}
+            <button
+              onClick={() => {
+                setIsScriptureOverlayActive(!isScriptureOverlayActive);
+                triggerNotificationSound();
+              }}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border transition-all text-xs font-mono font-bold cursor-pointer active:scale-[0.98] ${
+                isScriptureOverlayActive 
+                  ? "bg-amber-500/25 border-amber-500/45 text-amber-300 shadow-sm" 
+                  : "bg-stone-900/60 border-stone-800 text-stone-400 hover:text-stone-200 hover:bg-stone-800/50"
+              }`}
+              title="Toggle encouraging scripture verses fading every 30 seconds"
+            >
+              {isScriptureOverlayActive ? (
+                <>
+                  <BookOpen className="h-3.5 w-3.5 text-amber-400 animate-pulse" />
+                  <span className="text-[10px] md:text-xs">Scripture Overlay: ON</span>
+                </>
+              ) : (
+                <>
+                  <BookOpen className="h-3.5 w-3.5 text-stone-400" />
+                  <span className="text-[10px] md:text-xs text-stone-450">Scripture Overlay: OFF</span>
+                </>
+              )}
+            </button>
+
+            <button
+              onClick={() => {
+                setIsFocusMode(false);
+                triggerNotificationSound();
+              }}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 hover:text-white text-xs font-mono font-bold cursor-pointer transition-all border border-amber-500/20 active:scale-[0.98]"
+            >
+              Exit Focus [Esc]
+            </button>
+          </div>
+        </header>
+      )}
+
       {/* 1. TOP HEADER / APPMARGINS */}
-      <header className="border-b border-stone-200 dark:border-stone-850 px-4 md:px-8 py-3.5 flex items-center justify-between shadow-sm bg-white dark:bg-stone-950/80 backdrop-blur sticky top-0 z-50">
+      {!isFocusMode && (
+        <header className="border-b border-stone-200 dark:border-stone-850 px-4 md:px-8 py-3.5 flex items-center justify-between shadow-sm bg-white dark:bg-stone-950/80 backdrop-blur sticky top-0 z-50">
         <div className="flex items-center gap-3">
           <div className="bg-amber-600 dark:bg-amber-500 text-white dark:text-stone-950 p-2.5 rounded-xl shadow-md cursor-pointer hover:rotate-12 transition-transform">
             <CrossIcon className="h-5.5 w-5.5" />
@@ -753,12 +1412,13 @@ export default function App() {
           </button>
         </div>
       </header>
+      )}
 
       {/* 2. CORE LAYOUT WRAPPER (DYNAMIC PORTAL LAYOUT SKELETON) */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 relative z-10">
         
         {/* STYLE 2: MONASTIC LEFT DESKTOP SIDEBAR */}
-        {navStyle === "monastic_sidebar" && (
+        {!isFocusMode && navStyle === "monastic_sidebar" && (
           <aside className="hidden lg:flex lg:col-span-3 flex-col gap-5 sticky top-22 self-start pr-2 z-10 animate-fadeIn">
             <div className="bg-white dark:bg-[#12101d] border border-stone-200 dark:border-stone-850/80 rounded-2xl p-5 shadow-xl relative overflow-hidden">
               <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-amber-500/[0.03] to-transparent pointer-events-none" />
@@ -779,12 +1439,14 @@ export default function App() {
               </div>
 
               {/* Navigation List */}
-              <div className="flex flex-col gap-1.5">
+              <div className="flex flex-col gap-1.5 font-mono">
                 {[
                   { id: "reflections", label: "Readings", icon: BookMarked },
                   { id: "rosary", label: "Rosary Companion", icon: Compass },
                   { id: "calendar", label: "Liturgy", icon: Calendar },
+                  { id: "saints", label: "Saints", icon: BookOpen },
                   { id: "novenas", label: "Novenas", icon: Sparkles },
+                  { id: "confession", label: "Confession Prep", icon: ClipboardCheck },
                   { id: "routines", label: "Routines", icon: Award },
                   { id: "trending", label: "Trending", icon: Flame },
                   { id: "sleep_stories", label: "Sleep Stories", icon: Moon },
@@ -804,15 +1466,15 @@ export default function App() {
                       className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-mono font-semibold tracking-wide transition-all cursor-pointer text-left ${
                         isActive 
                           ? "bg-gradient-to-r from-amber-500/10 to-amber-600/[0.02] dark:from-amber-500/10 dark:to-transparent text-[#e5c353] dark:text-amber-400 border border-amber-500/20 shadow-xs" 
-                          : "text-stone-550 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-105 hover:bg-stone-50 dark:hover:bg-white/[0.02]"
+                          : "text-stone-600 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-100 hover:bg-stone-50 dark:hover:bg-white/[0.02]"
                       }`}
                     >
                       <span className="flex items-center gap-2.5">
-                        <TabIcon className={`h-4 w-4 shrink-0 ${isActive ? "text-[#d4af37] dark:text-amber-450 stroke-[2]" : "text-stone-400 dark:text-stone-500 stroke-[1.5]"}`} />
+                        <TabIcon className={`h-4 w-4 shrink-0 ${isActive ? "text-[#d4af37] dark:text-amber-400 stroke-[2]" : "text-stone-400 dark:text-stone-500 stroke-[1.5]"}`} />
                         <span>{tab.label}</span>
                       </span>
                       {isActive && (
-                        <span className="w-1.5 h-1.5 rounded-full bg-amber-500 dark:bg-amber-450 shadow-lg shadow-amber-550/50 animate-pulse" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-500 dark:bg-amber-400 shadow-lg shadow-amber-500/50 animate-pulse" />
                       )}
                     </button>
                   );
@@ -822,7 +1484,7 @@ export default function App() {
             
             {/* Quick Liturgical Design Note */}
             <div className="bg-gradient-to-br from-amber-500/[0.03] to-transparent border border-amber-500/5 rounded-2xl p-4 text-[10px] text-stone-500 dark:text-stone-400 font-sans leading-relaxed">
-              <span className="font-heading uppercase tracking-widest text-[#d4af37] dark:text-amber-450 font-semibold block mb-1">
+              <span className="font-heading uppercase tracking-widest text-[#d4af37] dark:text-amber-400 font-semibold block mb-1">
                 Monastic Tip
               </span>
               Use the <strong className="text-stone-700 dark:text-stone-300">Layout Studio</strong> above to toggle styles.
@@ -831,7 +1493,7 @@ export default function App() {
         )}
 
         {/* STYLE 3: CATHEDRAL LEFT DESKTOP NAV RAIL */}
-        {navStyle === "cathedral_rail" && (
+        {!isFocusMode && navStyle === "cathedral_rail" && (
           <aside className="hidden lg:flex lg:col-span-1 flex-col items-center gap-5 sticky top-22 self-start py-5 px-1 bg-white dark:bg-[#12101d] border border-stone-200 dark:border-stone-850/80 rounded-2xl shadow-xl animate-fadeIn">
             <div className="bg-gradient-to-br from-amber-500/15 to-transparent p-2 rounded-xl text-amber-500 border border-amber-500/20 mb-1 shadow-inner">
               <Compass className="h-4.5 w-4.5 animate-pulse" />
@@ -842,7 +1504,9 @@ export default function App() {
                 { id: "reflections", shortLabel: "READ", icon: BookMarked, tooltip: "Daily Readings" },
                 { id: "rosary", shortLabel: "ROSA", icon: Compass, tooltip: "Rosary Companion" },
                 { id: "calendar", shortLabel: "LITG", icon: Calendar, tooltip: "Liturgy Calendar" },
+                { id: "saints", shortLabel: "SNTS", icon: BookOpen, tooltip: "Saints Catalog" },
                 { id: "novenas", shortLabel: "NOVE", icon: Sparkles, tooltip: "Holy Novenas" },
+                { id: "confession", shortLabel: "CONF", icon: ClipboardCheck, tooltip: "Confession Prep" },
                 { id: "routines", shortLabel: "RTNS", icon: Award, tooltip: "Prayer Routines" },
                 { id: "trending", shortLabel: "TRND", icon: Flame, tooltip: "Trending List" },
                 { id: "sleep_stories", shortLabel: "REPS", icon: Moon, tooltip: "Sleep Stories" },
@@ -863,7 +1527,7 @@ export default function App() {
                     className={`flex flex-col items-center justify-center rounded-xl transition-all duration-200 cursor-pointer w-12 h-12 relative group ${
                       isActive 
                         ? "bg-stone-900 text-[#d4af37] dark:bg-amber-500 dark:text-stone-950 shadow-md font-bold" 
-                        : "text-stone-450 hover:text-stone-850 dark:text-stone-400 dark:hover:text-[#d4af37] hover:bg-stone-100 dark:hover:bg-white/[0.03]"
+                        : "text-stone-500 hover:text-stone-900 dark:text-stone-400 dark:hover:text-[#d4af37] hover:bg-stone-100 dark:hover:bg-white/[0.03]"
                     }`}
                   >
                     <TabIcon className="h-5 w-5" />
@@ -880,17 +1544,19 @@ export default function App() {
           </aside>
         )}
         
-        {/* ACTIVE VIEW COLUMN (Col span 6 vs 7 vs 8 depending on selected style) */}
+        {/* ACTIVE VIEW COLUMN (Col span 12 in Focus Mode vs 6 vs 7 vs 8 depending on selected style) */}
         <div className={`${
-          navStyle === "monastic_sidebar" 
+          isFocusMode
+            ? "lg:col-span-12 max-w-3xl mx-auto w-full"
+            : navStyle === "monastic_sidebar" 
             ? "lg:col-span-6" 
             : navStyle === "cathedral_rail" 
             ? "lg:col-span-7"
             : "lg:col-span-8"
-        } flex flex-col gap-6`}>
+        } flex flex-col gap-6 w-full z-10 transition-all duration-500`}>
           
           {/* OFFLINE CAPTIVITY WARNING BANNER */}
-          {isOfflineMode && (
+          {!isFocusMode && isOfflineMode && (
             <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-300/30 dark:border-amber-900/50 rounded-xl p-3 px-4 flex items-center justify-between text-xs text-amber-800 dark:text-amber-300">
               <span className="flex items-center gap-2">
                 <ShieldAlert className="h-4.5 w-4.5 text-amber-600" />
@@ -898,62 +1564,67 @@ export default function App() {
               </span>
             </div>
           )}
-                {/* THE LUXURY LAYOUT DESIGN STUDIO SELECTOR */}
-          <div className="bg-white dark:bg-[#12101e] border border-amber-500/10 dark:border-stone-850/80 p-4 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-gradient-to-br from-amber-500/[0.05] to-transparent blur-3xl pointer-events-none" />
-            <div className="flex items-start md:items-center gap-3 relative z-10">
-              <div className="bg-gradient-to-br from-amber-500/20 to-amber-600/5 p-2.5 rounded-xl text-amber-500 dark:text-amber-450 border border-amber-500/25 shadow-inner">
-                <Sparkles className="h-5 w-5 animate-pulse" />
-              </div>
-              <div>
-                <span className="text-[10px] font-mono tracking-widest text-[#d4af37] dark:text-amber-400 font-bold uppercase block mb-0.5">
-                  LAUDATE DESIGN STUDIO
-                </span>
-                <p className="text-xs text-stone-550 dark:text-stone-400 font-sans leading-relaxed">
-                  Toggle the navigation architecture of your digital sanctuary
-                </p>
-              </div>
-            </div>
 
-            {/* Selector Segmented Control */}
-            <div className="flex items-center gap-1.5 bg-stone-50 dark:bg-stone-950/80 p-1.5 rounded-xl border border-stone-200/80 dark:border-stone-900 z-10 shrink-0 self-start md:self-auto shadow-inner">
-              {[
-                { id: "floating_pill", name: "Arch Pill Dock" },
-                { id: "monastic_sidebar", name: "Monastic Sidebar" },
-                { id: "cathedral_rail", name: "Cathedral Rail" },
-              ].map(opt => {
-                const isSelected = navStyle === opt.id;
-                return (
-                  <button
-                    key={opt.id}
-                    onClick={() => {
-                      setNavStyle(opt.id as any);
-                      localStorage.setItem("sanctuary_nav_style", opt.id);
-                      triggerNotificationSound();
-                    }}
-                    className={`px-3 py-1.5 rounded-lg text-[10px] font-mono font-bold uppercase tracking-wider cursor-pointer transition-all duration-250 ${
-                      isSelected 
-                        ? "bg-gradient-to-r from-amber-500 to-amber-600 text-stone-950 dark:from-amber-400 dark:to-amber-500 dark:text-stone-950 shadow-md font-bold scale-[1.02]" 
-                        : "text-stone-500 dark:text-stone-450 hover:text-stone-800 dark:hover:text-stone-105 hover:bg-stone-200/30 dark:hover:bg-white/[0.03]"
-                    }`}
-                  >
-                    {opt.name}
-                  </button>
-                );
-              })}
+          {/* THE LUXURY LAYOUT DESIGN STUDIO SELECTOR */}
+          {!isFocusMode && (
+            <div className="bg-white dark:bg-[#12101e] border border-amber-500/10 dark:border-stone-850/80 p-4 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xl relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-gradient-to-br from-amber-500/[0.05] to-transparent blur-3xl pointer-events-none" />
+              <div className="flex items-start md:items-center gap-3 relative z-10">
+                <div className="bg-gradient-to-br from-amber-500/20 to-amber-600/5 p-2.5 rounded-xl text-amber-500 dark:text-amber-450 border border-amber-500/25 shadow-inner">
+                  <Sparkles className="h-5 w-5 animate-pulse" />
+                </div>
+                <div>
+                  <span className="text-[10px] font-mono tracking-widest text-[#d4af37] dark:text-amber-400 font-bold uppercase block mb-0.5">
+                    LAUDATE DESIGN STUDIO
+                  </span>
+                  <p className="text-xs text-stone-550 dark:text-stone-400 font-sans leading-relaxed">
+                    Toggle the navigation architecture of your digital sanctuary
+                  </p>
+                </div>
+              </div>
+
+              {/* Selector Segmented Control */}
+              <div className="flex items-center gap-1.5 bg-stone-50 dark:bg-stone-950/80 p-1.5 rounded-xl border border-stone-200/80 dark:border-stone-900 z-10 shrink-0 self-start md:self-auto shadow-inner">
+                {[
+                  { id: "floating_pill", name: "Arch Pill Dock" },
+                  { id: "monastic_sidebar", name: "Monastic Sidebar" },
+                  { id: "cathedral_rail", name: "Cathedral Rail" },
+                ].map(opt => {
+                  const isSelected = navStyle === opt.id;
+                  return (
+                    <button
+                      key={opt.id}
+                      onClick={() => {
+                        setNavStyle(opt.id as any);
+                        localStorage.setItem("sanctuary_nav_style", opt.id);
+                        triggerNotificationSound();
+                      }}
+                      className={`px-3 py-1.5 rounded-lg text-[10px] font-mono font-bold uppercase tracking-wider cursor-pointer transition-all duration-250 ${
+                        isSelected 
+                          ? "bg-gradient-to-r from-amber-500 to-amber-600 text-stone-950 dark:from-amber-400 dark:to-amber-500 dark:text-stone-950 shadow-md font-bold scale-[1.02]" 
+                          : "text-stone-500 dark:text-stone-450 hover:text-stone-800 dark:hover:text-stone-105 hover:bg-stone-200/30 dark:hover:bg-white/[0.03]"
+                      }`}
+                    >
+                      {opt.name}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* DYNAMIC NAVIGATION RENDERING */}
-          {navStyle === "floating_pill" && (
+          {!isFocusMode && navStyle === "floating_pill" && (
             <div className="bg-stone-50/50 dark:bg-stone-950/40 p-1 rounded-2xl border border-stone-200/60 dark:border-stone-850/80 shadow-md">
               <nav className="flex items-center gap-1 overflow-x-auto scrollbar-none py-1 px-1">
                 {[
                   { id: "reflections", label: "Readings", icon: BookMarked },
                   { id: "rosary", label: "Rosary Companion", icon: Compass },
                   { id: "calendar", label: "Liturgy", icon: Calendar },
+                  { id: "saints", label: "Saints", icon: BookOpen },
                   { id: "novenas", label: "Novenas", icon: Sparkles },
-                  { id: "routines", label: "Routines", icon: Award },
+                  { id: "confession", label: "Confession Prep", icon: ClipboardCheck },
+                  { id: "routines", label: "Readings / Prayers", icon: Award },
                   { id: "trending", label: "Trending", icon: Flame },
                   { id: "sleep_stories", label: "Sleep Stories", icon: Moon },
                   { id: "intentions", label: "Intentions", icon: Heart },
@@ -984,14 +1655,16 @@ export default function App() {
             </div>
           )}
 
-          {navStyle === "cathedral_rail" && (
+          {!isFocusMode && navStyle === "cathedral_rail" && (
             <div className="bg-transparent border-b border-stone-200 dark:border-stone-850/80 pb-1 lg:hidden">
               <nav className="flex items-center gap-2 overflow-x-auto scrollbar-none py-1">
                 {[
                   { id: "reflections", label: "READINGS", icon: BookMarked },
                   { id: "rosary", label: "ROSARY", icon: Compass },
                   { id: "calendar", label: "LITURGY", icon: Calendar },
+                  { id: "saints", label: "SAINTS", icon: BookOpen },
                   { id: "novenas", label: "NOVENAS", icon: Sparkles },
+                  { id: "confession", label: "CONFESSION", icon: ClipboardCheck },
                   { id: "routines", label: "ROUTINES", icon: Award },
                   { id: "trending", label: "TRENDING", icon: Flame },
                   { id: "sleep_stories", label: "REPOSE", icon: Moon },
@@ -1025,7 +1698,7 @@ export default function App() {
           )}
 
           {/* Fallback Mobile Top Header when in Monastic Sidebar view style */}
-          {navStyle === "monastic_sidebar" && (
+          {!isFocusMode && navStyle === "monastic_sidebar" && (
             <div className="flex flex-col gap-2">
               {/* Desktop breadcrumb */}
               <div className="hidden lg:flex items-center gap-2 text-[10px] font-mono tracking-widest text-[#d4af37] dark:text-amber-450 uppercase p-2 border-b border-stone-200/40 dark:border-stone-800/20 select-none animate-fadeIn">
@@ -1041,7 +1714,9 @@ export default function App() {
                     { id: "reflections", label: "Readings", icon: BookMarked },
                     { id: "rosary", label: "Rosary Companion", icon: Compass },
                     { id: "calendar", label: "Liturgy", icon: Calendar },
+                    { id: "saints", label: "Saints", icon: BookOpen },
                     { id: "novenas", label: "Novenas", icon: Sparkles },
+                    { id: "confession", label: "Confession Prep", icon: ClipboardCheck },
                     { id: "routines", label: "Routines", icon: Award },
                     { id: "trending", label: "Trending", icon: Flame },
                     { id: "sleep_stories", label: "Sleep Stories", icon: Moon },
@@ -1088,17 +1763,36 @@ export default function App() {
                   <span className="font-sans">O</span>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mb-2 pr-14 md:pr-16">
-                  <span className="text-[10px] font-mono uppercase bg-amber-50 dark:bg-amber-950/45 text-amber-700 dark:text-amber-400 px-2.5 py-0.5 rounded-full font-bold">
-                    Daily Reflection
-                  </span>
-                  <span className="text-[10px] font-mono text-stone-400 dark:text-stone-500">
-                    {todayReflection?.date ? new Date(todayReflection.date).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : "Today"}
-                  </span>
+                <div className="flex flex-wrap items-center justify-between gap-y-2 mb-2 pr-14 md:pr-16">
+                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                    <span className="text-[10px] font-mono uppercase bg-amber-50 dark:bg-amber-950/45 text-amber-700 dark:text-amber-400 px-2.5 py-0.5 rounded-full font-bold">
+                      Daily Reflection
+                    </span>
+                    <span className="text-[10px] font-mono text-stone-400 dark:text-stone-500">
+                      {todayReflection?.date ? new Date(todayReflection.date).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : "Today"}
+                    </span>
+                  </div>
+
+                  {/* Sanctuary Focus Mode Trigger */}
+                  <button
+                    onClick={() => {
+                      setIsFocusMode(!isFocusMode);
+                      triggerNotificationSound();
+                    }}
+                    className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-mono font-bold transition-all cursor-pointer border ${
+                      isFocusMode 
+                        ? "bg-amber-500 text-stone-950 border-amber-600 font-bold" 
+                        : "bg-stone-50 hover:bg-stone-100 dark:bg-stone-900 dark:hover:bg-stone-800 border-stone-200 dark:border-stone-800 text-stone-600 dark:text-stone-300"
+                    }`}
+                    title="Toggle distraction-free Focus Sanctuary Mode"
+                  >
+                    <Flame className="h-3.5 w-3.5 text-amber-500 animate-pulse" />
+                    <span>{isFocusMode ? "Focus Mode Active" : "Tranquil Focus"}</span>
+                  </button>
                 </div>
 
                 {isLoadingReflection ? (
-                  <div className="py-12 text-center text-stone-450 flex flex-col items-center justify-center gap-2 font-mono text-xs">
+                  <div className="py-12 text-center text-stone-500 flex flex-col items-center justify-center gap-2 font-mono text-xs">
                     <RefreshCw className="h-6 w-6 animate-spin text-amber-600" />
                     Discernment of daily scriptures in progress...
                   </div>
@@ -1126,7 +1820,7 @@ export default function App() {
 
                     {/* Morning & Evening prayers */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 pt-5 border-t border-stone-200/60 dark:border-stone-850">
-                      <div className="bg-[#fcfbf9] dark:bg-stone-900/60 border border-stone-150 dark:border-stone-800 p-4 rounded-xl">
+                      <div className="bg-[#fcfbf9] dark:bg-stone-900/60 border border-stone-200 dark:border-stone-800 p-4 rounded-xl">
                         <span className="text-[10px] font-mono text-emerald-700 dark:text-emerald-400 uppercase font-bold tracking-widest block mb-1">
                           🌅 Morning Prayer of Surrender
                         </span>
@@ -1134,7 +1828,7 @@ export default function App() {
                           {todayReflection?.morningPrayer}
                         </p>
                       </div>
-                      <div className="bg-[#fcfbf9] dark:bg-stone-900/60 border border-stone-150 dark:border-stone-800 p-4 rounded-xl">
+                      <div className="bg-[#fcfbf9] dark:bg-stone-900/60 border border-stone-200 dark:border-stone-800 p-4 rounded-xl">
                         <span className="text-[10px] font-mono text-amber-700 dark:text-amber-400 uppercase font-bold tracking-widest block mb-1">
                           🌌 Evening Examen Resolution
                         </span>
@@ -1558,6 +2252,8 @@ export default function App() {
               onRosaryComplete={incrementPrayerStats} 
               isTabActive={activeTab === "rosary"}
               setActiveTab={setActiveTab}
+              isFocusMode={isFocusMode}
+              setIsFocusMode={setIsFocusMode}
             />
           </div>
 
@@ -2293,10 +2989,10 @@ export default function App() {
 
                           <button
                             onClick={() => handleIncreaseAmen(item.id)}
-                            className="bg-white dark:bg-stone-950 border border-stone-200 dark:border-stone-850 hover:bg-amber-50 hover:border-amber-300 dark:hover:bg-amber-950/20 px-3 py-1.5 rounded-xl cursor-pointer transition-transform hover:scale-105 select-none flex items-center gap-1.5 text-xs text-stone-750 dark:text-stone-300 font-semibold"
+                            className="bg-white dark:bg-stone-950 border border-stone-200 dark:border-stone-850 hover:bg-amber-50 hover:border-amber-300 dark:hover:bg-amber-950/20 px-3 py-1.5 rounded-xl cursor-pointer transition-transform hover:scale-105 select-none flex items-center gap-1.5 text-xs text-stone-700 dark:text-stone-300 font-semibold"
                             title="Pray alongside this faithful person"
                           >
-                            🕯️ <span className="text-stone-450 font-bold font-mono">Amen ({item.amenCount})</span>
+                            🕯️ <span className="text-stone-500 dark:text-stone-400 font-bold font-mono">Amen ({item.amenCount})</span>
                           </button>
                         </div>
                       </div>
@@ -2333,11 +3029,566 @@ export default function App() {
             <BibleFlashcardsTab triggerSound={triggerNotificationSound} />
           )}
 
+          {/* TAB 11: SAINTS & INTERCESSORS CATALOG */}
+          {activeTab === "saints" && (
+            <SaintsCatalogTab 
+              personalIntentions={personalIntentions}
+              onAddIntentionNote={(id, noteText) => {
+                setPersonalIntentions(prev => {
+                  const updated = prev.map(item => {
+                    if (item.id === id) {
+                      const currentNotes = item.notes ? item.notes + "\n" : "";
+                      return { ...item, notes: currentNotes + noteText };
+                    }
+                    return item;
+                  });
+                  localStorage.setItem("catholic_intentions", JSON.stringify(updated));
+                  return updated;
+                });
+              }}
+              searchQuery={saintsSearchQuery}
+              onSearchQueryChange={setSaintsSearchQuery}
+            />
+          )}
+
+          {/* TAB 12: CONFESSION PREPARATION & SACRAMENT COMPANION */}
+          {activeTab === "confession" && (
+            <ConfessionPrepTab triggerSound={triggerNotificationSound} />
+          )}
+
         </div>
 
         {/* RIGHT COLUMN: USER GROWTH TRACKER & GENERAL STATS SIDEBAR (Sizing responsive to navigation style) */}
         <div className={`${navStyle === "monastic_sidebar" ? "lg:col-span-3" : "lg:col-span-4"} flex flex-col gap-6`}>
           
+          {/* USER SPIRITUAL COVENANT PROFILE */}
+          <motion.div 
+            id="user-spiritual-profile-card" 
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="bg-white dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-2xl p-5 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-amber-500/35 dark:hover:border-amber-400/25 relative overflow-hidden"
+          >
+            {/* Ambient Background Decorative Accent */}
+            <div className="absolute right-0 top-0 w-24 h-24 bg-amber-500/5 rounded-bl-full pointer-events-none" />
+
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-3">
+              <h4 className="text-sm font-heading font-semibold text-stone-950 dark:text-stone-50 flex items-center gap-1.5">
+                <UserCheck className="h-4.5 w-4.5 text-amber-600" />
+                Spiritual Covenant Profile
+              </h4>
+              <div className="flex gap-2 items-center shrink-0">
+                {/* QUICK ACTIONS DROPDOWN */}
+                <div className="relative" id="profile-quick-actions-container">
+                  <button
+                    onClick={() => {
+                      setIsQuickActionsOpen(!isQuickActionsOpen);
+                      triggerNotificationSound();
+                    }}
+                    className="text-stone-700 hover:text-stone-900 dark:text-stone-300 dark:hover:text-stone-100 text-xs font-mono font-semibold flex items-center gap-1 px-2.5 py-1.5 bg-stone-100 dark:bg-stone-900 hover:bg-stone-200 dark:hover:bg-stone-850 border border-stone-250 dark:border-stone-800 rounded-xl cursor-pointer transition-all active:scale-95 shadow-2xs"
+                    title="Access instant pilgrim actions"
+                    id="profile-quick-actions-btn"
+                  >
+                    <Sparkles className="h-3 w-3 text-amber-655" /> Actions <ChevronDown className="h-3 w-3" />
+                  </button>
+
+                  <AnimatePresence>
+                    {isQuickActionsOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.95, y: 5 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: 5 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute right-0 mt-2 w-56 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-xl shadow-lg py-1.5 z-50 text-left"
+                      >
+                        {/* Instant Light a Votive */}
+                        <button
+                          onClick={() => {
+                            setIsQuickActionsOpen(false);
+                            handleQuickLightVotive();
+                          }}
+                          className="w-full px-3.5 py-2 text-left text-xs font-sans font-medium text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-805 flex items-center gap-2 cursor-pointer border-none bg-transparent"
+                        >
+                          <Flame className="h-4 w-4 text-amber-500 fill-current animate-pulse shrink-0" />
+                          <div className="min-w-0">
+                            <p className="font-bold text-stone-850 dark:text-stone-100">Light Patron Votive</p>
+                            <p className="text-[10px] text-stone-400 dark:text-stone-500 truncate">For saint intercession</p>
+                          </div>
+                        </button>
+
+                        <div className="h-px bg-stone-100 dark:bg-stone-800 my-1" />
+
+                        {/* Toggle Liturgical Reminders */}
+                        <button
+                          onClick={() => {
+                            setIsQuickActionsOpen(false);
+                            handleToggleReminders();
+                          }}
+                          className="w-full px-3.5 py-2 text-left text-xs font-sans font-medium text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-805 flex items-center gap-2 cursor-pointer border-none bg-transparent"
+                        >
+                          <Bell className={`h-4 w-4 text-amber-500 shrink-0 ${notificationsEnabled ? "animate-swing" : ""}`} />
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center justify-between">
+                              <p className="font-bold text-stone-850 dark:text-stone-100">Daily Reminders</p>
+                              <span className={`text-[8.5px] font-bold font-mono px-1.5 py-0.2 rounded ${notificationsEnabled ? "bg-emerald-500/10 text-emerald-600" : "bg-stone-500/15 text-stone-500"}`}>
+                                {notificationsEnabled ? "ON" : "OFF"}
+                              </span>
+                            </div>
+                            <p className="text-[10px] text-stone-400 dark:text-stone-500 truncate">Feasts & morning verses</p>
+                          </div>
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                <button
+                  onClick={() => {
+                    setTempProfileName(profileName);
+                    setTempFavoriteSaint(favoriteSaint);
+                    setTempFavoriteSaintCustomText(favoriteSaintCustomText);
+                    setIsEditProfileOpen(true);
+                    triggerNotificationSound();
+                  }}
+                  className="text-amber-700 hover:text-amber-800 dark:text-amber-400 dark:hover:text-amber-300 text-xs font-mono font-semibold flex items-center gap-1 px-2.5 py-1.5 bg-amber-500/10 hover:bg-amber-500/20 dark:bg-stone-900 border border-amber-500/20 dark:border-stone-850 rounded-xl cursor-pointer transition-all active:scale-95"
+                  title="Edit pilgrim name and favorite saint patron"
+                >
+                  <Edit className="h-3 w-3" /> Edit
+                </button>
+              </div>
+            </div>
+
+            <p className="text-[11px] text-stone-450 dark:text-stone-450 block mb-4 leading-relaxed">
+              Define your faith details. Your chosen baptismal or confirmation patron saint customizes the daily saintly teachings.
+            </p>
+
+            {/* Profile Summary Layout */}
+            <div className="bg-stone-50/70 dark:bg-stone-900/40 border border-stone-150 dark:border-stone-900 p-3.5 rounded-xl space-y-3 mb-3.5">
+              <div className="flex gap-3 items-center justify-between">
+                <div className="flex gap-3 items-center min-w-0">
+                  <div className="h-10 w-10 shrink-0 rounded-full bg-gradient-to-br from-amber-500/20 to-amber-600/5 border border-amber-500/25 flex items-center justify-center text-amber-700 dark:text-amber-400 font-serif font-bold text-base shadow-inner select-none uppercase">
+                    {profileName.trim().charAt(0) || "P"}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-[9.5px] font-mono text-stone-450 dark:text-stone-500 uppercase tracking-widest font-bold">
+                      Faithful Pilgrim
+                    </div>
+                    <div className="text-sm font-heading font-semibold text-stone-850 dark:text-stone-200 truncate">
+                      {profileName}
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Liturgical Season Pill Badge */}
+                <span className={`text-[9.5px] font-mono uppercase px-2 py-0.5 rounded-full border shrink-0 font-bold transition-all duration-500 ${getLiturgicalSeasonBadgeStyles(selectedAffirmationSeason).pill}`} title={`Current Liturgical Season: ${selectedAffirmationSeason}`}>
+                  {selectedAffirmationSeason}
+                </span>
+              </div>
+
+              {/* Dynamic Season-themed Patron Saint Display Badge with smooth cross-fade */}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={`${favoriteSaint}-${favoriteSaintCustomText}-${selectedAffirmationSeason}`}
+                  initial={{ opacity: 0, y: 3 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -3 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  className={`mt-2 p-3.5 rounded-xl border flex items-center gap-3.5 transition-all duration-500 ${getLiturgicalSeasonBadgeStyles(selectedAffirmationSeason).bg} ${getLiturgicalSeasonBadgeStyles(selectedAffirmationSeason).glow}`}
+                  id="patron-saint-badge"
+                >
+                  <div className={`p-2 rounded-lg bg-white/85 dark:bg-stone-950/70 border border-stone-200/20 shadow-xs flex items-center justify-center transition-colors duration-500 ${getLiturgicalSeasonBadgeStyles(selectedAffirmationSeason).iconColor}`}>
+                    <Award className="h-4.5 w-4.5 animate-pulse" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[9px] font-mono uppercase tracking-widest opacity-80 font-bold">
+                      Patron Intercessor
+                    </div>
+                    <div className="text-xs font-sans font-bold leading-tight truncate">
+                      {favoriteSaint === "custom" 
+                        ? (favoriteSaintCustomText || "Custom Saint") 
+                        : (favoriteSaint === "s-peter" ? "Saint Peter" 
+                          : favoriteSaint === "s-paul" ? "Saint Paul"
+                          : favoriteSaint === "s-mary" ? "Blessed Virgin Mary"
+                          : favoriteSaint === "s-john-baptist" ? "Saint John the Baptist"
+                          : favoriteSaint === "s-therese" ? "Saint Thérèse"
+                          : favoriteSaint === "s-francis" ? "Saint Francis"
+                          : favoriteSaint === "s-augustine" ? "Saint Augustine"
+                          : favoriteSaint === "s-padre-pio" ? "Saint Padre Pio"
+                          : favoriteSaint === "s-ignatius" ? "Saint Ignatius"
+                          : "Saint Teresa")}
+                    </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsBioOpen(true);
+                        triggerNotificationSound();
+                      }}
+                      className="mt-1.5 text-[9.5px] font-mono hover:underline font-bold flex items-center gap-1 border-none bg-transparent cursor-pointer p-0 opacity-85 hover:opacity-100 transition-opacity text-inherit"
+                      title="View historical background and biography"
+                    >
+                      <BookOpen className="h-2.5 w-2.5" /> View Biography
+                    </button>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Next Upcoming Feast Day Badge */}
+              {(() => {
+                const upcoming = getUpcomingFeastForFavoriteSaint();
+                if (!upcoming) return null;
+                const { feast, nextDate } = upcoming;
+                const formattedDate = nextDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+                
+                const pSaintName = favoriteSaint === "custom" 
+                  ? (favoriteSaintCustomText || "Custom Saint") 
+                  : (favoriteSaint === "s-peter" ? "Saint Peter" 
+                    : favoriteSaint === "s-paul" ? "Saint Paul"
+                    : favoriteSaint === "s-mary" ? "Blessed Virgin Mary"
+                    : favoriteSaint === "s-john-baptist" ? "Saint John the Baptist"
+                    : favoriteSaint === "s-therese" ? "Saint Thérèse"
+                    : favoriteSaint === "s-francis" ? "Saint Francis"
+                    : favoriteSaint === "s-augustine" ? "Saint Augustine"
+                    : favoriteSaint === "s-padre-pio" ? "Saint Padre Pio"
+                    : favoriteSaint === "s-ignatius" ? "Saint Ignatius"
+                    : "Saint Teresa");
+
+                return (
+                  <div 
+                    id="upcoming-patron-feast-badge"
+                    className="mt-3 p-2.5 rounded-xl bg-amber-500/5 dark:bg-amber-500/2 border border-amber-500/10 flex items-center justify-between text-xs hover:bg-amber-500/10 transition-colors"
+                  >
+                    <div className="flex flex-col min-w-0">
+                      <span className="text-[9px] font-mono uppercase tracking-wider text-stone-400 dark:text-stone-500 font-bold">
+                        Upcoming Feast Day
+                      </span>
+                      <span className="font-semibold text-stone-800 dark:text-stone-200 truncate pr-1" title={feast.title}>
+                        {feast.title}
+                      </span>
+                      <span className="text-[10px] font-mono text-amber-700 dark:text-amber-400 font-semibold mt-0.5">
+                        {formattedDate}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => {
+                        // Set search query for the saint
+                        setSaintsSearchQuery(pSaintName);
+                        // Switch to the saints tab
+                        setActiveTab("saints");
+                        triggerNotificationSound();
+                      }}
+                      className="ml-2 px-2.5 py-1.5 rounded-lg bg-stone-100 hover:bg-stone-200 dark:bg-stone-900 dark:hover:bg-stone-850 border border-stone-250 dark:border-stone-800 hover:border-amber-500/35 text-stone-700 dark:text-stone-300 text-[10px] font-mono font-bold flex items-center gap-1 shrink-0 cursor-pointer active:scale-95 transition-all"
+                      title={`Examine full biography and details for ${pSaintName}`}
+                    >
+                      View Saint <ChevronRight className="h-2.5 w-2.5" />
+                    </button>
+                  </div>
+                );
+              })()}
+            </div>
+
+            {/* Custom trigger helper button */}
+            <div className="flex items-center justify-between text-[11px] text-stone-500 dark:text-stone-400">
+              <span className="text-[10px] italic">
+                 enseñanzas de los santos
+              </span>
+              <button
+                onClick={() => {
+                  triggerNotificationSound();
+                  fetchAffirmation(selectedAffirmationSeason);
+                }}
+                className="text-[10px] font-mono text-amber-600 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300 bg-transparent border-none cursor-pointer p-0 underline font-semibold flex items-center gap-1 animate-pulse"
+                title="Generate a brand new reflection for this saint"
+              >
+                <RefreshCw className="h-2.5 w-2.5" /> Re-Affirm
+              </button>
+            </div>
+          </motion.div>
+
+          {/* EDIT PROFILE MODAL */}
+          {isEditProfileOpen && (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center bg-stone-900/60 dark:bg-black/80 backdrop-blur-xs p-4">
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 0.2 }}
+                className="w-full max-w-sm bg-white dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-2xl shadow-2xl relative overflow-hidden"
+              >
+                {/* Divine background glow in modal */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-40 rounded-full bg-amber-500/10 blur-2xl pointer-events-none" />
+
+                <div className="p-6 relative">
+                  <div className="flex items-center justify-between mb-4 pb-2.5 border-b border-stone-100 dark:border-stone-900">
+                    <h3 className="text-sm font-heading font-bold text-stone-900 dark:text-stone-50 flex items-center gap-1.5">
+                      <UserCheck className="h-4 w-4 text-amber-600" />
+                      Configure Covenant Profile
+                    </h3>
+                    <button
+                      onClick={() => {
+                        setIsEditProfileOpen(false);
+                        triggerNotificationSound();
+                      }}
+                      className="text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-900 p-1.5 rounded-lg border-none cursor-pointer transition-all"
+                      title="Discard and close modal"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+
+                  <div className="space-y-4">
+                    {/* Pilgrim Name Customizer */}
+                    <div className="space-y-1">
+                      <label className="block text-[9.5px] font-mono text-stone-500 dark:text-stone-400 uppercase tracking-wider font-bold">
+                        Pilgrim Confirmation / Baptism Name
+                      </label>
+                      <input
+                        type="text"
+                        value={tempProfileName}
+                        onChange={(e) => setTempProfileName(e.target.value)}
+                        className="w-full text-xs p-2.5 rounded-lg border border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-900 text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-1 focus:ring-amber-500 font-sans font-medium hover:border-stone-300 dark:hover:border-stone-700"
+                        placeholder="e.g. Francis, Teresa..."
+                      />
+                    </div>
+
+                    {/* Patron Selector */}
+                    <div className="space-y-1">
+                      <label className="block text-[9.5px] font-mono text-stone-500 dark:text-stone-400 uppercase tracking-wider font-bold">
+                        ✨ patron / Favorite Saint
+                      </label>
+                      <select
+                        value={tempFavoriteSaint}
+                        onChange={(e) => setTempFavoriteSaint(e.target.value)}
+                        className="w-full text-xs p-2.5 rounded-lg border border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-900 text-stone-800 dark:text-stone-100 focus:outline-none focus:ring-1 focus:ring-amber-500 font-sans cursor-pointer"
+                      >
+                        <option value="s-teresa-calcutta">Saint Teresa of Calcutta</option>
+                        <option value="s-peter">Saint Peter the Apostle</option>
+                        <option value="s-paul">Saint Paul the Apostle</option>
+                        <option value="s-mary">Blessed Virgin Mary</option>
+                        <option value="s-john-baptist">Saint John the Baptist</option>
+                        <option value="s-therese">Saint Thérèse of Lisieux</option>
+                        <option value="s-francis">Saint Francis of Assisi</option>
+                        <option value="s-augustine">Saint Augustine of Hippo</option>
+                        <option value="s-padre-pio">Saint Padre Pio of Pietrelcina</option>
+                        <option value="s-ignatius">Saint Ignatius of Loyola</option>
+                        <option value="custom">Other / Custom Patron Saint...</option>
+                      </select>
+                    </div>
+
+                    {/* Custom selection text box */}
+                    {tempFavoriteSaint === "custom" && (
+                      <div className="space-y-1 animate-fadeIn">
+                        <label className="block text-[9.5px] font-mono text-stone-500 dark:text-stone-400 uppercase tracking-wider font-bold">
+                          Custom Saint Name
+                        </label>
+                        <input
+                          type="text"
+                          value={tempFavoriteSaintCustomText}
+                          onChange={(e) => setTempFavoriteSaintCustomText(e.target.value)}
+                          className="w-full text-xs p-2.5 rounded-lg border border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-900 text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-1 focus:ring-amber-550 font-sans font-medium"
+                          placeholder="e.g. Saint Thomas Aquinas"
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Actions */}
+                  <div className="mt-6 flex justify-end gap-2 pt-3 border-t border-stone-100 dark:border-stone-900">
+                    <button
+                      onClick={() => {
+                        setIsEditProfileOpen(false);
+                        triggerNotificationSound();
+                      }}
+                      className="bg-transparent border border-stone-250 dark:border-stone-800 hover:bg-stone-50 dark:hover:bg-stone-900 text-stone-600 dark:text-stone-300 font-bold px-3.5 py-2 rounded-lg text-xs font-mono transition-all cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={() => {
+                        setProfileName(tempProfileName);
+                        setFavoriteSaint(tempFavoriteSaint);
+                        setFavoriteSaintCustomText(tempFavoriteSaintCustomText);
+                        setIsEditProfileOpen(false);
+                        triggerNotificationSound();
+                        
+                        // Refetch the customized affirmation
+                        fetchAffirmation(selectedAffirmationSeason, { favSaint: tempFavoriteSaint, customText: tempFavoriteSaintCustomText });
+                      }}
+                      className="bg-amber-500 hover:bg-amber-600 active:scale-95 text-stone-950 font-bold px-4 py-2 rounded-lg text-xs font-mono transition-all border-none cursor-pointer shadow-sm hover:shadow"
+                    >
+                      Save changes
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          )}
+
+          {/* SAINT BIOGRAPHY MODAL */}
+          {isBioOpen && (() => {
+            const details = getFavoriteSaintDetails();
+            const colorStyles = (() => {
+              switch (details.color) {
+                case "red":
+                  return { text: "text-red-600 dark:text-red-400", bg: "bg-red-500/10 dark:bg-red-500/5", border: "border-red-500/20" };
+                case "blue":
+                  return { text: "text-blue-600 dark:text-blue-400", bg: "bg-blue-500/10 dark:bg-blue-500/5", border: "border-blue-500/20" };
+                case "white":
+                  return { text: "text-stone-700 dark:text-stone-300", bg: "bg-stone-500/10 dark:bg-stone-500/5", border: "border-stone-500/20" };
+                case "purple":
+                  return { text: "text-purple-600 dark:text-purple-400", bg: "bg-purple-500/10 dark:bg-purple-500/5", border: "border-purple-500/20" };
+                default:
+                  return { text: "text-amber-600 dark:text-amber-400", bg: "bg-amber-500/10 dark:bg-amber-500/5", border: "border-amber-500/20" };
+              }
+            })();
+
+            return (
+              <div className="fixed inset-0 z-[100] flex items-center justify-center bg-stone-900/60 dark:bg-black/80 backdrop-blur-xs p-4">
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.95, y: 15 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: 15 }}
+                  transition={{ duration: 0.25, ease: "easeOut" }}
+                  className="w-full max-w-lg bg-white dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-2xl shadow-2xl relative overflow-hidden flex flex-col max-h-[85vh]"
+                  id="saint-biography-modal"
+                >
+                  {/* Glowing ambient background header */}
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-48 rounded-full bg-amber-500/5 blur-3xl pointer-events-none" />
+
+                  {/* Header */}
+                  <div className="p-6 pb-4 border-b border-stone-100 dark:border-stone-900 flex items-center justify-between shrink-0">
+                    <div className="min-w-0 pr-4">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-[10px] font-mono uppercase tracking-widest font-bold px-2 py-0.5 rounded-md bg-stone-100 dark:bg-stone-900 text-stone-500 dark:text-stone-400 border border-stone-200/20">
+                          {details.era}
+                        </span>
+                        <Award className={`h-4 w-4 ${colorStyles.text}`} />
+                      </div>
+                      <h3 className="text-lg font-heading font-bold text-stone-900 dark:text-stone-50 font-serif leading-tight">
+                        {details.name}
+                      </h3>
+                      <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5 italic">
+                        {details.title}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setIsBioOpen(false);
+                        triggerNotificationSound();
+                      }}
+                      className="text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-900 p-1.5 rounded-lg border-none cursor-pointer transition-all shrink-0 self-start"
+                      title="Close biography modal"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+
+                  {/* Scrollable Content Area */}
+                  <div className="p-6 pt-5 overflow-y-auto space-y-5 flex-1 text-left">
+                    
+                    {/* Biography Description */}
+                    <div className="space-y-2">
+                      <h4 className="text-[10px] font-mono text-stone-400 dark:text-stone-500 uppercase tracking-widest font-bold flex items-center gap-1.5">
+                        <BookOpen className="h-3 w-3 text-amber-600" /> Historical background
+                      </h4>
+                      <p className="text-xs text-stone-700 dark:text-stone-300 leading-relaxed font-sans font-normal whitespace-pre-line bg-stone-50/50 dark:bg-stone-900/30 p-3 rounded-xl border border-stone-150/40 dark:border-stone-900/40">
+                        {details.biography}
+                      </p>
+                    </div>
+
+                    {/* Patronage and Virtues Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-1 bg-stone-50/40 dark:bg-stone-900/10 p-3.5 rounded-xl border border-stone-150/20 dark:border-stone-950">
+                        <span className="text-[9px] font-mono text-stone-400 dark:text-stone-500 uppercase tracking-wider font-bold">
+                          Patronage Duties
+                        </span>
+                        <p className="text-xs font-semibold text-stone-800 dark:text-stone-200">
+                          {details.patronage}
+                        </p>
+                      </div>
+
+                      <div className="space-y-1.5 bg-stone-50/40 dark:bg-stone-900/10 p-3.5 rounded-xl border border-stone-150/20 dark:border-stone-950">
+                        <span className="text-[9px] font-mono text-stone-400 dark:text-stone-500 uppercase tracking-wider font-bold block">
+                          Core Virtues
+                        </span>
+                        <div className="flex flex-wrap gap-1">
+                          {details.virtues.map((v, i) => (
+                            <span 
+                              key={i} 
+                              className="text-[9.5px] font-semibold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-800 dark:text-amber-400 border border-amber-500/15"
+                            >
+                              {v}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Feast Day Details (Sourced from FEAST_DAYS) */}
+                    <div className="p-4 rounded-xl bg-amber-500/5 dark:bg-amber-500/[0.02] border border-amber-500/15 space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[9px] font-mono uppercase tracking-widest text-amber-700 dark:text-amber-400 font-bold">
+                          Upcoming Liturgical Feast
+                        </span>
+                        <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded-sm bg-amber-500/15 text-amber-800 dark:text-amber-300">
+                          {details.feastDateFormatted}
+                        </span>
+                      </div>
+                      <h5 className="text-xs font-bold text-stone-900 dark:text-stone-50 leading-tight">
+                        {details.feastTitle}
+                      </h5>
+                      <p className="text-[11px] text-stone-600 dark:text-stone-400 leading-relaxed italic">
+                        {details.feastDescription}
+                      </p>
+                    </div>
+
+                    {/* Intercessory Prayer */}
+                    <div className="p-4.5 rounded-xl border border-stone-150 dark:border-stone-850 bg-[#faf8f4] dark:bg-stone-950/60 relative overflow-hidden">
+                      {/* Prayer Cross Icon background decor */}
+                      <CrossIcon className="absolute right-2 bottom-2 h-14 w-14 text-stone-250/15 dark:text-stone-800/15 pointer-events-none" />
+
+                      <div className="flex items-center gap-1.5 mb-2 border-b border-stone-200/45 dark:border-stone-900 pb-1.5">
+                        <Flame className="h-3.5 w-3.5 text-amber-600 animate-pulse" />
+                        <span className="text-[9px] font-mono text-stone-450 dark:text-stone-505 uppercase tracking-widest font-bold">
+                          Daily Intercessory Prayer
+                        </span>
+                      </div>
+                      <p className="text-xs text-stone-750 dark:text-stone-300 font-serif leading-relaxed italic whitespace-pre-line relative z-10">
+                        "{details.traditionalPrayer}"
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Actions footer */}
+                  <div className="p-5 border-t border-stone-100 dark:border-stone-900 flex flex-wrap justify-between gap-3 bg-stone-50/50 dark:bg-stone-950 shrink-0">
+                    <button
+                      onClick={() => {
+                        setIsBioOpen(false);
+                        // Search saint in Saints Tab
+                        setSaintsSearchQuery(details.name);
+                        setActiveTab("saints");
+                        triggerNotificationSound();
+                      }}
+                      className="px-3.5 py-2 rounded-xl bg-transparent border border-stone-250 dark:border-stone-800 hover:bg-stone-100 dark:hover:bg-stone-900 text-stone-700 dark:text-stone-300 text-xs font-mono font-semibold flex items-center gap-1 cursor-pointer transition-all active:scale-95"
+                    >
+                      Search Saints Catalog <ChevronRight className="h-3 w-3" />
+                    </button>
+
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => {
+                          setIsBioOpen(false);
+                          triggerNotificationSound();
+                        }}
+                        className="bg-amber-500 hover:bg-amber-600 active:scale-95 text-stone-950 font-bold px-5 py-2.5 rounded-xl text-xs font-mono transition-all border-none cursor-pointer shadow-sm hover:shadow"
+                      >
+                        Close
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+            );
+          })()}
+
           {/* STREAK & SACRED CANDLE VISUALIZATION */}
           <div className="bg-[#fcfaf4] dark:bg-stone-950 border border-amber-500/10 rounded-2xl p-6 shadow-xs relative text-center">
             <h4 className="text-xs font-mono uppercase tracking-widest text-stone-500 block mb-2 font-bold select-none">
@@ -2510,7 +3761,7 @@ export default function App() {
           </div>
 
           {/* SIMULATED MORNING VERSES & LITURGY NOTIFICATION LOG */}
-          {notificationsEnabled && (
+          {notificationsEnabled && !isFocusMode && (
             <div className="bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-2xl p-5 shadow-xs">
               <h4 className="text-sm font-heading font-semibold text-stone-950 dark:text-stone-50 mb-1 flex items-center gap-1.5">
                 <Bell className="h-4 w-4 text-amber-600 animate-pulse" />
@@ -2527,7 +3778,7 @@ export default function App() {
               ) : (
                 <div className="space-y-2.5">
                   {simulatedNotifications.map(n => (
-                    <div key={n.id} className="p-3 bg-amber-500/5 dark:bg-amber-950/20 border-l-2 border-amber-500 rounded-lg text-[11px] leading-relaxed relative font-sans">
+                    <div key={n.id} className="p-3 bg-amber-500/5 dark:bg-amber-950/20 border-l-2 border-amber-500 rounded-lg text-[11px] leading-relaxed relative font-sans animate-fadeIn">
                       <p className="text-stone-750 dark:text-stone-300 pr-4 italic">
                         {n.msg}
                       </p>
@@ -2543,6 +3794,46 @@ export default function App() {
                       </button>
                     </div>
                   ))}
+
+                  {/* Daily Liturgical Feast Day Notification Trigger Creator */}
+                  <div className="pt-2 border-t border-stone-200 dark:border-stone-850 mt-3 space-y-2">
+                    <label className="block text-[9.5px] font-mono uppercase text-stone-500 dark:text-stone-400 font-bold">
+                      🏆 Feast Memorial Service Selector
+                    </label>
+                    <div className="flex gap-2">
+                      <select 
+                        value={selectedFeastId}
+                        onChange={(e) => setSelectedFeastId(e.target.value)}
+                        className="flex-1 text-[11px] p-2 rounded-lg border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-950 text-stone-800 dark:text-stone-100 focus:outline-none focus:border-amber-500 select-none cursor-pointer"
+                      >
+                        {FEAST_DAYS.map(feast => (
+                          <option key={feast.id} value={feast.id}>
+                            ({feast.date}) {feast.title.length > 32 ? feast.title.substring(0, 32) + "..." : feast.title}
+                          </option>
+                        ))}
+                      </select>
+                      <button
+                        onClick={() => {
+                          const matched = FEAST_DAYS.find(f => f.id === selectedFeastId);
+                          if (!matched) return;
+                          triggerNotificationSound();
+                          setSimulatedNotifications(prev => [
+                            {
+                              id: "feast-manual-" + Date.now(),
+                              msg: `✨ Liturgical Feast Alert: Today is the ${matched.feastLevel} of ${matched.title}. Liturgical Color: ${matched.color.toUpperCase()}. ${matched.description} ${matched.saintBrief ? matched.saintBrief : ""}`,
+                              time: "Just now"
+                            },
+                            ...prev
+                          ]);
+                        }}
+                        className="bg-amber-500 hover:bg-amber-600 active:scale-95 text-stone-950 font-bold px-3 py-1.5 rounded-lg text-xs font-mono transition-all border-none cursor-pointer"
+                        title="Manually fire a memorial or feast alert to the devotional feed"
+                      >
+                        Send
+                      </button>
+                    </div>
+                  </div>
+
                   <button 
                     onClick={() => {
                       triggerNotificationSound();
@@ -2569,14 +3860,45 @@ export default function App() {
       </main>
 
       {/* FOOTER */}
-      <footer className="mt-auto border-t border-stone-200 dark:border-stone-850 py-6 px-4 md:px-8 text-center bg-white dark:bg-stone-950">
-        <p className="text-xs text-stone-450 leading-relaxed font-sans font-light">
-          "Praise the Lord, all you nations! Extol him, all you peoples! For great is his steadfast love toward us." — Psalm 117
-        </p>
-        <p className="text-[11px] text-stone-400 font-mono mt-1 font-semibold uppercase tracking-widest">
-          Soli Deo Gloria • Made Securely with Express & Gemini AI
-        </p>
-      </footer>
+      {!isFocusMode && (
+        <footer className="mt-auto border-t border-stone-200 dark:border-stone-850 py-6 px-4 md:px-8 text-center bg-white dark:bg-stone-950">
+          <p className="text-xs text-stone-450 leading-relaxed font-sans font-light">
+            "Praise the Lord, all you nations! Extol him, all you peoples! For great is his steadfast love toward us." — Psalm 117
+          </p>
+          <p className="text-[11px] text-stone-400 font-mono mt-1 font-semibold uppercase tracking-widest">
+            Soli Deo Gloria • Made Securely with Express & Gemini AI
+          </p>
+        </footer>
+      )}
+
+      {/* SCRIPTURE OVERLAY FOR FOCUS MODE */}
+      {isFocusMode && isScriptureOverlayActive && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 max-w-lg w-[90%] pointer-events-none text-center">
+          <AnimatePresence mode="wait">
+            {isVerseVisible && (
+              <motion.div
+                key={currentVerseIdx}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 1.5, ease: "easeInOut" }}
+                className="bg-black/85 backdrop-blur-xl border border-amber-500/15 p-4 md:p-5 rounded-2xl shadow-2xl max-w-md mx-auto pointer-events-auto"
+              >
+                <div className="flex items-center justify-center gap-1.5 mb-2">
+                  <BookOpen className="h-4 w-4 text-amber-500 animate-pulse" />
+                  <span className="text-[10px] uppercase font-mono tracking-widest text-[#d4af37] font-bold">Scripture Focus</span>
+                </div>
+                <p className="text-xs md:text-sm font-sans italic text-stone-100 leading-relaxed font-normal">
+                  "{ENCOURAGING_VERSES[currentVerseIdx].text}"
+                </p>
+                <p className="text-[10px] md:text-xs font-mono text-amber-500/85 mt-2 font-bold tracking-wider uppercase">
+                  — {ENCOURAGING_VERSES[currentVerseIdx].reference}
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      )}
 
     </div>
   );

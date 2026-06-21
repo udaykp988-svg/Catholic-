@@ -346,11 +346,75 @@ app.post("/api/community-wall/:id/amen", (req, res) => {
 
 // 6. Generate seasonal saint affirmation
 app.post("/api/generate-affirmation", async (req, res) => {
-  const { season } = req.body;
+  const { season, favoriteSaint } = req.body;
   const validSeasons = ["Ordinary Time", "Lent", "Easter", "Advent", "Christmas"];
   const selectedSeason = (validSeasons.includes(season)) ? season : "Ordinary Time";
 
-  const fallbackAffirmations = {
+  // Handcrafted popular saint fallback affirmations
+  const saintFallbacks: Record<string, { quote: string; saintName: string; affirmation: string; contemplation: string }> = {
+    "s-peter": {
+      quote: "Lord, you know all things; you know that I love you.",
+      saintName: "Saint Peter the Apostle",
+      affirmation: "Even in moments of doubt or high pressure, I will declare my deep love for Jesus and trust that His grace will rebuild and strengthen my resolve.",
+      contemplation: "Saint Peter teaches us that our human flaws do not disqualify us from our sacred purpose. Speak your loving surrender and trust to the Good Shepherd today."
+    },
+    "s-paul": {
+      quote: "I can do all things through Christ who strengthens me.",
+      saintName: "Saint Paul the Apostle",
+      affirmation: "I will press forward with holy zeal today, confident that Christ's strength is made perfect in my ultimate weakness.",
+      contemplation: "Reflect on Saint Paul's boundless energy to proclaim hope. Ask for apostolic fortitude and trust that no obstacle is too great when Christ guides your steps."
+    },
+    "s-mary": {
+      quote: "My soul proclaims the greatness of the Lord; my spirit rejoices in God my Savior.",
+      saintName: "Blessed Virgin Mary",
+      affirmation: "I offer my positive, joyful 'Fiat' to God's holy path today, allowing Him to work wonders through my humble, quiet heart.",
+      contemplation: "Our Lady's absolute obedience is the masterclass in spiritual trust. In quiet composure, offer your daily contributions to God as a pleasing sacrifice of prayer."
+    },
+    "s-john-baptist": {
+      quote: "He must increase, but I must decrease.",
+      saintName: "Saint John the Baptist",
+      affirmation: "I will humble my pride today, seeking to point others to the Lamb of God so that Christ may shine more brightly through my actions.",
+      contemplation: "Saint John dedicated his life to preparing the way. Stepping back from temporal self-glory allows God's loving light to occupy the center stage."
+    },
+    "s-therese": {
+      quote: "My vocation is love! In the heart of the Church, my Mother, I will be love.",
+      saintName: "Saint Thérèse of Lisieux",
+      affirmation: "I will scatter small details of active love and patience today, walking the 'Little Way' of profound trust and simple surrender.",
+      contemplation: "The Little Flower showed us that holiness is found in doing ordinary deeds with supreme supernatural charity. See each minor irritation as a golden intercession."
+    },
+    "s-francis": {
+      quote: "Lord, make me an instrument of your peace.",
+      saintName: "Saint Francis of Assisi",
+      affirmation: "I choose the path of peace, simple living, and deep reverence for all of God's creation, bringing light where there is darkness.",
+      contemplation: "Saint Francis embraced holy simplicity and immediate trust in God's providence. Let go of material anxieties and rest in the abundance of Fatherly love."
+    },
+    "s-augustine": {
+      quote: "You have made us for yourself, O Lord, and our heart is restless until it rests in You.",
+      saintName: "Saint Augustine of Hippo",
+      affirmation: "I will quiet my restless, wandering thoughts today, seeking my true rest and home only in the merciful embrace of God.",
+      contemplation: "Saint Augustine found after many years that God is closer to us than we are to ourselves. Lift your eyes, surrender restlessness, and breathe peace."
+    },
+    "s-padre-pio": {
+      quote: "Pray, hope, and don't worry. Worry is useless. God is merciful and will hear your prayer.",
+      saintName: "Saint Padre Pio of Pietrelcina",
+      affirmation: "Today, I choose to pray, hope, and refuse to worry, resting in the absolute confidence of God's merciful listening ear.",
+      contemplation: "Padre Pio was an ultimate advocate of serene trust. Do not allow tomorrow's unknown to rob you of today's prayerful peace. God runs the future."
+    },
+    "s-ignatius": {
+      quote: "Receive, Lord, all my liberty, my memory, my understanding, and my whole will. All that I have or cherish You have given me.",
+      saintName: "Saint Ignatius of Loyola",
+      affirmation: "I surrender all my wishes, plans, and liberties to God today, asking only for His love and grace, which is fully sufficient for me.",
+      contemplation: "Saint Ignatius designed the Spiritual Exercises to align our wills perfectly with God. Seek to find God in all things and work everything for His greater glory."
+    },
+    "s-teresa-calcutta": {
+      quote: "Do ordinary things with extraordinary love.",
+      saintName: "Saint Teresa of Calcutta",
+      affirmation: "I will seek God in the small, seemingly mundane moments of this ordinary day, transforming my routine tasks into acts of deep prayer and love.",
+      contemplation: "Mother Teresa teaches us that God does not ask of us great deeds, but rather great love in the midst of our normal responsibilities. Let tiny acts shine."
+    }
+  };
+
+  const defaultFallbacks = {
     "Ordinary Time": {
       quote: "Do ordinary things with extraordinary love.",
       saintName: "Saint Teresa of Calcutta",
@@ -383,31 +447,61 @@ app.post("/api/generate-affirmation", async (req, res) => {
     }
   };
 
+  const getFallback = () => {
+    if (favoriteSaint) {
+      const match = saintFallbacks[favoriteSaint];
+      if (match) return match;
+      
+      // If it is custom name string
+      const matchedKey = Object.keys(saintFallbacks).find(k => 
+        saintFallbacks[k].saintName.toLowerCase().includes(favoriteSaint.toLowerCase())
+      );
+      if (matchedKey) return saintFallbacks[matchedKey];
+
+      // Generic customized custom saint fallback if not matching hardcoded list
+      return {
+        quote: `Trust in the Lord and declare His praise in all your tabernacles.`,
+        saintName: favoriteSaint.startsWith("Saint") || favoriteSaint.startsWith("Blessed") ? favoriteSaint : `Saint ${favoriteSaint}`,
+        affirmation: `I walk today inspired by the life of ${favoriteSaint}, holding fast to humble service, perfect peace, and sincere faith in all things.`,
+        contemplation: `Reflecting on the unique teachings and virtues of ${favoriteSaint} helps us pattern our lives after the Gospel. Carry their saintly perspective into your ordinary duties today.`
+      };
+    }
+    return defaultFallbacks[selectedSeason as keyof typeof defaultFallbacks];
+  };
+
   if (!ai) {
     return res.json({
-      ...fallbackAffirmations[selectedSeason as keyof typeof fallbackAffirmations],
+      ...getFallback(),
       liturgicalSeason: selectedSeason,
       simulated: true
     });
   }
 
   try {
-    const prompt = `You are an encouraging, devout Catholic theologian and spiritual director.
+    let prompt = `You are an encouraging, devout Catholic theologian and spiritual director.
     Generate a beautiful, traditional saint-inspired Quote, Affirmation, and Contemplation based on the liturgical season: "${selectedSeason}".
-    The quote must be from a real Catholic saint whose theology or spirituality matches the key themes of this liturgical season.
+    The quote must be from a real Catholic saint whose theology or spirituality matches the key themes of this liturgical season.`;
+
+    if (favoriteSaint) {
+      prompt = `You are an encouraging, devout Catholic theologian and spiritual director.
+      Generate a beautiful, traditional saint-inspired Quote, Affirmation, and Contemplation specifically focused on the spiritual teachings, theological insights, and life of the saint: "${favoriteSaint}".
+      If possible or appropriate, harmonize it with the themes of the active liturgical season: "${selectedSeason}".`;
+    }
+
+    const finalPrompt = `${prompt}
 
     Respond in strict JSON format matching this schema:
     {
-      "quote": "A beautifully selected quote from an authorized Catholic saint matching the theme/spirit of this season.",
-      "saintName": "The name of the saint (e.g. Saint Thérèse of Lisieux, Saint Augustine, etc.)",
-      "affirmation": "A highly comforting, personal first-person positive Catholic daily affirmation (e.g., 'I will walk in...', 'Today, I choose to...') tailored to the saint's quote and the season.",
+      "quote": "A beautifully selected quote from this saint (or matching the theme/spirit).",
+      "saintName": "Name of the Saint",
+      "affirmation": "A highly comforting, personal first-person positive Catholic daily affirmation (e.g., 'I will walk in...', 'Today, I choose to...') tailored to the saint's quote.",
       "contemplation": "A brief, 2-3 sentence spiritual director's contemplation/reflection on how the reader can integrate this saintly wisdom and live out this affirmation in their day-to-day life."
     }
     Do not include markdown tags like \`\`\`json or backticks. Only output valid parsable JSON.`;
 
     const response = await ai.models.generateContent({
       model: "gemini-3.5-flash",
-      contents: prompt,
+      contents: finalPrompt,
       config: {
         responseMimeType: "application/json"
       }
@@ -425,10 +519,188 @@ app.post("/api/generate-affirmation", async (req, res) => {
       throw new Error("Empty response from Gemini");
     }
   } catch (error: any) {
-    console.log("Affirmation generator was gracefully served using secondary parish profiles.");
+    if (error && (error.status === "RESOURCE_EXHAUSTED" || error.code === 429 || String(error).includes("429") || String(error).includes("quota"))) {
+      console.log("Season affirmation fallback activated (Gemini API rate limit / quota exceeded).");
+    } else {
+      console.log("Season affirmation fallback activated gracefully:", error?.message || error);
+    }
     return res.json({
-      ...fallbackAffirmations[selectedSeason as keyof typeof fallbackAffirmations],
+      ...getFallback(),
       liturgicalSeason: selectedSeason,
+      simulated: true
+    });
+  }
+});
+
+// 7. Explore and fetch any Saint's biographical profile dynamically using Gemini
+app.get("/api/saints/explore", async (req, res) => {
+  const query = req.query.q as string;
+  if (!query || query.trim().length === 0) {
+    return res.status(400).json({ error: "Saint search query cannot be empty." });
+  }
+
+  const cleanQuery = query.trim().replace(/^saint\s+/i, "").replace(/^st\.\s+/i, "");
+
+  // Predefined catalog fallbacks in case AI is offline / key missing
+  const offlineSaints = [
+    {
+      id: "s-peter",
+      name: "Saint Peter",
+      title: "Prince of the Apostles & First Pope",
+      feastDay: "June 29",
+      patronage: "Fishermen, Popes, Rome, Net makers",
+      era: "1st Century",
+      color: "red",
+      biography: "A Galilean fisherman chosen by Jesus to be the base rock of His Church. He is the first Pope, martyred upside-down in Rome in 64 AD.",
+      virtues: ["Repentance", "Bold Leadership", "Faithfulness"],
+      traditionalPrayer: "O Saint Peter, Keybearer of the Kingdom, obtain for us a sincere contrition for our sins and the strength to leave our nets to follow Christ. Amen."
+    },
+    {
+      id: "s-paul",
+      name: "Saint Paul",
+      title: "Apostle to the Gentiles",
+      feastDay: "June 29",
+      patronage: "Theologians, Writers, Publishers, Missionaries",
+      era: "1st Century",
+      color: "red",
+      biography: "Formerly Saul of Tarsus, he experienced a blinding conversion on the road to Damascus. He authored 14 letters and founded churches across the Greco-Roman world.",
+      virtues: ["Zeal for Souls", "Spiritual Fortitude", "Theological Depth"],
+      traditionalPrayer: "O Saint Paul, Apostle of the nations, grant us your fierce zeal to share Christ's message and final perseverance to finish our race in faith. Amen."
+    },
+    {
+      id: "s-jude",
+      name: "Saint Jude Thaddeus",
+      title: "Patron of Hopeless Causes & Desperate Scenarios",
+      feastDay: "October 28",
+      patronage: "Desperate situations, Hospitals, Lost causes",
+      era: "1st Century",
+      color: "red",
+      biography: "One of Jesus's Twelve Apostles. He was a relative of Jesus and preached with profound courage. Known globally as a quick refuge for impossible trials.",
+      virtues: ["Unshakable Hope", "Merciful Compassion", "Final Perseverance"],
+      traditionalPrayer: "Glorious Apostle Saint Jude, intercede for me in my hour of distress. Bring speedy relief and let me experience the grace of the Savior. Amen."
+    },
+    {
+      id: "s-joseph",
+      name: "Saint Joseph",
+      title: "Chaste Spouse of Mary & Foster-Father of Jesus",
+      feastDay: "March 19",
+      patronage: "Fathers, Workers, Families, Happy Death",
+      era: "1st Century BC - 1st Century AD",
+      color: "white",
+      biography: "A righteous craftsman of Davidic descent. He listened to angels' warnings, guarding the child Jesus and Mary in complete silent obedience.",
+      virtues: ["Silent Vigilance", "Noble Justness", "Sacrificial Labor"],
+      traditionalPrayer: "O Blessed Saint Joseph, guardian of the Savior. Guide my daily labors, keep my family safe from discord, and lead us finally to a happy, holy death. Amen."
+    },
+    {
+      id: "s-therese",
+      name: "Saint Thérèse of Lisieux",
+      title: "The Little Flower & Doctor of the Church",
+      feastDay: "October 1",
+      patronage: "Missionaries, Florists, Loss of Parents",
+      era: "19th Century",
+      color: "white",
+      biography: "A French Carmelite nun who died at 24. Her 'Little Way' of performing ordinary daily chores with tremendous, burning love has healed and guided millions.",
+      virtues: ["Childlike Trust", "Spiritual Simplicity", "Priceless Sacrifices"],
+      traditionalPrayer: "O Saint Thérèse, let fall a shower of roses upon my small needs. Grant that I may love Jesus in tiny details and trust His mercy completely. Amen."
+    }
+  ];
+
+  if (!ai) {
+    // If Gemini is not set up, search our offline database for best match
+    const match = offlineSaints.find(s => 
+      s.name.toLowerCase().includes(cleanQuery.toLowerCase()) || 
+      s.patronage.toLowerCase().includes(cleanQuery.toLowerCase())
+    );
+
+    if (match) {
+      return res.json({ ...match, simulated: true });
+    }
+
+    // Default simulated fallback of any requested saint name
+    const genericName = query.charAt(0).toUpperCase() + query.slice(1);
+    return res.json({
+      id: `st-sim-${Date.now()}`,
+      name: genericName.startsWith("Saint") ? genericName : `Saint ${genericName}`,
+      title: "Holy Confessor and Advocate of Faith",
+      feastDay: "October 17",
+      patronage: "Seekers, Devotional prayers, Pure of heart",
+      era: "Patristic Era",
+      color: "white",
+      biography: `A dedicated witness of Christ who lived in profound devotion, serving the community with exemplary faith. Known for teaching spiritual endurance, this saint reminds us that a life surrendered to God's providence is never in vain.`,
+      virtues: ["Devotion", "Humility", "Quiet Peace"],
+      traditionalPrayer: `O Lord, grant us the grace of holy endurance through the intercession of this blessed Saint. May we, inspired by their courage, carry our small daily crosses with love. Amen.`,
+      simulated: true
+    });
+  }
+
+  try {
+    const prompt = `You are an expert Catholic hagiographer, theologian, and historian.
+    Generate an authentic, highly detailed biographical and patronage profile for the saint: "${query}".
+    
+    The details must be fully orthodox and accurate to Catholic tradition and historical records.
+    Choose a liturgical color most fitting for this saint (e.g. "red" for martyrs/apostles, "white" for pastors/virgins/confessors, "blue" for Mary/Marian themes, "violet" for penitents, "rose" for joy, "green" for ordinary times).
+
+    Respond in strict JSON format matching this schema:
+    {
+      "name": "Full name of the saint (with 'Saint' prefix, e.g. 'Saint Francis of Assisi')",
+      "title": "A beautiful traditional title (e.g. 'Founder of the Franciscan Order & Mirror of Christ')",
+      "feastDay": "The official Catholic feast day (e.g. 'October 4')",
+      "patronage": "What this saint is the patron saint of (e.g. 'Animals, Ecology, Merchants, Italy')",
+      "era": "The historical era or century (e.g. '13th Century' or '1181 - 1226 AD')",
+      "color": "Choose exactly one from: 'white', 'red', 'green', 'violet', 'rose', 'blue'",
+      "biography": "A beautifully written, highly accurate 4-5 sentence biography focusing on their conversion, holy encounters or miraculous life, their specific teachings, and their holy death. Make it deeply inspiring.",
+      "virtues": ["Three core virtues e.g. 'Radical Poverty', 'Love of Creation', 'Inward Calmness'"],
+      "traditionalPrayer": "A beautiful, heartfelt traditional or custom intercessory prayer specifically to this saint seeking their spiritual aid and guidance in our intentions."
+    }
+    Do not include markdown tags like \`\`\`json or backticks. Only output valid parsable JSON.`;
+
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json"
+      }
+    });
+
+    const responseText = response?.text ? response.text.trim() : "";
+    if (responseText) {
+      const jsonResult = JSON.parse(responseText);
+      return res.json({
+        id: `st-gen-${Date.now()}`,
+        ...jsonResult,
+        simulated: false
+      });
+    } else {
+      throw new Error("Empty hagiography from Gemini");
+    }
+  } catch (err: any) {
+    if (err && (err.status === "RESOURCE_EXHAUSTED" || err.code === 429 || String(err).includes("429") || String(err).includes("quota"))) {
+      console.log("Saint exploration fallback activated (Gemini API rate limit / quota exceeded).");
+    } else {
+      console.log("Saint exploration fallback activated gracefully:", err?.message || err);
+    }
+    // Fallback to offline matching
+    const match = offlineSaints.find(s => 
+      s.name.toLowerCase().includes(cleanQuery.toLowerCase()) || 
+      s.patronage.toLowerCase().includes(cleanQuery.toLowerCase())
+    );
+
+    if (match) {
+      return res.json({ ...match, simulated: true });
+    }
+
+    const genericName = query.charAt(0).toUpperCase() + query.slice(1);
+    return res.json({
+      id: `st-sim-err-${Date.now()}`,
+      name: genericName.startsWith("Saint") ? genericName : `Saint ${genericName}`,
+      title: "Devout Advocate of the Sacred Word",
+      feastDay: "November 14",
+      patronage: "Patience under trial, Inner stillness",
+      era: "Early Church",
+      color: "white",
+      biography: `A quiet disciple who offered a life of contemplation and charitable service to neighbors, inspiring our parish through severe patience. This saint lived in holy surrender, teaching that our prayers are heard when they are whispered with trust.`,
+      virtues: ["Patience", "Inner Prayer", "Grace"],
+      traditionalPrayer: `O Holy Advocate in heaven, pray for us that we may grow in quiet patience and seek the face of Christ in our daily trials. Amen.`,
       simulated: true
     });
   }

@@ -8,27 +8,51 @@ import { createPortal } from "react-dom";
 import { 
   Play, Pause, ChevronRight, ChevronLeft, Volume2, VolumeX, RotateCcw, 
   HelpCircle, ChevronDown, Check, Info, Flame, Moon, Compass,
-  Sparkles, User, MessageCircle, Heart, ShieldCheck, Maximize2, X
+  Sparkles, User, MessageCircle, Heart, ShieldCheck, Maximize2, X, Settings,
+  Eye, EyeOff
 } from "lucide-react";
 
 // Web Audio meditational synthesizer helper
 class RosarySynth {
-  private audioCtx: AudioContext | null = null;
-  private rootOsc: OscillatorNode | null = null;
-  private fifthOsc: OscillatorNode | null = null;
-  private octaveOsc: OscillatorNode | null = null;
-  private mainGain: GainNode | null = null;
+  public audioCtx: AudioContext | null = null;
+  public rootOsc: OscillatorNode | null = null;
+  public fifthOsc: OscillatorNode | null = null;
+  public octaveOsc: OscillatorNode | null = null;
+  public mainGain: GainNode | null = null;
+  public analyser: AnalyserNode | null = null;
+
+  ensureAudioContext() {
+    if (this.audioCtx) return;
+    try {
+      const AudioCtxClass = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioCtxClass) return;
+      this.audioCtx = new AudioCtxClass();
+
+      this.analyser = this.audioCtx.createAnalyser();
+      this.analyser.fftSize = 64;
+      this.analyser.smoothingTimeConstant = 0.8;
+
+      // Connect analyser to destination so sounds played through it are outputted
+      this.analyser.connect(this.audioCtx.destination);
+    } catch (err) {
+      console.error("Could not ensure audio context:", err);
+    }
+  }
 
   startDrone() {
     try {
-      // Create audio context safely
-      const AudioCtxClass = window.AudioContext || (window as any).webkitAudioContext;
-      if (!AudioCtxClass) return;
+      this.ensureAudioContext();
+      if (!this.audioCtx || !this.analyser) return;
 
-      this.audioCtx = new AudioCtxClass();
+      if (this.audioCtx.state === "suspended") {
+        this.audioCtx.resume();
+      }
+
       this.mainGain = this.audioCtx.createGain();
       this.mainGain.gain.setValueAtTime(0.0, this.audioCtx.currentTime);
-      this.mainGain.connect(this.audioCtx.destination);
+      
+      // Connect mainGain to the analyser
+      this.mainGain.connect(this.analyser);
 
       // Warm Root drone - perfect fifth harmony (C2 - 130.81 Hz, G2 - 196.00 Hz, C3 - 261.63 Hz)
       this.rootOsc = this.audioCtx.createOscillator();
@@ -69,16 +93,18 @@ class RosarySynth {
         const now = this.audioCtx.currentTime;
         // Fade out over 0.8 seconds
         this.mainGain.gain.linearRampToValueAtTime(0.001, now + 0.8);
+        const oscToStop = [this.rootOsc, this.fifthOsc, this.octaveOsc];
+        this.rootOsc = null;
+        this.fifthOsc = null;
+        this.octaveOsc = null;
+        const gainToDisconnect = this.mainGain;
+        this.mainGain = null;
+
         setTimeout(() => {
-          this.rootOsc?.stop();
-          this.fifthOsc?.stop();
-          this.octaveOsc?.stop();
-          this.audioCtx?.close();
-          this.rootOsc = null;
-          this.fifthOsc = null;
-          this.octaveOsc = null;
-          this.mainGain = null;
-          this.audioCtx = null;
+          oscToStop.forEach(osc => {
+            try { osc?.stop(); } catch (e) {}
+          });
+          try { gainToDisconnect?.disconnect(); } catch (e) {}
         }, 900);
       }
     } catch (e) {
@@ -89,9 +115,13 @@ class RosarySynth {
   // Plays a soft angelic bell chime
   playBeadChime() {
     try {
-      const AudioCtxClass = window.AudioContext || (window as any).webkitAudioContext;
-      const ctx = this.audioCtx || new AudioCtxClass();
+      this.ensureAudioContext();
+      const ctx = this.audioCtx;
       if (!ctx) return;
+
+      if (ctx.state === "suspended") {
+        ctx.resume();
+      }
       
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
@@ -115,7 +145,11 @@ class RosarySynth {
       osc2.connect(chimeGain);
       chimeGain.connect(gain);
       
-      gain.connect(ctx.destination);
+      if (this.analyser) {
+        gain.connect(this.analyser);
+      } else {
+        gain.connect(ctx.destination);
+      }
       
       osc.start();
       osc2.start();
@@ -270,9 +304,17 @@ interface AudioRosaryProps {
   onRosaryComplete: () => void;
   isTabActive?: boolean;
   setActiveTab?: (tab: any) => void;
+  isFocusMode?: boolean;
+  setIsFocusMode?: (mode: boolean) => void;
 }
 
-export function AudioRosary({ onRosaryComplete, isTabActive = true, setActiveTab }: AudioRosaryProps) {
+export function AudioRosary({ 
+  onRosaryComplete, 
+  isTabActive = true, 
+  setActiveTab,
+  isFocusMode,
+  setIsFocusMode
+}: AudioRosaryProps) {
   const [selectedMysteryKey, setSelectedMysteryKey] = useState<string>("Joyful");
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -280,14 +322,129 @@ export function AudioRosary({ onRosaryComplete, isTabActive = true, setActiveTab
   const [autoAdvance, setAutoAdvance] = useState<boolean>(true); // recommended default for speech tracking
 
   // Vocal settings states
-  const [voiceGender, setVoiceGender] = useState<"female" | "male">("female");
+  const [isVoiceGuideEnabled, setIsVoiceGuideEnabled] = useState<boolean>(true);
   const [recitationMode, setRecitationMode] = useState<"full" | "leader">("full");
   const [voiceRate, setVoiceRate] = useState<number>(0.9); // Reverent pace (slightly below default)
   const [voiceVolume, setVoiceVolume] = useState<number>(0.95);
   const [isVoiceSpeaking, setIsVoiceSpeaking] = useState<boolean>(false);
   const [voiceSupported, setVoiceSupported] = useState<boolean>(true);
+  const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [showPrayerText, setShowPrayerText] = useState<boolean>(true);
   
   const synthRef = useRef<RosarySynth | null>(null);
+  const isPlayingRef = useRef<boolean>(isPlaying);
+  const speechTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const visualizerRef = useRef<HTMLDivElement>(null);
+  const miniVisualizerRef = useRef<HTMLDivElement>(null);
+
+  // Sync isPlaying state with a mutable ref to solve closure and concurrency race conditions in SpeechSynthesis
+  useEffect(() => {
+    isPlayingRef.current = isPlaying;
+  }, [isPlaying]);
+
+  // Synchronized visualizer animation loop
+  useEffect(() => {
+    let animationFrameId: number;
+    const barCount = 16;
+    
+    // Create pre-allocated array for frequency data
+    const dataArray = new Uint8Array(32);
+    
+    const updateVisualizer = () => {
+      let active = false;
+      const values = new Float32Array(barCount);
+      
+      const synth = synthRef.current;
+      
+      if (synth && synth.analyser && synth.audioCtx && synth.audioCtx.state !== "suspended") {
+        synth.analyser.getByteFrequencyData(dataArray);
+        
+        // Map dataArray values into our 16 bars
+        for (let i = 0; i < barCount; i++) {
+          // Take active spectrum bin ranges, ignoring DC offset
+          const rawValue = dataArray[i + 1] || 0;
+          values[i] = rawValue / 255;
+        }
+        
+        const totalEnergy = values.reduce((sum, v) => sum + v, 0);
+        if (totalEnergy > 0.05) {
+          active = true;
+        }
+      }
+      
+      // If voice guide is speaking, synthesize fluid, voice-like pulsing on top of standard analysis
+      if (isVoiceSpeaking && isPlaying) {
+        active = true;
+        const time = Date.now() * 0.005;
+        for (let i = 0; i < barCount; i++) {
+          const speakMod = Math.sin(time * 3 + i * 0.5) * 0.4 + 0.6;
+          const randomPulse = Math.random() * 0.4 + 0.2;
+          const frequencyFactor = Math.sin((i * Math.PI) / barCount); // speech envelope curve
+          
+          const speechVal = speakMod * randomPulse * frequencyFactor * voiceVolume;
+          values[i] = Math.max(values[i], speechVal);
+        }
+      } else if (isPlaying && !isVoiceSpeaking) {
+        // Comforting rest/breathing pulse cycle when paused or waiting between prayer beads
+        active = true;
+        const breath = Math.sin(Date.now() * 0.0025) * 0.15 + 0.2;
+        for (let i = 0; i < barCount; i++) {
+          const depth = (Math.sin((i * Math.PI) / (barCount - 1)) * 0.1 + 0.05) * breath;
+          values[i] = Math.max(values[i], depth);
+        }
+      } else if (soundscapeEnabled) {
+        active = true;
+      }
+      
+      // Standby state
+      if (!active) {
+        for (let i = 0; i < barCount; i++) {
+          values[i] = 0;
+        }
+      }
+      
+      // Performance-optimized direct inline transform rendering (No React lifecycle overhead, full 60fps)
+      if (visualizerRef.current) {
+        const bars = visualizerRef.current.children;
+        for (let i = 0; i < barCount; i++) {
+          const bar = bars[i] as HTMLDivElement;
+          if (bar) {
+            const scale = Math.max(0.08, values[i]);
+            bar.style.transform = `scaleY(${scale})`;
+            bar.style.opacity = `${0.3 + scale * 0.7}`;
+          }
+        }
+      }
+      
+      if (miniVisualizerRef.current) {
+        const bars = miniVisualizerRef.current.children;
+        for (let i = 0; i < barCount; i++) {
+          const bar = bars[i] as HTMLDivElement;
+          if (bar) {
+            const scale = Math.max(0.08, values[i]);
+            bar.style.transform = `scaleY(${scale})`;
+            bar.style.opacity = `${0.3 + scale * 0.7}`;
+          }
+        }
+      }
+      
+      animationFrameId = requestAnimationFrame(updateVisualizer);
+    };
+    
+    updateVisualizer();
+    
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, [isPlaying, isVoiceSpeaking, soundscapeEnabled, voiceVolume]);
+
+  // Helper to load up-to-date audio voices on mobile/iframes
+  const updateVoicesList = () => {
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      const voices = window.speechSynthesis.getVoices();
+      setAvailableVoices(voices);
+    }
+  };
 
   // Auto detect typical mystery based on today's day of week
   useEffect(() => {
@@ -303,9 +460,19 @@ export function AudioRosary({ onRosaryComplete, isTabActive = true, setActiveTab
     synthRef.current = new RosarySynth();
     if (typeof window === "undefined" || !("speechSynthesis" in window)) {
       setVoiceSupported(false);
+    } else {
+      updateVoicesList();
+      if (typeof window !== "undefined" && window.speechSynthesis) {
+        window.speechSynthesis.onvoiceschanged = updateVoicesList;
+      }
     }
     return () => {
       synthRef.current?.stopDrone();
+      if (synthRef.current?.audioCtx) {
+        try {
+          synthRef.current.audioCtx.close();
+        } catch (e) {}
+      }
       if (typeof window !== "undefined" && "speechSynthesis" in window) {
         window.speechSynthesis.cancel();
       }
@@ -359,10 +526,47 @@ export function AudioRosary({ onRosaryComplete, isTabActive = true, setActiveTab
 
   // Stop vocal recitation
   const stopVoice = () => {
+    if (speechTimeoutRef.current) {
+      clearTimeout(speechTimeoutRef.current);
+      speechTimeoutRef.current = null;
+    }
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       window.speechSynthesis.cancel();
     }
     setIsVoiceSpeaking(false);
+  };
+
+  // Get browser/phone default US English voice or other English fallback
+  const getPhoneDefaultVoice = (voices: SpeechSynthesisVoice[]): SpeechSynthesisVoice | null => {
+    // Filter to English voices (US, UK, AU, etc.)
+    const englishVoices = voices.filter(v => v.lang.toLowerCase().startsWith("en"));
+    if (englishVoices.length === 0) {
+      const absoluteDefault = voices.find(v => v.default);
+      return absoluteDefault || (voices.length > 0 ? voices[0] : null);
+    }
+
+    // Filter to US English specifically to avoid Australian, British, etc.
+    const usEnglishVoices = englishVoices.filter(v => 
+      v.lang.toLowerCase().includes("us") || v.lang.toLowerCase() === "en"
+    );
+
+    // Tier 1: Prefer local (offline-downloaded) US English voices for highest quality
+    const usLocal = usEnglishVoices.filter(v => v.localService);
+    if (usLocal.length > 0) return usLocal[0];
+
+    // Tier 2: Prefer any US English voice
+    if (usEnglishVoices.length > 0) return usEnglishVoices[0];
+
+    // Tier 3: Look for an English voice explicitly set as default inside user settings
+    const systemDefaultEng = englishVoices.find(v => v.default);
+    if (systemDefaultEng) return systemDefaultEng;
+
+    // Tier 4: Prefer local (offline-downloaded) English voices for quality (UK, AU if no US is available)
+    const localEnglish = englishVoices.filter(v => v.localService);
+    if (localEnglish.length > 0) return localEnglish[0];
+
+    // Tier 5: Return any English voice
+    return englishVoices[0];
   };
 
   // Play vocal speech
@@ -371,7 +575,7 @@ export function AudioRosary({ onRosaryComplete, isTabActive = true, setActiveTab
     
     window.speechSynthesis.cancel();
     
-    if (!isPlaying) {
+    if (!isPlaying || !isVoiceGuideEnabled) {
       setIsVoiceSpeaking(false);
       return;
     }
@@ -419,44 +623,14 @@ export function AudioRosary({ onRosaryComplete, isTabActive = true, setActiveTab
     utterance.volume = voiceVolume;
     utterance.rate = voiceRate;
 
-    // Retrieve compatible male or female speech voices
-    const voices = window.speechSynthesis.getVoices();
-    let selectedVoice: SpeechSynthesisVoice | null = null;
-    const isFemaleSelected = voiceGender === "female";
-
-    // Filter list
-    const englishVoices = voices.filter(v => v.lang.toLowerCase().startsWith("en"));
-    const matchingGenderVoices = englishVoices.filter(v => {
-      const name = v.name.toLowerCase();
-      if (isFemaleSelected) {
-        return (
-          name.includes("female") || name.includes("zira") || 
-          name.includes("samantha") || name.includes("hazel") ||
-          name.includes("susan") || name.includes("karen") || 
-          name.includes("moira") || name.includes("tessa") || 
-          name.includes("victoria") || name.includes("google us english")
-        );
-      } else {
-        return (
-          name.includes("male") || name.includes("david") || 
-          name.includes("george") || name.includes("ravi") || 
-          name.includes("mark") || name.includes("microsoft david") ||
-          name.includes("daniel") || name.includes("oliver") ||
-          name.includes("google uk english male")
-        );
-      }
-    });
-
-    if (matchingGenderVoices.length > 0) {
-      selectedVoice = matchingGenderVoices[0];
-    } else if (englishVoices.length > 0) {
-      selectedVoice = isFemaleSelected ? englishVoices[0] : englishVoices[englishVoices.length - 1];
-    } else if (voices.length > 0) {
-      selectedVoice = voices[0];
-    }
+    // Retrieve compatible speech voices
+    const rawVoices = window.speechSynthesis.getVoices();
+    const voices = rawVoices.length > 0 ? rawVoices : availableVoices;
+    const selectedVoice = getPhoneDefaultVoice(voices);
 
     if (selectedVoice) {
       utterance.voice = selectedVoice;
+      console.log(`AudioRosary: Selected default speech voice "${selectedVoice.name}" (localService=${selectedVoice.localService}, lang=${selectedVoice.lang})`);
     }
 
     utterance.onstart = () => {
@@ -465,26 +639,96 @@ export function AudioRosary({ onRosaryComplete, isTabActive = true, setActiveTab
 
     utterance.onend = () => {
       setIsVoiceSpeaking(false);
-      // If Auto Advance is enabled, wait a short reverent moment and advance to next
-      if (isPlaying) {
+      // Use the mutable ref to ensure checking the actual up-to-date playback status to prevent playing when paused
+      if (isPlayingRef.current) {
         if (autoAdvance) {
           setTimeout(() => {
-            handleNextStep();
+            if (isPlayingRef.current) {
+              handleNextStep();
+            }
           }, 1800);
         }
       }
     };
 
-    utterance.onerror = () => {
+    utterance.onerror = (e) => {
+      console.error("AudioRosary Web Speech TTS error event:", e);
       setIsVoiceSpeaking(false);
+      
+      // Self-healing: retry with default voice fallback, checking active play state
+      if (utterance.voice && isPlayingRef.current) {
+        console.warn("Retrying speech synthesis using browser default voice fallback...");
+        try {
+          const fallbackUtterance = new SpeechSynthesisUtterance(textToSpeak);
+          fallbackUtterance.volume = voiceVolume;
+          fallbackUtterance.rate = voiceRate;
+          fallbackUtterance.voice = null; // force browser default
+          fallbackUtterance.onstart = () => setIsVoiceSpeaking(true);
+          fallbackUtterance.onend = utterance.onend;
+          fallbackUtterance.onerror = () => setIsVoiceSpeaking(false);
+          window.speechSynthesis.speak(fallbackUtterance);
+        } catch (err) {
+          console.error("Fallback speech synthesis failed:", err);
+        }
+      }
     };
 
-    window.speechSynthesis.speak(utterance);
+    // Avoid concurrent race condition queue blocks in Web Speech Synthesis by tracking scheduled timers
+    if (speechTimeoutRef.current) {
+      clearTimeout(speechTimeoutRef.current);
+    }
+    speechTimeoutRef.current = setTimeout(() => {
+      if (typeof window !== "undefined" && "speechSynthesis" in window && isPlayingRef.current && isVoiceGuideEnabled) {
+        window.speechSynthesis.speak(utterance);
+      }
+    }, 100);
   };
+
+  // Play dynamic prayer bell chime using Web Audio API on-the-fly
+  const playTestChime = () => {
+    try {
+      const AudioCtxClass = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioCtxClass) return;
+      const ctx = new AudioCtxClass();
+      
+      const osc1 = ctx.createOscillator();
+      const gain1 = ctx.createGain();
+      osc1.type = "sine";
+      osc1.frequency.setValueAtTime(440, ctx.currentTime);
+      
+      const osc2 = ctx.createOscillator();
+      const gain2 = ctx.createGain();
+      osc2.type = "sine";
+      osc2.frequency.setValueAtTime(659.25, ctx.currentTime); // E5
+      
+      const now = ctx.currentTime;
+      gain1.gain.setValueAtTime(0.25, now);
+      gain1.gain.exponentialRampToValueAtTime(0.001, now + 1.5);
+      
+      gain2.gain.setValueAtTime(0.12, now);
+      gain2.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+      
+      osc1.connect(gain1);
+      gain1.connect(ctx.destination);
+      
+      osc2.connect(gain2);
+      gain2.connect(ctx.destination);
+      
+      osc1.start(now);
+      osc2.start(now);
+      
+      osc1.stop(now + 1.6);
+      osc2.stop(now + 1.6);
+    } catch (err) {
+      console.error("Failed to play diagnostic prayer audio chime:", err);
+    }
+  };
+
+
 
   // Sync vocal speech with state properties
   useEffect(() => {
-    if (isPlaying && voiceSupported) {
+    if (isPlaying && voiceSupported && isVoiceGuideEnabled) {
       speakActivePrayer(currentStepIndex);
     } else {
       stopVoice();
@@ -492,7 +736,7 @@ export function AudioRosary({ onRosaryComplete, isTabActive = true, setActiveTab
     return () => {
       stopVoice();
     };
-  }, [currentStepIndex, isPlaying, voiceGender, recitationMode, voiceRate]);
+  }, [currentStepIndex, isPlaying, isVoiceGuideEnabled, recitationMode, voiceRate]);
 
   // Handle manual play/pause toggle
   const handlePlayToggle = () => {
@@ -503,7 +747,7 @@ export function AudioRosary({ onRosaryComplete, isTabActive = true, setActiveTab
   const getBeadColorClass = (stepIdx: number) => {
     if (stepIdx === currentStepIndex) return "bg-amber-500 scale-125 ring-4 ring-amber-200 dark:ring-amber-900 text-amber-950 font-bold";
     if (stepIdx < currentStepIndex) return "bg-amber-700/60 dark:bg-amber-500/40 opacity-80 text-white/70";
-    return "bg-stone-250 dark:bg-stone-800 text-stone-600 dark:text-stone-400 hover:bg-stone-300 dark:hover:bg-stone-700";
+    return "bg-stone-200 dark:bg-stone-800 text-stone-600 dark:text-stone-400 hover:bg-stone-300 dark:hover:bg-stone-700";
   };
 
   const activePrayerKey = getPrayerKey(currentStep.id);
@@ -536,7 +780,7 @@ export function AudioRosary({ onRosaryComplete, isTabActive = true, setActiveTab
               <span className={`relative inline-flex rounded-full h-2 w-2 ${isPlaying ? "bg-amber-500" : "bg-stone-500"}`}></span>
             </span>
             <span className="text-[10px] uppercase font-mono font-bold tracking-wider text-stone-500 dark:text-stone-400">
-              {isPlaying ? "Playing Rosary" : "Rosary Paused"} ({voiceGender === "female" ? "Sister B." : "Brother P."})
+              {isPlaying ? "Playing Rosary" : "Rosary Paused"} {isVoiceGuideEnabled ? "(Vocal Guide)" : "(Muted)"}
             </span>
           </div>
 
@@ -580,6 +824,23 @@ export function AudioRosary({ onRosaryComplete, isTabActive = true, setActiveTab
           <p className="text-xs text-stone-500 dark:text-stone-400 italic line-clamp-1 mt-2 bg-stone-50/50 dark:bg-stone-950/40 p-1.5 rounded border border-stone-100/50 dark:border-stone-900/50">
             {currentStep.text}
           </p>
+        </div>
+
+        {/* Subtle pulsing mini visualizer */}
+        <div className="flex items-center justify-between px-2 bg-stone-50 dark:bg-stone-950/40 py-1 rounded-lg border border-stone-100 dark:border-stone-850">
+          <span className="text-[9px] font-mono font-semibold text-stone-400 dark:text-stone-500 uppercase tracking-widest pl-1">Audio Pulse</span>
+          <div 
+            ref={miniVisualizerRef}
+            className="flex items-end justify-end gap-1 h-5 w-32 pr-1"
+          >
+            {Array.from({ length: 16 }).map((_, i) => (
+              <div
+                key={i}
+                className="w-1 h-full rounded-full bg-gradient-to-t from-amber-600 to-amber-500 dark:from-amber-550 dark:to-amber-400 origin-bottom"
+                style={{ transform: "scaleY(0.08)", opacity: 0.3 }}
+              />
+            ))}
+          </div>
         </div>
 
         {/* Progress bar */}
@@ -666,6 +927,7 @@ export function AudioRosary({ onRosaryComplete, isTabActive = true, setActiveTab
     );
   }
 
+
   return (
     <div className="bg-stone-50 dark:bg-stone-900 rounded-3xl shadow-md border border-stone-200/80 dark:border-stone-800/80 p-6 max-w-4xl mx-auto overflow-hidden">
       
@@ -676,7 +938,7 @@ export function AudioRosary({ onRosaryComplete, isTabActive = true, setActiveTab
             Rosary Companion
           </span>
           <h2 className="text-2xl font-heading font-normal text-stone-950 dark:text-stone-50 flex items-center gap-2 mt-1">
-            <Compass className="h-6 w-6 text-amber-655 dark:text-amber-400" />
+            <Compass className="h-6 w-6 text-amber-600 dark:text-amber-400" />
             Celestial Audio Play-Along Rosary
           </h2>
           <p className="text-xs text-stone-500 dark:text-stone-400 mt-1.5 max-w-lg">
@@ -685,8 +947,8 @@ export function AudioRosary({ onRosaryComplete, isTabActive = true, setActiveTab
         </div>
 
         {/* Mystery Selection Dropdown */}
-        <div className="flex items-center gap-2.5 bg-stone-150/70 dark:bg-stone-950/60 border border-stone-200 dark:border-stone-800 p-2 rounded-xl">
-          <label className="text-xs font-mono text-stone-400 dark:text-stone-500 uppercase tracking-wider pl-1">Daily Mystery:</label>
+        <div className="flex items-center gap-2.5 bg-stone-100/80 dark:bg-stone-950/60 border border-stone-200 dark:border-stone-800 p-2 rounded-xl">
+          <label className="text-xs font-mono text-stone-500 dark:text-stone-400 uppercase tracking-wider pl-1">Daily Mystery:</label>
           <select 
             value={selectedMysteryKey} 
             onChange={(e) => {
@@ -706,65 +968,71 @@ export function AudioRosary({ onRosaryComplete, isTabActive = true, setActiveTab
 
       {/* NEW SECTION: Voice Gender Leader Selector Option */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        {/* Box Left: Select Male or Female Companion */}
-        <div className="bg-white dark:bg-stone-950/40 p-4 rounded-2xl border border-stone-200/95 dark:border-stone-850 flex flex-col justify-between">
+        {/* Box Left: Audio Rosary Vocal Guide toggle and setup */}
+        <div className="bg-white dark:bg-stone-950/40 p-5 rounded-2xl border border-stone-200 dark:border-stone-800 flex flex-col justify-between">
           <div>
-            <h4 className="text-xs font-mono font-bold text-stone-450 dark:text-stone-400 uppercase tracking-widest flex items-center gap-1.5 mb-3">
-              <User className="h-3.5 w-3.5 text-amber-600" />
-              1. Choose Prayer Guide Voice
+            <h4 className="text-xs font-mono font-bold text-stone-800 dark:text-stone-200 uppercase tracking-widest flex items-center gap-1.5 mb-3.5">
+              <Volume2 className="h-3.5 w-3.5 text-amber-600" />
+              1. Audio Rosary Vocal Guide
             </h4>
             
-            <div className="grid grid-cols-2 gap-2.5">
-              {/* Sister Beatrice Option */}
+            <div className="flex flex-col gap-3">
               <button
+                type="button"
                 onClick={() => {
-                  setVoiceGender("female");
+                  setIsVoiceGuideEnabled(!isVoiceGuideEnabled);
                   stopVoice();
                 }}
-                className={`p-3 rounded-xl border text-center transition-all flex flex-col items-center justify-center cursor-pointer ${
-                  voiceGender === "female"
+                className={`w-full p-4 rounded-xl border text-left transition-all flex items-center justify-between cursor-pointer ${
+                  isVoiceGuideEnabled
                     ? "bg-amber-50/50 dark:bg-amber-950/20 border-amber-500/40 text-amber-900 dark:text-amber-200 font-medium"
-                    : "bg-stone-50 dark:bg-stone-900/45 border-stone-150 dark:border-stone-800 text-stone-550 dark:text-stone-400 hover:bg-stone-100"
+                    : "bg-stone-50 dark:bg-stone-900/45 border-stone-200 dark:border-stone-800 text-stone-500 dark:text-stone-400 hover:bg-stone-100/80"
                 }`}
               >
-                <div className="w-9 h-9 rounded-full bg-amber-100 dark:bg-amber-900/55 flex items-center justify-center font-bold text-amber-750 dark:text-amber-350 text-sm mb-1.5">
-                  SB
+                <div className="flex items-center gap-3">
+                  <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm ${
+                    isVoiceGuideEnabled 
+                      ? "bg-amber-100 dark:bg-amber-900/55 text-amber-700 dark:text-amber-300"
+                      : "bg-stone-200 dark:bg-stone-800 text-stone-500 dark:text-stone-400"
+                  }`}>
+                    {isVoiceGuideEnabled ? "ON" : "OFF"}
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-xs font-semibold">Vocal Guide {isVoiceGuideEnabled ? "Enabled" : "Disabled"}</span>
+                    <span className="text-[10px] text-stone-500">Read aloud prayers automatically</span>
+                  </div>
                 </div>
-                <span className="text-xs font-semibold">Sister Beatrice</span>
-                <span className="text-[10px] text-stone-400 mt-0.5">Female Voice</span>
+                <div className="flex items-center">
+                  <span className={`w-2.5 h-2.5 rounded-full ${isVoiceGuideEnabled ? "bg-emerald-500" : "bg-stone-300"}`} />
+                </div>
               </button>
 
-              {/* Brother Paul Option */}
-              <button
-                onClick={() => {
-                  setVoiceGender("male");
-                  stopVoice();
-                }}
-                className={`p-3 rounded-xl border text-center transition-all flex flex-col items-center justify-center cursor-pointer ${
-                  voiceGender === "male"
-                    ? "bg-amber-50/50 dark:bg-amber-950/20 border-amber-500/40 text-amber-900 dark:text-amber-200 font-medium"
-                    : "bg-stone-50 dark:bg-stone-900/45 border-stone-150 dark:border-stone-800 text-stone-550 dark:text-stone-400 hover:bg-stone-100"
-                }`}
-              >
-                <div className="w-9 h-9 rounded-full bg-blue-100 dark:bg-blue-950/55 flex items-center justify-center font-bold text-blue-700 dark:text-blue-300 text-sm mb-1.5">
-                  BP
+              {isVoiceGuideEnabled && (
+                <div className="text-[10.5px] text-stone-500 bg-stone-50 dark:bg-stone-900/55 p-3 rounded-xl border border-stone-150 dark:border-stone-850">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="font-semibold text-stone-700 dark:text-stone-300">Default Phone Voice:</span>
+                    <span className="font-mono text-[10px] bg-stone-200/60 dark:bg-stone-800 text-stone-800 dark:text-stone-200 px-1.5 py-0.5 rounded max-w-[140px] truncate" title={getPhoneDefaultVoice(availableVoices)?.name || "System default"}>
+                      {getPhoneDefaultVoice(availableVoices)?.name || "System default"}
+                    </span>
+                  </div>
+                  <p className="text-[9.5px] text-stone-450 leading-relaxed">
+                    Recitations will play naturally using the default preferred language speaker configured on your mobile phone or browser.
+                  </p>
                 </div>
-                <span className="text-xs font-semibold">Brother Paul</span>
-                <span className="text-[10px] text-stone-400 mt-0.5">Male Voice</span>
-              </button>
+              )}
             </div>
           </div>
           
-          <div className="mt-3 text-[10px] text-stone-400 dark:text-stone-500 italic pl-1 flex items-center gap-1.5 border-t border-stone-100/70 dark:border-stone-900/75 pt-2.5">
-            <ShieldCheck className="h-3 w-3 text-emerald-650" />
-            Built-in high fidelity sound synthesis is fully supported.
+          <div className="mt-3 text-[10px] text-stone-500 dark:text-stone-400 italic pl-1 flex items-center gap-1.5 border-t border-stone-100 dark:border-stone-800 pt-2.5">
+            <ShieldCheck className="h-3 w-3 text-emerald-600" />
+            Vocal recitations are read live on your device.
           </div>
         </div>
 
         {/* Box Right: Companion vs. Response Mode Selector */}
-        <div className="bg-white dark:bg-stone-950/40 p-4 rounded-2xl border border-stone-200/95 dark:border-stone-850 flex flex-col justify-between">
+        <div className="bg-white dark:bg-stone-950/40 p-4 rounded-2xl border border-stone-200 dark:border-stone-800 flex flex-col justify-between">
           <div>
-            <h4 className="text-xs font-mono font-bold text-stone-450 dark:text-stone-400 uppercase tracking-widest flex items-center gap-1.5 mb-3">
+            <h4 className="text-xs font-mono font-bold text-stone-800 dark:text-stone-200 uppercase tracking-widest flex items-center gap-1.5 mb-3">
               <MessageCircle className="h-3.5 w-3.5 text-amber-600" />
               2. Play-Along Recitation Style
             </h4>
@@ -775,12 +1043,12 @@ export function AudioRosary({ onRosaryComplete, isTabActive = true, setActiveTab
                 className={`p-2 px-3.5 rounded-xl border text-left transition-all flex items-center justify-between cursor-pointer ${
                   recitationMode === "full"
                     ? "bg-amber-50/50 dark:bg-amber-950/20 border-amber-500/40 text-amber-900 dark:text-amber-200 font-medium whitespace-normal"
-                    : "bg-stone-50 dark:bg-stone-900/45 border-stone-150 dark:border-stone-800 text-stone-550 dark:text-stone-400 hover:bg-stone-100"
+                    : "bg-stone-50 dark:bg-stone-900/45 border-stone-200 dark:border-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-100/80 hover:text-stone-900"
                 }`}
               >
                 <div className="flex flex-col">
                   <span className="text-xs font-semibold">Companion Mode</span>
-                  <span className="text-[9.5px] text-stone-400 mt-0.5">Voice recites 100% of the entire prayer with you</span>
+                  <span className="text-[9.5px] text-stone-500 dark:text-stone-400 mt-0.5">Voice recites 100% of the entire prayer with you</span>
                 </div>
                 {recitationMode === "full" && <Check className="h-4 w-4 text-amber-600 shrink-0" />}
               </button>
@@ -790,24 +1058,24 @@ export function AudioRosary({ onRosaryComplete, isTabActive = true, setActiveTab
                 className={`p-2 px-3.5 rounded-xl border text-left transition-all flex items-center justify-between cursor-pointer ${
                   recitationMode === "leader"
                     ? "bg-amber-50/50 dark:bg-amber-950/20 border-amber-500/40 text-amber-900 dark:text-amber-200 font-medium"
-                    : "bg-stone-50 dark:bg-stone-900/45 border-stone-150 dark:border-stone-800 text-stone-550 dark:text-stone-400 hover:bg-stone-100"
+                    : "bg-stone-50 dark:bg-stone-900/45 border-stone-200 dark:border-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-100/80 hover:text-stone-900"
                 }`}
               >
                 <div className="flex flex-col font-heading">
                   <span className="text-xs font-semibold flex items-center gap-1">
                     Leader / Response Mode
                   </span>
-                  <span className="text-[9.5px] text-stone-400 mt-0.5">Voice leads the 1st half; you recite the 2nd half response</span>
+                  <span className="text-[9.5px] text-stone-500 dark:text-stone-400 mt-0.5">Voice leads the 1st half; you recite the 2nd half response</span>
                 </div>
                 {recitationMode === "leader" && <Check className="h-4 w-4 text-amber-600 shrink-0" />}
               </button>
             </div>
           </div>
 
-          <div className="mt-3 flex items-center justify-between border-t border-stone-100/70 dark:border-stone-900/75 pt-2.5">
-            <span className="text-[10px] text-stone-400">Pace Control:</span>
+          <div className="mt-3 flex items-center justify-between border-t border-stone-100 dark:border-stone-800 pt-2.5">
+            <span className="text-[10px] text-stone-500 dark:text-stone-400">Pace Control:</span>
             <div className="flex items-center gap-2">
-              <span className="text-[9px] text-stone-400">Speech Speed:</span>
+              <span className="text-[9px] text-stone-500 dark:text-stone-400">Speech Speed:</span>
               <select
                 value={voiceRate}
                 onChange={(e) => {
@@ -847,23 +1115,33 @@ export function AudioRosary({ onRosaryComplete, isTabActive = true, setActiveTab
           </div>
         </div>
       ) : (
-        <div className="mb-6 bg-stone-100 dark:bg-stone-950/60 rounded-2xl p-4 text-center text-xs text-stone-500 dark:text-stone-400 border border-stone-250/20">
+        <div className="mb-6 bg-stone-100 dark:bg-stone-950/60 rounded-2xl p-4 text-center text-xs text-stone-500 dark:text-stone-400 border border-stone-200/50">
           <Info className="h-4 w-4 mx-auto mb-1 text-stone-400" />
           Currently reciting the opening prayers of devotion. Hold Saint Mary's hand to begin Calvary's walk.
         </div>
-      )}
-
-      {/* Centered Large Prayer Script Viewer */}
-      <div className="bg-white dark:bg-stone-950 rounded-2xl border border-stone-200 dark:border-stone-850 p-6 md:p-8 min-h-[240px] flex flex-col justify-between relative shadow-sm">
+      )}      {/* Centered Large Prayer Script Viewer */}
+      <div className="bg-white dark:bg-stone-950 rounded-2xl border border-stone-200 dark:border-stone-800 p-6 md:p-8 min-h-[240px] flex flex-col justify-between relative shadow-sm">
         
         {/* Step Badge and Audio Pulse */}
-        <div className="flex items-center justify-between">
-          <span className="inline-block px-2.5 py-0.5 bg-stone-100 dark:bg-stone-900 text-[10px] font-mono text-stone-500 dark:text-stone-400 rounded-full font-bold uppercase tracking-wider">
-            Bead {currentStepIndex + 1} of {ROSARY_STEPS.length} • {currentStep.beadType}
-          </span>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="inline-block px-2.5 py-0.5 bg-stone-100 dark:bg-stone-900 text-[10px] font-mono text-stone-500 dark:text-stone-400 rounded-full font-bold uppercase tracking-wider">
+              Bead {currentStepIndex + 1} of {ROSARY_STEPS.length} • {currentStep.beadType}
+            </span>
+            
+            {/* Display Text Toggle */}
+            <button
+              onClick={() => setShowPrayerText(!showPrayerText)}
+              className="px-2.5 py-0.5 text-[10px] font-mono font-bold rounded-full bg-stone-100 hover:bg-stone-200 dark:bg-stone-900 dark:hover:bg-stone-850 border border-stone-200 dark:border-stone-800 text-stone-600 dark:text-stone-300 transition-all flex items-center gap-1 cursor-pointer"
+              title={showPrayerText ? "Hide active prayer text for focused meditation" : "Show active prayer text"}
+            >
+              {showPrayerText ? <EyeOff className="h-3 w-3 text-stone-500" /> : <Eye className="h-3 w-3 text-stone-500" />}
+              <span>{showPrayerText ? "Hide Text" : "Show Text"}</span>
+            </button>
+          </div>
           
           {isPlaying && (
-            <div className="flex items-center gap-1.5 bg-amber-500/10 dark:bg-amber-500/5 px-2 py-0.5 rounded-full border border-amber-500/20 text-[10px] font-mono text-amber-600 dark:text-amber-400">
+            <div className="flex items-center gap-1.5 bg-amber-500/10 dark:bg-amber-500/5 px-2 py-0.5 rounded-full border border-amber-500/20 text-[10px] font-mono text-amber-600 dark:text-amber-400 select-none">
               {isVoiceSpeaking ? (
                 <span className="flex items-center gap-1">
                   {/* Waveform graphic animation */}
@@ -886,45 +1164,75 @@ export function AudioRosary({ onRosaryComplete, isTabActive = true, setActiveTab
 
         {/* The active prayer script with Leader & Response Separated beautifully */}
         <div className="my-6 text-center">
-          <h4 className="text-xs font-bold text-amber-600 dark:text-amber-500 uppercase tracking-widest font-sans mb-3">
+          <h4 className="text-xs font-bold text-amber-600 dark:text-amber-550 uppercase tracking-widest font-sans mb-3">
             {currentStep.name}
           </h4>
 
-          {recitationMode === "leader" ? (
-            <div className="flex flex-col gap-4 text-left max-w-2xl mx-auto">
-              {/* Leader segment */}
-              <div className="p-3 bg-stone-50 dark:bg-stone-900 rounded-xl border border-stone-100 dark:border-stone-850">
-                <span className="text-[10px] font-mono font-bold text-amber-700 dark:text-amber-400 flex items-center gap-1 uppercase tracking-wider mb-1">
-                  <span className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-ping"></span>
-                  Leader ({voiceGender === "female" ? "Sister Beatrice" : "Brother Paul"} speaks):
-                </span>
-                <p className={`text-sm leading-relaxed italic ${isVoiceSpeaking ? "text-stone-900 dark:text-stone-150 font-medium" : "text-stone-500 dark:text-stone-400"}`}>
-                  "{prayerScript.leader}"
-                </p>
-              </div>
+          {showPrayerText ? (
+            recitationMode === "leader" ? (
+              <div className="flex flex-col gap-4 text-left max-w-2xl mx-auto">
+                {/* Leader segment */}
+                <div className="p-3 bg-stone-50 dark:bg-stone-900 rounded-xl border border-stone-100 dark:border-stone-800">
+                  <span className="text-[10px] font-mono font-bold text-amber-700 dark:text-amber-400 flex items-center gap-1 uppercase tracking-wider mb-1">
+                    <span className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-ping"></span>
+                    Leader (Vocal Guide Speaks):
+                  </span>
+                  <p className={`text-sm leading-relaxed italic ${isVoiceSpeaking ? "text-stone-900 dark:text-stone-200 font-medium" : "text-stone-500 dark:text-stone-400"}`}>
+                    "{prayerScript.leader}"
+                  </p>
+                </div>
 
-              {/* Response segment */}
-              <div className="p-3 bg-amber-500/5 dark:bg-amber-500/[0.02] rounded-xl border border-amber-500/10">
-                <span className="text-[10px] font-mono font-bold text-amber-700 dark:text-amber-400 flex items-center gap-1 uppercase tracking-wider mb-1">
-                  <Heart className="h-3 w-3 inline text-amber-600 animate-pulse" />
-                  Your Response (Recite Aloud):
-                </span>
-                <p className={`text-sm leading-relaxed font-semibold italic ${!isVoiceSpeaking && isPlaying ? "text-stone-900 dark:text-stone-100 font-normal underline decoration-amber-500/25 decoration-wavy" : "text-stone-500 dark:text-stone-400"}`}>
-                  "{prayerScript.response}"
-                </p>
+                {/* Response segment */}
+                <div className="p-3 bg-amber-500/5 dark:bg-amber-500/[0.02] rounded-xl border border-amber-500/10">
+                  <span className="text-[10px] font-mono font-bold text-amber-700 dark:text-amber-400 flex items-center gap-1 uppercase tracking-wider mb-1">
+                    <Heart className="h-3 w-3 inline text-amber-600 animate-pulse" />
+                    Your Response (Recite Aloud):
+                  </span>
+                  <p className={`text-sm leading-relaxed font-semibold italic ${!isVoiceSpeaking && isPlaying ? "text-stone-900 dark:text-stone-100 font-normal underline decoration-amber-500/25 decoration-wavy" : "text-stone-500 dark:text-stone-400"}`}>
+                    "{prayerScript.response}"
+                  </p>
+                </div>
               </div>
-            </div>
+            ) : (
+              // Full play along companion mode
+              <p className="text-base md:text-[17px] text-stone-800 dark:text-stone-200 font-heading leading-relaxed font-normal max-w-2xl mx-auto italic">
+                "{prayerScript.full}"
+              </p>
+            )
           ) : (
-            // Full play along companion mode
-            <p className="text-base md:text-[17px] text-stone-850 dark:text-stone-150 font-heading leading-relaxed font-normal max-w-2xl mx-auto italic">
-              "{prayerScript.full}"
-            </p>
+            <div className="py-8 flex flex-col items-center justify-center gap-3">
+              <span className="p-4 rounded-full bg-amber-500/15 dark:bg-amber-500/5 border border-amber-500/20 text-amber-600 animate-pulse">
+                <Flame className="h-6 w-6" />
+              </span>
+              <p className="text-xs text-stone-500 dark:text-stone-400 max-w-xs mx-auto italic leading-normal">
+                Active prayer text is hidden for focused scripture meditation. Follow along by listening to the spoken guides.
+              </p>
+            </div>
           )}
+        </div>
+
+        {/* Subtle, pulsing audio visualizer bar */}
+        <div className="flex flex-col items-center justify-center -mt-2 mb-4">
+          <div 
+            ref={visualizerRef}
+            className="flex items-end justify-center gap-1.5 h-10 w-full max-w-[200px] mx-auto"
+          >
+            {Array.from({ length: 16 }).map((_, i) => (
+              <div
+                key={i}
+                className="w-1.5 h-full rounded-full bg-gradient-to-t from-amber-600 to-amber-500 dark:from-amber-550 dark:to-amber-400 origin-bottom"
+                style={{ transform: "scaleY(0.08)", opacity: 0.3 }}
+              />
+            ))}
+          </div>
+          <span className="text-[9px] font-mono text-stone-400 dark:text-stone-500 tracking-wider mt-1.5 uppercase select-none">
+            {isPlaying || soundscapeEnabled ? "Meditation Audio Pulse" : "Visualizer Standby"}
+          </span>
         </div>
 
         {/* Dynamic Prayer Helper Text (Hail Mary, Glory Be fully printed for ease) */}
         <div className="border-t border-stone-100 dark:border-stone-900 pt-3 flex justify-between items-center">
-          <span className="text-[10px] text-stone-450 dark:text-stone-500 italic">
+          <span className="text-[10px] text-stone-500 dark:text-stone-500 italic">
             Liturgical devotion of the {selectedMysteryKey} Holy Mystery.
           </span>
           <button 
@@ -1067,7 +1375,7 @@ export function AudioRosary({ onRosaryComplete, isTabActive = true, setActiveTab
               className="rounded border-stone-300 text-amber-600 focus:ring-amber-500 cursor-pointer h-4 w-4 accent-amber-600"
             />
           </div>
-          <span className="text-[9.5px] text-stone-405 dark:text-stone-500 leading-none text-right">
+          <span className="text-[9.5px] text-stone-400 dark:text-stone-500 leading-none text-right">
             {autoAdvance ? "Advances automatically when guide stops speaking." : "Requires manual clicking for next bead."}
           </span>
           

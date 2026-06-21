@@ -83,3 +83,19 @@ export interface DailyReflection {
   morningPrayer: string;
   eveningPrayer: string;
 }
+
+export interface Saint {
+  id: string;
+  name: string;
+  title: string;
+  feastDay: string;
+  patronage: string;
+  era: string;
+  color: 'green' | 'violet' | 'white' | 'red' | 'rose' | 'blue';
+  biography: string;
+  virtues: string[];
+  traditionalPrayer: string;
+  liturgicalAffiliation?: string;
+  imageSeed?: string; // used for generating beautiful visual avatars or icons
+}
+
