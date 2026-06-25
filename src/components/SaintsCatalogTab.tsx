@@ -280,7 +280,7 @@ export default function SaintsCatalogTab({
                         <div className="font-heading font-medium text-xs text-stone-800 dark:text-stone-200 group-hover:text-amber-600 dark:group-hover:text-amber-400 truncate">
                           {s.name}
                         </div>
-                        <div className="text-[10px] text-stone-450 dark:text-stone-500 truncate font-sans">
+                        <div className="text-[10px] text-stone-500 dark:text-stone-400 truncate font-sans">
                           {s.patronage}
                         </div>
                       </div>
@@ -321,7 +321,7 @@ export default function SaintsCatalogTab({
                     placeholder="Search saints by name, patronage, or century (e.g. Peter, Lost Causes, 20th Century)..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-9 pr-4 py-2 bg-stone-50 dark:bg-stone-900/50 border border-stone-200 dark:border-stone-800 rounded-xl text-xs font-sans text-stone-800 dark:text-stone-100 placeholder-stone-450 focus:outline-hidden focus:ring-1 focus:ring-[#d4af37] focus:border-transparent transition-all"
+                    className="w-full pl-9 pr-4 py-2 bg-stone-50 dark:bg-stone-900/50 border border-stone-200 dark:border-stone-800 rounded-xl text-xs font-sans text-stone-800 dark:text-stone-100 placeholder-stone-400 dark:placeholder-stone-500 focus:outline-hidden focus:ring-1 focus:ring-[#d4af37] focus:border-transparent transition-all"
                   />
                   {searchQuery && (
                     <button 
@@ -449,7 +449,7 @@ export default function SaintsCatalogTab({
                   value={exploreQuery}
                   onChange={(e) => setExploreQuery(e.target.value)}
                   disabled={isExploring}
-                  className="flex-1 px-4 py-2.5 bg-stone-50 dark:bg-stone-900/50 border border-stone-200 dark:border-stone-850 rounded-xl text-xs font-sans text-stone-800 dark:text-stone-100 placeholder-stone-450 focus:outline-hidden focus:ring-1 focus:ring-amber-500 focus:border-transparent"
+                  className="flex-1 px-4 py-2.5 bg-stone-50 dark:bg-stone-900/50 border border-stone-200 dark:border-stone-850 rounded-xl text-xs font-sans text-stone-800 dark:text-stone-100 placeholder-stone-400 dark:placeholder-stone-500 focus:outline-hidden focus:ring-1 focus:ring-amber-500 focus:border-transparent"
                 />
                 <button
                   type="submit"
@@ -647,7 +647,7 @@ export default function SaintsCatalogTab({
                   <button
                     type="button"
                     onClick={() => handleCopyPrayer(selectedSaint.traditionalPrayer, selectedSaint.id)}
-                    className="text-[9px] font-mono font-bold text-stone-450 hover:text-stone-800 dark:text-stone-500 dark:hover:text-stone-200 flex items-center gap-1 cursor-pointer"
+                    className="text-[9px] font-mono font-bold text-stone-500 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-200 flex items-center gap-1 cursor-pointer"
                   >
                     {copied === selectedSaint.id ? (
                       <>

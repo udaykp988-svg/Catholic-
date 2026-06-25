@@ -1015,7 +1015,7 @@ export function AudioRosary({
                       {getPhoneDefaultVoice(availableVoices)?.name || "System default"}
                     </span>
                   </div>
-                  <p className="text-[9.5px] text-stone-450 leading-relaxed">
+                  <p className="text-[9.5px] text-stone-500 dark:text-stone-400 leading-relaxed">
                     Recitations will play naturally using the default preferred language speaker configured on your mobile phone or browser.
                   </p>
                 </div>

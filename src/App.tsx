@@ -8,9 +8,10 @@ import {
   Flame, BookOpen, Heart, Compass, Calendar, Moon, Sun, Bell, 
   Send, Plus, Trash, Check, Sparkles, RefreshCw, Info, HelpCircle, 
   CheckCircle, ChevronRight, ChevronDown, BookMarked, UserCheck, Eye, ShieldAlert, WifiOff, Wifi, Award,
-  ClipboardCheck, Edit, X, Volume2, VolumeX
+  ClipboardCheck, Edit, X, Volume2, VolumeX, Filter, Sliders
 } from "lucide-react";
 import { AudioRosary } from "./components/AudioRosary";
+import { SpeechToTextButton } from "./components/SpeechToTextButton";
 import { FEAST_DAYS, TRADITIONAL_PRAYERS, NOVENAS, SCRIPTURE_READINGS, TraditionalPrayer } from "./data/liturgy";
 import { PersonalIntention, CommunityPrayer, Novena, ScriptureReading, UserStats, DailyReflection, LiturgicalSeason } from "./types";
 import { AuthOverlay } from "./components/AuthOverlay";
@@ -132,6 +133,7 @@ export default function App() {
   const [tempProfileName, setTempProfileName] = useState<string>("");
   const [tempFavoriteSaint, setTempFavoriteSaint] = useState<string>("");
   const [tempFavoriteSaintCustomText, setTempFavoriteSaintCustomText] = useState<string>("");
+  const [tempFontSize, setTempFontSize] = useState<number>(16);
   const [saintsSearchQuery, setSaintsSearchQuery] = useState<string>("");
 
   useEffect(() => {
@@ -175,6 +177,7 @@ export default function App() {
   const [selectedIntentionIdForNotes, setSelectedIntentionIdForNotes] = useState<string | null>(null);
   const [intentionNoteText, setIntentionNoteText] = useState<string>("");
   const [votiveDetailId, setVotiveDetailId] = useState<string | null>(null);
+  const [votiveFilter, setVotiveFilter] = useState<string>("all");
 
   // Novenas states
   const [activeNovenas, setActiveNovenas] = useState<Novena[]>([]);
@@ -198,6 +201,17 @@ export default function App() {
     totalPrayersCount: 14,
     completedScripturesCount: 2
   });
+
+  // Accessibility font size state
+  const [appFontSize, setAppFontSize] = useState<number>(() => {
+    const saved = localStorage.getItem("sanctuary_font_size");
+    return saved ? parseInt(saved, 10) : 16;
+  });
+
+  useEffect(() => {
+    document.documentElement.style.fontSize = `${appFontSize}px`;
+    localStorage.setItem("sanctuary_font_size", appFontSize.toString());
+  }, [appFontSize]);
 
   // Settings & notifications simulation states
   const [notificationsEnabled, setNotificationsEnabled] = useState<boolean>(true);
@@ -1244,7 +1258,7 @@ export default function App() {
                   className={`text-[9px] font-mono uppercase px-2.5 py-1 rounded-lg cursor-pointer transition-colors ${
                     focusBackground === style 
                       ? "bg-amber-500 text-stone-950 font-bold" 
-                      : "text-stone-450 hover:text-stone-200 hover:bg-stone-800/40"
+                      : "text-stone-400 hover:text-stone-200 hover:bg-stone-800/40"
                   }`}
                 >
                   {style.replace("_", " ")}
@@ -1273,7 +1287,7 @@ export default function App() {
               ) : (
                 <>
                   <VolumeX className="h-3.5 w-3.5" />
-                  <span className="text-[10px] md:text-xs text-stone-450">Cathedral Chants: OFF</span>
+                  <span className="text-[10px] md:text-xs text-stone-400">Cathedral Chants: OFF</span>
                 </>
               )}
             </button>
@@ -1299,7 +1313,7 @@ export default function App() {
               ) : (
                 <>
                   <BookOpen className="h-3.5 w-3.5 text-stone-400" />
-                  <span className="text-[10px] md:text-xs text-stone-450">Scripture Overlay: OFF</span>
+                  <span className="text-[10px] md:text-xs text-stone-400">Scripture Overlay: OFF</span>
                 </>
               )}
             </button>
@@ -1449,7 +1463,7 @@ export default function App() {
                   { id: "confession", label: "Confession Prep", icon: ClipboardCheck },
                   { id: "routines", label: "Routines", icon: Award },
                   { id: "trending", label: "Trending", icon: Flame },
-                  { id: "sleep_stories", label: "Sleep Stories", icon: Moon },
+                  // { id: "sleep_stories", label: "Sleep Stories", icon: Moon },
                   { id: "intentions", label: "Intentions", icon: Heart },
                   { id: "wall", label: "Community", icon: UserCheck },
                   { id: "flashcards", label: "Bible Flashcards", icon: BookOpen },
@@ -1509,7 +1523,7 @@ export default function App() {
                 { id: "confession", shortLabel: "CONF", icon: ClipboardCheck, tooltip: "Confession Prep" },
                 { id: "routines", shortLabel: "RTNS", icon: Award, tooltip: "Prayer Routines" },
                 { id: "trending", shortLabel: "TRND", icon: Flame, tooltip: "Trending List" },
-                { id: "sleep_stories", shortLabel: "REPS", icon: Moon, tooltip: "Sleep Stories" },
+                // { id: "sleep_stories", shortLabel: "REPS", icon: Moon, tooltip: "Sleep Stories" },
                 { id: "intentions", shortLabel: "INTN", icon: Heart, tooltip: "Your Intentions" },
                 { id: "wall", shortLabel: "COMM", icon: UserCheck, tooltip: "Community Feed" },
                 { id: "flashcards", shortLabel: "MEMO", icon: BookOpen, tooltip: "Bible Flashcards" },
@@ -1602,7 +1616,7 @@ export default function App() {
                       className={`px-3 py-1.5 rounded-lg text-[10px] font-mono font-bold uppercase tracking-wider cursor-pointer transition-all duration-250 ${
                         isSelected 
                           ? "bg-gradient-to-r from-amber-500 to-amber-600 text-stone-950 dark:from-amber-400 dark:to-amber-500 dark:text-stone-950 shadow-md font-bold scale-[1.02]" 
-                          : "text-stone-500 dark:text-stone-450 hover:text-stone-800 dark:hover:text-stone-105 hover:bg-stone-200/30 dark:hover:bg-white/[0.03]"
+                          : "text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-100 hover:bg-stone-200/30 dark:hover:bg-white/[0.03]"
                       }`}
                     >
                       {opt.name}
@@ -1626,7 +1640,7 @@ export default function App() {
                   { id: "confession", label: "Confession Prep", icon: ClipboardCheck },
                   { id: "routines", label: "Readings / Prayers", icon: Award },
                   { id: "trending", label: "Trending", icon: Flame },
-                  { id: "sleep_stories", label: "Sleep Stories", icon: Moon },
+                  // { id: "sleep_stories", label: "Sleep Stories", icon: Moon },
                   { id: "intentions", label: "Intentions", icon: Heart },
                   { id: "wall", label: "Community", icon: UserCheck },
                   { id: "flashcards", label: "Bible Flashcards", icon: BookOpen },
@@ -1667,7 +1681,7 @@ export default function App() {
                   { id: "confession", label: "CONFESSION", icon: ClipboardCheck },
                   { id: "routines", label: "ROUTINES", icon: Award },
                   { id: "trending", label: "TRENDING", icon: Flame },
-                  { id: "sleep_stories", label: "REPOSE", icon: Moon },
+                  // { id: "sleep_stories", label: "REPOSE", icon: Moon },
                   { id: "intentions", label: "INTENTIONS", icon: Heart },
                   { id: "wall", label: "COMMUNITY", icon: UserCheck },
                   { id: "flashcards", label: "MEMORIZE", icon: BookOpen },
@@ -1719,7 +1733,7 @@ export default function App() {
                     { id: "confession", label: "Confession Prep", icon: ClipboardCheck },
                     { id: "routines", label: "Routines", icon: Award },
                     { id: "trending", label: "Trending", icon: Flame },
-                    { id: "sleep_stories", label: "Sleep Stories", icon: Moon },
+                    // { id: "sleep_stories", label: "Sleep Stories", icon: Moon },
                     { id: "intentions", label: "Intentions", icon: Heart },
                     { id: "wall", label: "Community", icon: UserCheck },
                     { id: "flashcards", label: "Bible Flashcards", icon: BookOpen },
@@ -1898,6 +1912,63 @@ export default function App() {
                   </div>
                 </div>
 
+                {/* Active Lamps Filter Selectors */}
+                <div className="mb-6 bg-stone-50/50 dark:bg-stone-900/20 border border-stone-200 dark:border-stone-850/60 p-4 rounded-xl w-full">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                    <p className="text-[11px] font-mono uppercase tracking-widest font-bold text-stone-600 dark:text-stone-300 flex items-center gap-1.5">
+                      <Filter className="h-3.5 w-3.5 text-amber-500" />
+                      <span>Focus intercessory prayer time by type:</span>
+                    </p>
+                    {votiveFilter !== "all" && (
+                      <button 
+                        onClick={() => setVotiveFilter("all")}
+                        className="text-[10px] font-mono font-bold text-amber-600 dark:text-amber-400 hover:underline cursor-pointer"
+                      >
+                        [Clear Filter / Show All]
+                      </button>
+                    )}
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    <button
+                      onClick={() => setVotiveFilter("all")}
+                      className={`px-2.5 py-1.5 rounded-lg border text-xs font-mono font-bold transition-all duration-200 cursor-pointer ${
+                        votiveFilter === "all"
+                          ? "bg-stone-900 border-stone-900 text-stone-50 dark:bg-stone-50 dark:border-stone-50 dark:text-stone-950 shadow-xs"
+                          : "bg-white dark:bg-stone-900 border-stone-200 dark:border-stone-800 text-stone-700 dark:text-stone-300 hover:border-stone-300 dark:hover:border-stone-700"
+                      }`}
+                    >
+                      All ({personalIntentions.filter(item => !item.answered).length})
+                    </button>
+                    {INTENTION_CATEGORIES.map(cat => {
+                      const count = personalIntentions.filter(item => !item.answered && item.category === cat.id).length;
+                      return (
+                        <button
+                          key={cat.id}
+                          onClick={() => setVotiveFilter(cat.id)}
+                          className={`px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-all duration-200 flex items-center gap-1.5 cursor-pointer ${
+                            votiveFilter === cat.id
+                              ? "shadow-xs font-bold"
+                              : "bg-white dark:bg-stone-900 border-stone-200 dark:border-stone-800 text-stone-700 dark:text-stone-300 hover:border-stone-300 dark:hover:border-stone-700"
+                          }`}
+                          style={
+                            votiveFilter === cat.id
+                              ? {
+                                  borderColor: cat.hex + "70",
+                                  backgroundColor: cat.hex + "20",
+                                  color: cat.hex
+                                }
+                              : {}
+                          }
+                        >
+                          <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: cat.hex }} />
+                          <span className="text-[11px] font-semibold">{cat.name.split(" ")[0]}</span>
+                          <span className="text-[10px] font-mono opacity-80 font-bold">({count})</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
                 {/* Votives Altar Box */}
                 <div className="relative w-full bg-[#fcfbf9]/50 dark:bg-stone-950/20 border border-stone-200/50 dark:border-stone-850/50 rounded-2xl p-6 md:p-8 flex flex-col items-center justify-center overflow-hidden min-h-[220px]">
                   
@@ -1906,105 +1977,136 @@ export default function App() {
                     <CrossIcon className="h-40 w-40" />
                   </div>
 
-                  {personalIntentions.filter(item => !item.answered).length === 0 ? (
-                    /* EMPTY SANCTUARY PRESENCE */
-                    <div className="text-center py-6 max-w-sm mx-auto z-10 animate-fadeIn">
-                      <div className="flex justify-center gap-4 mb-4 opacity-35">
-                        <div className="w-8 h-12 border border-dashed border-stone-300 dark:border-stone-750 bg-stone-100/10 rounded-t-md rounded-b-sm flex flex-col items-center justify-end pb-1 text-[8px] text-stone-400 font-mono">ordinary</div>
-                        <div className="w-8 h-14 border border-dashed border-stone-300 dark:border-stone-750 bg-stone-100/10 rounded-t-md rounded-b-sm flex flex-col items-center justify-end pb-1 text-[8px] text-stone-400 font-mono">discern</div>
-                        <div className="w-8 h-12 border border-dashed border-stone-300 dark:border-stone-750 bg-stone-100/10 rounded-t-md rounded-b-sm flex flex-col items-center justify-end pb-1 text-[8px] text-stone-400 font-mono">healing</div>
-                      </div>
-                      <p className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed font-sans mb-3">
-                        The sanctuary stands in quiet expectation. No active prayer lamps are burning at this hour.
-                      </p>
-                      <button
-                        onClick={() => setActiveTab("intentions")}
-                        className="px-3 py-1.5 bg-stone-100 hover:bg-stone-200 dark:bg-stone-900 dark:hover:bg-stone-850 rounded-lg text-xs font-mono text-stone-700 dark:text-stone-350 transition-colors border border-stone-200 dark:border-stone-800 cursor-pointer"
-                      >
-                        + Light a Personal Votive
-                      </button>
-                    </div>
-                  ) : (
-                    /* CORE ACTIVE LAMPS GRID */
-                    <div className="w-full space-y-6 z-10">
-                      <div className="flex flex-wrap justify-center gap-x-8 gap-y-10 pb-2">
-                        {personalIntentions.filter(item => !item.answered).map(item => {
-                          const catConfig = getCategoryConfig(item.category);
-                          const isSelectedDetail = votiveDetailId === item.id;
-                          
-                          return (
-                            <div 
-                              key={item.id}
-                              onClick={() => setVotiveDetailId(isSelectedDetail ? null : item.id)}
-                              className="group relative flex flex-col items-center cursor-pointer select-none"
-                            >
-                              {/* Votive Glass Holder */}
-                              <div 
-                                className={`w-14 h-18 bg-stone-50 dark:bg-stone-900 border-x border-b border-t-2 rounded-t-md rounded-b-lg flex flex-col items-center justify-end pb-2.5 shadow-md relative transition-all duration-300 transform group-hover:scale-108 group-hover:-translate-y-1 ${
-                                  isSelectedDetail 
-                                    ? "ring-2 ring-amber-500 scale-108 -translate-y-1 shadow-lg border-stone-300" 
-                                    : "border-stone-200 dark:border-stone-800 hover:border-stone-300"
-                                }`}
-                                style={{
-                                  borderTopColor: catConfig.hex,
-                                  boxShadow: isSelectedDetail ? `0 4px 12px ${catConfig.hex}30` : `0 2px 4px rgba(0,0,0,0.05)`
-                                }}
-                              >
-                                {/* Glowing Flame Assembly */}
-                                <div className="absolute top-1.5 left-1/2 -translate-x-1/2 flex flex-col items-center">
-                                  
-                                  {/* Pulsing Light Aura Glow */}
-                                  <div 
-                                    className="absolute -top-1 w-8 h-8 rounded-full opacity-35 blur-xs animate-pulse transition-all duration-300"
-                                    style={{ 
-                                      backgroundColor: catConfig.hex,
-                                      boxShadow: `0 0 14px 6px ${catConfig.hex}`
-                                    }}
-                                  />
-                                  
-                                  {/* Micro flicker aura */}
-                                  <div 
-                                    className="absolute -top-2 w-10 h-10 rounded-full opacity-15 blur-md animate-ping"
-                                    style={{ backgroundColor: catConfig.hex }}
-                                  />
+                  {(() => {
+                    const activeLamps = personalIntentions.filter(item => !item.answered);
+                    const filteredLamps = votiveFilter === "all" ? activeLamps : activeLamps.filter(item => item.category === votiveFilter);
 
-                                  {/* Actual Flame Graphic */}
-                                  <Flame 
-                                    className="h-5 w-5 animate-bounce fill-current"
-                                    style={{ color: catConfig.hex }}
-                                  />
+                    if (activeLamps.length === 0) {
+                      return (
+                        /* EMPTY SANCTUARY PRESENCE */
+                        <div className="text-center py-6 max-w-sm mx-auto z-10 animate-fadeIn">
+                          <div className="flex justify-center gap-4 mb-4 opacity-35">
+                            <div className="w-8 h-12 border border-dashed border-stone-300 dark:border-stone-750 bg-stone-100/10 rounded-t-md rounded-b-sm flex flex-col items-center justify-end pb-1 text-[8px] text-stone-400 font-mono">ordinary</div>
+                            <div className="w-8 h-14 border border-dashed border-stone-300 dark:border-stone-750 bg-stone-100/10 rounded-t-md rounded-b-sm flex flex-col items-center justify-end pb-1 text-[8px] text-stone-400 font-mono">discern</div>
+                            <div className="w-8 h-12 border border-dashed border-stone-300 dark:border-stone-750 bg-stone-100/10 rounded-t-md rounded-b-sm flex flex-col items-center justify-end pb-1 text-[8px] text-stone-400 font-mono">healing</div>
+                          </div>
+                          <p className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed font-sans mb-3">
+                            The sanctuary stands in quiet expectation. No active prayer lamps are burning at this hour.
+                          </p>
+                          <button
+                            onClick={() => setActiveTab("intentions")}
+                            className="px-3 py-1.5 bg-stone-100 hover:bg-stone-200 dark:bg-stone-900 dark:hover:bg-stone-850 rounded-lg text-xs font-mono text-stone-700 dark:text-stone-350 transition-colors border border-stone-200 dark:border-stone-800 cursor-pointer"
+                          >
+                            + Light a Personal Votive
+                          </button>
+                        </div>
+                      );
+                    }
+
+                    if (filteredLamps.length === 0) {
+                      const catConfig = getCategoryConfig(votiveFilter);
+                      return (
+                        /* NO MATCHING INTENTIONS COHORTS */
+                        <div className="text-center py-10 max-w-sm mx-auto z-10 animate-fadeIn">
+                          <div className="flex justify-center mb-3">
+                            <Flame className="h-10 w-10 animate-pulse" style={{ color: catConfig.hex }} />
+                          </div>
+                          <p className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed font-sans mb-3">
+                            No active <strong style={{ color: catConfig.hex }}>{catConfig.name}</strong> prayer lamps are glowing on the altar currently.
+                          </p>
+                          <button
+                            onClick={() => setVotiveFilter("all")}
+                            className="px-3 py-1.5 bg-stone-100 hover:bg-stone-200 dark:bg-stone-900 dark:hover:bg-stone-850 rounded-lg text-xs font-mono text-stone-755 dark:text-stone-300 transition-colors border border-stone-200 dark:border-stone-800 cursor-pointer font-bold animate-pulse"
+                          >
+                            Show All Active Lamps ({activeLamps.length})
+                          </button>
+                        </div>
+                      );
+                    }
+
+                    return (
+                      /* CORE ACTIVE LAMPS GRID */
+                      <div className="w-full space-y-6 z-10">
+                        <div className="flex flex-wrap justify-center gap-x-8 gap-y-10 pb-2">
+                          {filteredLamps.map(item => {
+                            const catConfig = getCategoryConfig(item.category);
+                            const isSelectedDetail = votiveDetailId === item.id;
+                            
+                            return (
+                              <div 
+                                key={item.id}
+                                onClick={() => setVotiveDetailId(isSelectedDetail ? null : item.id)}
+                                className="group relative flex flex-col items-center cursor-pointer select-none"
+                              >
+                                {/* Votive Glass Holder */}
+                                <div 
+                                  className={`w-14 h-18 bg-stone-50 dark:bg-stone-900 border-x border-b border-t-2 rounded-t-md rounded-b-lg flex flex-col items-center justify-end pb-2.5 shadow-md relative transition-all duration-300 transform group-hover:scale-108 group-hover:-translate-y-1 ${
+                                    isSelectedDetail 
+                                      ? "ring-2 ring-amber-500 scale-108 -translate-y-1 shadow-lg border-stone-300" 
+                                      : "border-stone-200 dark:border-stone-800 hover:border-stone-300"
+                                  }`}
+                                  style={{
+                                    borderTopColor: catConfig.hex,
+                                    boxShadow: isSelectedDetail ? `0 4px 12px ${catConfig.hex}30` : `0 2px 4px rgba(0,0,0,0.05)`
+                                  }}
+                                >
+                                  {/* Glowing Flame Assembly */}
+                                  <div className="absolute top-1.5 left-1/2 -translate-x-1/2 flex flex-col items-center">
+                                    
+                                    {/* Pulsing Light Aura Glow */}
+                                    <div 
+                                      className="absolute -top-1 w-8 h-8 rounded-full opacity-35 blur-xs animate-pulse transition-all duration-300"
+                                      style={{ 
+                                        backgroundColor: catConfig.hex,
+                                        boxShadow: `0 0 14px 6px ${catConfig.hex}`
+                                      }}
+                                    />
+                                    
+                                    {/* Micro flicker aura */}
+                                    <div 
+                                      className="absolute -top-2 w-10 h-10 rounded-full opacity-15 blur-md animate-ping"
+                                      style={{ backgroundColor: catConfig.hex }}
+                                    />
+
+                                    {/* Actual Flame Graphic */}
+                                    <Flame 
+                                      className="h-5 w-5 animate-bounce fill-current"
+                                      style={{ color: catConfig.hex }}
+                                    />
+                                  </div>
+
+                                  {/* Monogram abbreviation of the title on glass vessel */}
+                                  <span className="text-[10px] font-mono tracking-widest text-stone-400 dark:text-stone-500 font-bold uppercase z-10">
+                                    {item.title.trim().substring(0, 2)}
+                                  </span>
                                 </div>
 
-                                {/* Monogram abbreviation of the title on glass vessel */}
-                                <span className="text-[10px] font-mono tracking-widest text-stone-400 dark:text-stone-500 font-bold uppercase z-10">
-                                  {item.title.trim().substring(0, 2)}
-                                </span>
-                              </div>
+                                {/* Shelf Shadow Base Anchor */}
+                                <div className="absolute bottom-[-10px] w-16 h-1.5 bg-black/5 dark:bg-black/30 rounded-full blur-xs pointer-events-none group-hover:scale-110 transition-all duration-300" />
 
-                              {/* Shelf Shadow Base Anchor */}
-                              <div className="absolute bottom-[-10px] w-16 h-1.5 bg-black/5 dark:bg-black/30 rounded-full blur-xs pointer-events-none group-hover:scale-110 transition-all duration-300" />
-
-                              {/* Title labels block */}
-                              <div className="mt-3 text-center max-w-[100px]">
-                                <span className="text-[10px] font-sans font-bold text-stone-800 dark:text-stone-200 line-clamp-1 block">
-                                  {item.title}
-                                </span>
-                                <span 
-                                  className="text-[8px] font-mono uppercase tracking-widest block font-extrabold"
-                                  style={{ color: catConfig.hex }}
-                                >
-                                  {catConfig.name.split(" ")[0]}
-                                </span>
+                                {/* Title labels block */}
+                                <div className="mt-3 text-center max-w-[100px]">
+                                  <span className="text-[10px] font-sans font-bold text-stone-800 dark:text-stone-200 line-clamp-1 block">
+                                    {item.title}
+                                  </span>
+                                  <span 
+                                    className="text-[8px] font-mono uppercase tracking-widest block font-extrabold"
+                                    style={{ color: catConfig.hex }}
+                                  >
+                                    {catConfig.name.split(" ")[0]}
+                                  </span>
+                                </div>
                               </div>
-                            </div>
-                          );
-                        })}
+                            );
+                          })}
+                        </div>
+
+                        {/* Interactive Glass Shelf Stand Shadow */}
+                        <div className="w-full h-1 bg-linear-to-r from-transparent via-stone-300/60 to-transparent dark:via-stone-750/50 rounded-full shadow-inner" />
                       </div>
-
-                      {/* Interactive Glass Shelf Stand Shadow */}
-                      <div className="w-full h-1 bg-linear-to-r from-transparent via-stone-300/60 to-transparent dark:via-stone-750/50 rounded-full shadow-inner" />
-                    </div>
-                  )}
+                    );
+                  })()}
+                </div>
 
                   {/* DRAWER/CARD DETAIL PREVIEW FOR CRITICAL DETAILED DEVOTION */}
                   {votiveDetailId && (() => {
@@ -2026,7 +2128,7 @@ export default function App() {
                           <span className={`text-[9px] px-2 py-0.5 rounded font-mono uppercase tracking-wider font-semibold border ${catConfig.badge}`}>
                             {catConfig.name}
                           </span>
-                          <span className="text-[9px] font-mono text-stone-450 dark:text-stone-500">
+                          <span className="text-[9px] font-mono text-stone-500 dark:text-stone-400">
                             Lit on {new Date(detailedInt.createdAt).toLocaleDateString()}
                           </span>
                         </div>
@@ -2073,7 +2175,6 @@ export default function App() {
                     );
                   })()}
                 </div>
-              </div>
 
               {/* BRAND NEW: DAILY LITURGICAL SEASON SAINT AFFIRMATION */}
               <div className="bg-white dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-2xl p-6 shadow-sm relative overflow-hidden transition-all">
@@ -2213,13 +2314,19 @@ export default function App() {
                   </div>
                   <div>
                     <label className="text-xs font-mono uppercase tracking-wider text-stone-400 block mb-1">Your Pressing Intention (Optional):</label>
-                    <input
-                      type="text"
-                      className="text-xs border border-stone-200 dark:border-stone-800 rounded-lg p-2 bg-white dark:bg-stone-950 w-full text-stone-950 dark:text-stone-100"
-                      placeholder="My grandfather's chest issue, finding focus..."
-                      value={devotionalIntention}
-                      onChange={(e) => setDevotionalIntention(e.target.value)}
-                    />
+                    <div className="relative w-full">
+                      <input
+                        type="text"
+                        className="text-xs border border-stone-200 dark:border-stone-800 rounded-lg p-2 pr-10 bg-white dark:bg-stone-950 w-full text-stone-950 dark:text-stone-100"
+                        placeholder="My grandfather's chest issue, finding focus..."
+                        value={devotionalIntention}
+                        onChange={(e) => setDevotionalIntention(e.target.value)}
+                      />
+                      <SpeechToTextButton 
+                        onTranscript={(text) => setDevotionalIntention(prev => prev ? prev + " " + text : text)}
+                        className="absolute right-1 top-1/2 -translate-y-1/2"
+                      />
+                    </div>
                   </div>
                 </div>
 
@@ -2378,14 +2485,14 @@ export default function App() {
                           </div>
                           <button
                             onClick={() => setSelectedNovenaId(null)}
-                            className="text-xs text-stone-400 hover:text-stone-650"
+                            className="text-xs text-stone-950 dark:text-stone-50 hover:text-black dark:hover:text-white font-bold underline decoration-amber-500/40 hover:decoration-amber-500 underline-offset-4 cursor-pointer"
                           >
                             Back to Library
                           </button>
                         </div>
 
                         {/* Traditional Days Progress */}
-                        <div className="flex items-center justify-between gap-1.5 mb-5 overflow-x-auto py-1">
+                        <div className="flex items-center justify-start md:justify-center gap-2.5 mb-5 overflow-x-auto py-2 px-1">
                           {activeNov.prayersByDay.map(day => {
                             const isDone = activeNov.completedDays.includes(day.day);
                             const isActive = activeNov.currentDay === day.day;
@@ -2402,12 +2509,12 @@ export default function App() {
                                   });
                                   saveNovenasToStorage(updated);
                                 }}
-                                className={`w-8 h-8 rounded-full flex items-center justify-center font-mono text-xs font-bold transition-all cursor-pointer ${
+                                className={`w-8 h-8 rounded-full flex items-center justify-center font-mono text-xs font-bold transition-all cursor-pointer shrink-0 ${
                                   isDone 
                                     ? "bg-emerald-600 text-white" 
                                     : isActive 
-                                      ? "bg-amber-500 text-stone-900 ring-2 ring-amber-200 dark:ring-amber-900 scale-110" 
-                                      : "bg-stone-100 dark:bg-stone-900 text-stone-400 hover:bg-stone-200"
+                                      ? "bg-amber-500 text-stone-900 ring-4 ring-amber-500/25 dark:ring-amber-500/35 scale-105" 
+                                      : "bg-stone-100 dark:bg-stone-900 text-stone-650 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-stone-850"
                                 }`}
                               >
                                 {day.day}
@@ -2543,13 +2650,19 @@ export default function App() {
                     </div>
                     <div>
                       <label className="text-xs font-mono text-stone-500 block mb-1">Brief Description / Intention Context:</label>
-                      <input 
-                        type="text"
-                        value={newIntentionDesc}
-                        onChange={(e) => setNewIntentionDesc(e.target.value)}
-                        className="text-xs border border-stone-200 dark:border-stone-850 rounded-lg p-2.5 bg-stone-50 dark:bg-stone-950 w-full text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-1 focus:ring-amber-500"
-                        placeholder="E.g., Give courage to doctors and help my family be calm..."
-                      />
+                      <div className="relative w-full">
+                        <input 
+                          type="text"
+                          value={newIntentionDesc}
+                          onChange={(e) => setNewIntentionDesc(e.target.value)}
+                          className="text-xs border border-stone-200 dark:border-stone-850 rounded-lg p-2.5 pr-10 bg-stone-50 dark:bg-stone-950 w-full text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                          placeholder="E.g., Give courage to doctors and help my family be calm..."
+                        />
+                        <SpeechToTextButton 
+                          onTranscript={(text) => setNewIntentionDesc(prev => prev ? prev + " " + text : text)}
+                          className="absolute right-1 top-1/2 -translate-y-1/2"
+                        />
+                      </div>
                     </div>
                     <div>
                       <label className="text-xs font-mono text-stone-500 block mb-1">Symbolic Color & Category:</label>
@@ -2654,7 +2767,7 @@ export default function App() {
 
                 {personalIntentions.filter(item => !item.answered).length === 0 ? (
                   <div className="text-center py-8 text-xs text-stone-500">
-                    <CheckCircle className="h-5 w-5 mx-auto mb-2 text-stone-450" />
+                    <CheckCircle className="h-5 w-5 mx-auto mb-2 text-stone-400 dark:text-stone-600" />
                     All intentions answered or archived! Light a new prayer candle above.
                   </div>
                 ) : (
@@ -2765,7 +2878,7 @@ export default function App() {
                             ) : (
                               <button
                                 onClick={() => setSelectedIntentionIdForNotes(item.id)}
-                                className="text-[11px] font-mono text-stone-450 hover:text-stone-750 hover:underline cursor-pointer flex items-center gap-1"
+                                className="text-[11px] font-mono text-stone-500 hover:text-stone-700 dark:text-stone-400 dark:hover:text-stone-300 hover:underline cursor-pointer flex items-center gap-1"
                               >
                                 + Write Private Journal Note
                               </button>
@@ -2842,7 +2955,7 @@ export default function App() {
                         </div>
 
                         {item.notes && (
-                          <div className="mt-2 text-[11px] bg-amber-500/5 p-1.5 rounded text-stone-600 dark:text-stone-450">
+                          <div className="mt-2 text-[11px] bg-amber-500/5 p-1.5 rounded text-stone-600 dark:text-stone-400">
                             <strong>Intervention:</strong> {item.notes}
                           </div>
                         )}
@@ -2883,15 +2996,21 @@ export default function App() {
                 <form onSubmit={handlePostToWall} className="space-y-4">
                   <div>
                     <label className="text-xs font-mono text-stone-500 block mb-1">Your Prayer Pleading / Intercession request:</label>
-                    <textarea
-                      value={newWallContent}
-                      onChange={(e) => setNewWallContent(e.target.value)}
-                      rows={3}
-                      max-length={250}
-                      className="text-xs border border-stone-200 dark:border-stone-800 rounded-lg p-2.5 bg-stone-50 dark:bg-stone-950 w-full text-stone-900 dark:text-stone-100 placeholder:text-stone-400 focus:outline-none focus:ring-1 focus:ring-amber-500"
-                      placeholder="Pray for us. We are currently searching for job peace... (Limit 250 characters)"
-                      required
-                    />
+                    <div className="relative w-full">
+                      <textarea
+                        value={newWallContent}
+                        onChange={(e) => setNewWallContent(e.target.value)}
+                        rows={3}
+                        max-length={250}
+                        className="text-xs border border-stone-200 dark:border-stone-800 rounded-lg p-2.5 pr-10 bg-stone-50 dark:bg-stone-950 w-full text-stone-900 dark:text-stone-100 placeholder:text-stone-400 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                        placeholder="Pray for us. We are currently searching for job peace... (Limit 250 characters)"
+                        required
+                      />
+                      <SpeechToTextButton 
+                        onTranscript={(text) => setNewWallContent(prev => prev ? prev + " " + text : text)}
+                        className="absolute right-2.5 bottom-2.5 z-10"
+                      />
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -2940,7 +3059,7 @@ export default function App() {
                     <h3 className="text-lg font-heading font-semibold text-stone-950 dark:text-stone-50">
                       The Communion of Prayers Wall
                     </h3>
-                    <p className="text-[11px] text-stone-450">
+                    <p className="text-[11px] text-stone-500 dark:text-stone-400">
                       Spiritual communion. Stand united with other faithful souls across the globe.
                     </p>
                   </div>
@@ -2958,7 +3077,7 @@ export default function App() {
                 </div>
 
                 {isLoadingWall ? (
-                  <div className="py-12 text-center text-xs font-mono text-stone-450">
+                  <div className="py-12 text-center text-xs font-mono text-stone-500 dark:text-stone-400">
                     Entering Eucharistic prayer room ... gathering community intentions...
                   </div>
                 ) : communityPrayers.length === 0 ? (
@@ -2973,7 +3092,7 @@ export default function App() {
                           <span className="text-[9px] font-mono font-bold tracking-widest text-[#9b6c20] bg-amber-100/40 px-2 py-0.5 rounded-full uppercase">
                             {item.category || "Healing"}
                           </span>
-                          <span className="text-[10px] font-mono text-stone-450 dark:text-stone-500">
+                          <span className="text-[10px] font-mono text-stone-500 dark:text-stone-400">
                             {new Date(item.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                           </span>
                         </div>
@@ -3147,6 +3266,7 @@ export default function App() {
                     setTempProfileName(profileName);
                     setTempFavoriteSaint(favoriteSaint);
                     setTempFavoriteSaintCustomText(favoriteSaintCustomText);
+                    setTempFontSize(appFontSize);
                     setIsEditProfileOpen(true);
                     triggerNotificationSound();
                   }}
@@ -3158,7 +3278,7 @@ export default function App() {
               </div>
             </div>
 
-            <p className="text-[11px] text-stone-450 dark:text-stone-450 block mb-4 leading-relaxed">
+            <p className="text-[11px] text-stone-500 dark:text-stone-400 block mb-4 leading-relaxed">
               Define your faith details. Your chosen baptismal or confirmation patron saint customizes the daily saintly teachings.
             </p>
 
@@ -3170,7 +3290,7 @@ export default function App() {
                     {profileName.trim().charAt(0) || "P"}
                   </div>
                   <div className="min-w-0">
-                    <div className="text-[9.5px] font-mono text-stone-450 dark:text-stone-500 uppercase tracking-widest font-bold">
+                    <div className="text-[9.5px] font-mono text-stone-500 dark:text-stone-400 uppercase tracking-widest font-bold">
                       Faithful Pilgrim
                     </div>
                     <div className="text-sm font-heading font-semibold text-stone-850 dark:text-stone-200 truncate">
@@ -3388,6 +3508,34 @@ export default function App() {
                         />
                       </div>
                     )}
+
+                    {/* Accessibility Font Size Slider */}
+                    <div className="space-y-2 pt-2.5 border-t border-stone-100 dark:border-stone-900/60">
+                      <div className="flex items-center justify-between">
+                        <label className="block text-[9.5px] font-mono text-stone-500 dark:text-stone-400 uppercase tracking-wider font-bold flex items-center gap-1">
+                          <Sliders className="h-3.5 w-3.5 text-amber-500" />
+                          <span>Text Font Size</span>
+                        </label>
+                        <span className="text-[10px] font-mono text-amber-600 dark:text-amber-400 font-bold bg-amber-500/10 px-1.5 py-0.5 rounded">
+                          {tempFontSize}px ({Math.round((tempFontSize / 16) * 100)}%)
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2.5 bg-stone-50 dark:bg-stone-900/50 p-2 rounded-xl border border-stone-150 dark:border-stone-850/60">
+                        <span className="text-xs text-stone-400 dark:text-stone-500 select-none font-medium">A</span>
+                        <input
+                          type="range"
+                          min="13"
+                          max="22"
+                          value={tempFontSize}
+                          onChange={(e) => setTempFontSize(parseInt(e.target.value, 10))}
+                          className="flex-1 h-1.5 bg-stone-200 dark:bg-stone-800 rounded-lg appearance-none cursor-pointer accent-amber-500"
+                        />
+                        <span className="text-lg font-bold text-stone-600 dark:text-stone-300 select-none">A</span>
+                      </div>
+                      <p className="text-[9.5px] text-stone-400 dark:text-stone-500 leading-normal">
+                        Dynamically adjust the sanctuary font scale for enhanced legibility and general accessibility.
+                      </p>
+                    </div>
                   </div>
 
                   {/* Actions */}
@@ -3406,6 +3554,7 @@ export default function App() {
                         setProfileName(tempProfileName);
                         setFavoriteSaint(tempFavoriteSaint);
                         setFavoriteSaintCustomText(tempFavoriteSaintCustomText);
+                        setAppFontSize(tempFontSize);
                         setIsEditProfileOpen(false);
                         triggerNotificationSound();
                         
@@ -3639,7 +3788,7 @@ export default function App() {
               <BookOpen className="h-4.5 w-4.5 text-amber-600" />
               15-Day Daily Scripture Pathway
             </h4>
-            <p className="text-[11px] text-stone-450 dark:text-stone-450 block mb-3 leading-relaxed">
+            <p className="text-[11px] text-stone-500 dark:text-stone-400 block mb-3 leading-relaxed">
               Accept the challange of reading standard theological selections, ticking off chapters as completed.
             </p>
 
@@ -3729,7 +3878,7 @@ export default function App() {
             <h4 className="text-sm font-heading font-semibold text-stone-950 dark:text-stone-50 mb-1 flex items-center gap-1.5 block">
               Traditional Catholic Prayers Finder
             </h4>
-            <p className="text-[11px] text-stone-450 block mb-3 font-sans">
+            <p className="text-[11px] text-stone-500 dark:text-stone-400 block mb-3 font-sans">
               Locate ancient devotions like the Salve Regina, Anima Christi, or Saint Michael protection pleading.
             </p>
 
@@ -3752,7 +3901,7 @@ export default function App() {
                   <span className="font-heading font-medium text-stone-850 dark:text-stone-300">
                     {p.title}
                   </span>
-                  <span className="text-[9px] font-mono bg-stone-200/50 dark:bg-stone-900 px-2.5 py-0.5 rounded text-stone-450">
+                  <span className="text-[9px] font-mono bg-stone-100 dark:bg-stone-900 px-2.5 py-0.5 rounded text-stone-600 dark:text-stone-400">
                     {p.category}
                   </span>
                 </div>
@@ -3862,7 +4011,7 @@ export default function App() {
       {/* FOOTER */}
       {!isFocusMode && (
         <footer className="mt-auto border-t border-stone-200 dark:border-stone-850 py-6 px-4 md:px-8 text-center bg-white dark:bg-stone-950">
-          <p className="text-xs text-stone-450 leading-relaxed font-sans font-light">
+          <p className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed font-sans font-light">
             "Praise the Lord, all you nations! Extol him, all you peoples! For great is his steadfast love toward us." — Psalm 117
           </p>
           <p className="text-[11px] text-stone-400 font-mono mt-1 font-semibold uppercase tracking-widest">

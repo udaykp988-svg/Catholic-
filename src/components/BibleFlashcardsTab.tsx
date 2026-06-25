@@ -819,7 +819,7 @@ export default function BibleFlashcardsTab({ triggerSound }: BibleFlashcardsTabP
               </div>
             ) : (
               <div className="bg-white dark:bg-[#12101d] border border-stone-250/60 dark:border-stone-850 p-10 rounded-2xl text-center shadow-xs">
-                <AlertCircle className="h-10 w-10 text-stone-450 dark:text-stone-500 mx-auto mb-3" />
+                <AlertCircle className="h-10 w-10 text-stone-400 dark:text-stone-500 mx-auto mb-3" />
                 <h4 className="text-sm font-bold text-stone-700 dark:text-stone-300 uppercase font-mono mb-1">
                   No Bible Cards Available
                 </h4>

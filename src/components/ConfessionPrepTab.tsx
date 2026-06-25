@@ -470,7 +470,7 @@ export function ConfessionPrepTab({ triggerSound }: ConfessionPrepTabProps) {
                                 </span>
                               )}
                             </div>
-                            <p className="text-[11px] font-sans italic text-stone-500 dark:text-stone-450 mt-1 max-w-xl">
+                            <p className="text-[11px] font-sans italic text-stone-500 dark:text-stone-400 mt-1 max-w-xl">
                               "{cmd.commandmentText}"
                             </p>
                           </div>

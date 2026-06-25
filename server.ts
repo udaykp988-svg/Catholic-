@@ -22,13 +22,91 @@ app.use(express.json());
 let ai: GoogleGenAI | null = null;
 if (process.env.GEMINI_API_KEY) {
   try {
-    ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-    console.log("Gemini API initialized successfully.");
+    ai = new GoogleGenAI({
+      apiKey: process.env.GEMINI_API_KEY,
+      httpOptions: {
+        headers: {
+          'User-Agent': 'aistudio-build',
+        }
+      }
+    });
+    console.log("Gemini API initialized successfully with build telemetry.");
   } catch (err) {
     console.error("Error initializing Gemini API:", err);
   }
 } else {
   console.log("No GEMINI_API_KEY found. Using liturgical fallback engine.");
+}
+
+/**
+ * Robust helper to query Gemini content generation with automated retries and fallback model.
+ * If the primary model (default: gemini-3.5-flash) experiences high demand (503),
+ * rate limits (429), or general outages, it automatically fails over to gemini-3.1-flash-lite.
+ */
+async function generateContentWithRetry(params: {
+  contents: any;
+  config?: any;
+  preferredModel?: string;
+}) {
+  if (!ai) {
+    throw new Error("Gemini API client not initialized");
+  }
+
+  const primaryModel = params.preferredModel || "gemini-3.5-flash";
+  const fallbackModel = "gemini-3.1-flash-lite";
+
+  try {
+    console.log(`Attempting generateContent with primary model: ${primaryModel}`);
+    const response = await ai.models.generateContent({
+      model: primaryModel,
+      contents: params.contents,
+      config: params.config,
+    });
+    return response;
+  } catch (firstError: any) {
+    const errorMsg = String(firstError?.message || firstError);
+    const isTemporaryError = firstError && (
+      firstError.status === "UNAVAILABLE" || 
+      firstError.code === 503 ||
+      firstError.status === "RESOURCE_EXHAUSTED" ||
+      firstError.code === 429 ||
+      errorMsg.includes("503") ||
+      errorMsg.includes("429") ||
+      errorMsg.includes("RESOURCE_EXHAUSTED") ||
+      errorMsg.includes("UNAVAILABLE") ||
+      errorMsg.includes("high demand")
+    );
+
+    if (isTemporaryError) {
+      console.log(`[Graceful Recovery] Primary model ${primaryModel} is experiencing temporary high demand. Automatically routeing to ${fallbackModel}.`);
+      try {
+        const response = await ai.models.generateContent({
+          model: fallbackModel,
+          contents: params.contents,
+          config: params.config,
+        });
+        console.log(`[Graceful Recovery] Failover to ${fallbackModel} succeeded.`);
+        return response;
+      } catch (secondError: any) {
+        console.error(`[Server Alert] Fallback model ${fallbackModel} also failed:`, secondError?.message || secondError);
+        throw secondError;
+      }
+    } else {
+      console.log(`[Graceful Recovery] General busy status on primary model. Trying ${fallbackModel} for high availability.`);
+      try {
+        const response = await ai.models.generateContent({
+          model: fallbackModel,
+          contents: params.contents,
+          config: params.config,
+        });
+        console.log(`[Graceful Recovery] Failover to ${fallbackModel} succeeded after general status.`);
+        return response;
+      } catch (secondError: any) {
+        console.error(`[Server Alert] Both primary and fallback models failed:`, firstError?.message || firstError);
+        throw firstError; // Throw original error if both fail
+      }
+    }
+  }
 }
 
 // Memory database for the anonymous Community Prayer Wall
@@ -224,8 +302,8 @@ app.get("/api/reflections/today", async (req, res) => {
       }
       Do not include markdown tags like \`\`\`json or backticks. Only output valid parsable JSON.`;
 
-      const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
+      const response = await generateContentWithRetry({
+        preferredModel: "gemini-3.5-flash",
         contents: prompt,
         config: {
           responseMimeType: "application/json"
@@ -278,8 +356,8 @@ app.post("/api/generate-devotional", async (req, res) => {
     3. An inspirational prayer asking for the intercession of a saint suited for this situation (e.g. Saint Jude for hope, Saint Dymphna for peace of mind, Saint Rita for family, Saint Michael for protection, or Saint Joseph for work/strength).
     Keep the tone serene, traditional, deeply faith-affirming, and beautiful. Format it neatly with spacing.`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+    const response = await generateContentWithRetry({
+      preferredModel: "gemini-3.5-flash",
       contents: prompt,
     });
 
@@ -499,8 +577,8 @@ app.post("/api/generate-affirmation", async (req, res) => {
     }
     Do not include markdown tags like \`\`\`json or backticks. Only output valid parsable JSON.`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3.5-flash",
+    const response = await generateContentWithRetry({
+      preferredModel: "gemini-3.5-flash",
       contents: finalPrompt,
       config: {
         responseMimeType: "application/json"
@@ -654,8 +732,8 @@ app.get("/api/saints/explore", async (req, res) => {
     }
     Do not include markdown tags like \`\`\`json or backticks. Only output valid parsable JSON.`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+    const response = await generateContentWithRetry({
+      preferredModel: "gemini-3.5-flash",
       contents: prompt,
       config: {
         responseMimeType: "application/json"

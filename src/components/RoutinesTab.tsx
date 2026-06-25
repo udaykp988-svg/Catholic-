@@ -414,7 +414,7 @@ export function RoutinesTab({ onAddStatsPrayer, onNavigateToStories }: RoutinesT
                 <div className="text-stone-300 dark:text-stone-800 text-lg font-serif mt-4 select-none">†</div>
               </div>
 
-              {selectedGroupId === "night" && activeStepIdx === steps.length - 1 && (
+              {/* {selectedGroupId === "night" && activeStepIdx === steps.length - 1 && (
                 <div className="p-3.5 bg-violet-500/10 border border-violet-500/20 rounded-xl text-xs flex justify-between items-center gap-4">
                   <span className="text-violet-700 dark:text-violet-300 font-sans font-medium">Ready for bed? Play highly soothing Bible Soundscapes.</span>
                   <button
@@ -424,7 +424,7 @@ export function RoutinesTab({ onAddStatsPrayer, onNavigateToStories }: RoutinesT
                     <span>Go to Stories</span> <ChevronRight className="h-3 w-3" />
                   </button>
                 </div>
-              )}
+              )} */}
             </div>
 
             {/* Micro Timer Actions & Page buttons section */}
@@ -452,7 +452,7 @@ export function RoutinesTab({ onAddStatsPrayer, onNavigateToStories }: RoutinesT
                     </button>
                     <button
                       onClick={handleRestartTimer}
-                      className="p-1 text-stone-450 hover:text-red-500 cursor-pointer rounded-full transition-colors"
+                      className="p-1 text-stone-400 hover:text-red-500 dark:text-stone-550 dark:hover:text-red-400 cursor-pointer rounded-full transition-colors"
                       title="Reset countdown"
                     >
                       <RotateCcw className="h-3.5 w-3.5" />
@@ -466,7 +466,7 @@ export function RoutinesTab({ onAddStatsPrayer, onNavigateToStories }: RoutinesT
                 <button
                   disabled={activeStepIdx === 0}
                   onClick={handlePrevStep}
-                  className="px-3.5 py-2 bg-stone-105 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-xl text-xs font-semibold cursor-pointer text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 disabled:opacity-35 disabled:cursor-not-allowed transition-colors"
+                  className="px-3.5 py-2 bg-stone-100 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-xl text-xs font-semibold cursor-pointer text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 disabled:opacity-35 disabled:cursor-not-allowed transition-colors"
                 >
                   ◀ Previous
                 </button>

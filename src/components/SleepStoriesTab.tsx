@@ -354,7 +354,7 @@ export function SleepStoriesTab() {
                     {story.title}
                   </h5>
                   
-                  <p className="text-[11px] text-stone-500 dark:text-stone-450 leading-relaxed font-sans line-clamp-2 pt-0.5">
+                  <p className="text-[11px] text-stone-500 dark:text-stone-400 leading-relaxed font-sans line-clamp-2 pt-0.5">
                     {story.description}
                   </p>
                 </div>
