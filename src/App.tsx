@@ -4,6 +4,8 @@
  */
 
 import React, { useState, useEffect, useRef } from "react";
+import { SplashScreen } from "./components/SplashScreen";
+import { SkeletonCard } from "./components/SkeletonCard";
 import { 
   Flame, BookOpen, Heart, Compass, Calendar, Moon, Sun, Bell, 
   Send, Plus, Trash, Check, Sparkles, RefreshCw, Info, HelpCircle, 
@@ -75,9 +77,15 @@ export const getCategoryConfig = (categoryId?: string) => {
   return INTENTION_CATEGORIES.find(c => c.id === "healing") || INTENTION_CATEGORIES[3];
 };
 
+
 export default function App() {
   // --- STATE ---
   const [activeTab, setActiveTab] = useState<"reflections" | "rosary" | "calendar" | "novenas" | "intentions" | "wall" | "routines" | "trending" | "sleep_stories" | "design_studio" | "flashcards" | "saints" | "confession">("reflections");
+
+  const [splashDone, setSplashDone] = useState(() => {
+    return sessionStorage.getItem("splashShown") === "true";
+  });
+
   const [navStyle, setNavStyle] = useState<"floating_pill" | "monastic_sidebar" | "cathedral_rail">(() => {
     const saved = localStorage.getItem("sanctuary_nav_style");
     return (saved as any) || "cathedral_rail";
@@ -1169,9 +1177,19 @@ export default function App() {
     p.text.toLowerCase().includes(searchPrayerQuery.toLowerCase())
   );
 
-  return (
-    <div className={`min-h-screen ${isFocusMode ? "bg-[#0a0712] text-stone-100" : isDarkMode ? "bg-stone-950 text-stone-100 hallow-stars" : "bg-[#f9f7f3] text-stone-900"} font-sans transition-colors duration-500 flex flex-col relative overflow-hidden`}>
-      
+  if (!splashDone) {
+      return (
+        <SplashScreen
+          onComplete={() => {
+            sessionStorage.setItem("splashShown", "true");
+            setSplashDone(true);
+          }}
+        />
+      );
+    }
+
+    return (
+      <div className={`min-h-screen ${isFocusMode ? "bg-[#0a0712] text-stone-100" : isDarkMode ? "bg-stone-950 text-stone-100 hallow-stars" : "bg-[#f9f7f3] text-stone-900"} font-sans transition-colors duration-500 flex flex-col relative overflow-hidden`}>
       {/* Tranquil Blurred Background for Focus Mode */}
       {isFocusMode && (
         <div className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-hidden animate-fadeIn">
@@ -1339,9 +1357,9 @@ export default function App() {
             <CrossIcon className="h-5.5 w-5.5" />
           </div>
           <div>
-            <h1 className="text-lg md:text-xl font-heading font-bold text-stone-950 dark:text-stone-50 tracking-wider flex items-center gap-2">
-              LAUDATE SOLMNI
-            </h1>
+           <h1 className="text-lg md:text-xl font-heading font-bold text-stone-950 dark:text-stone-50 tracking-wider flex items-center gap-2">
+                         LAUDATE SOLEMNI
+                       </h1>
             <span className="text-[11px] font-mono tracking-widest text-amber-700 dark:text-amber-400 font-bold uppercase">
               Catholic Companion & Liturgical Guide
             </span>
@@ -1764,9 +1782,10 @@ export default function App() {
           )}
 
           {/* VIEW CONTROLLER SCREEN */}
-          
-          {/* TAB 1: DAILY REFLECTIONS & DEVOTIONALS */}
-          {activeTab === "reflections" && (
+                    <div key={activeTab} className="tab-panel">
+
+                    {/* TAB 1: DAILY REFLECTIONS & DEVOTIONALS */}
+                    {activeTab === "reflections" && (
             <div className="space-y-6">
               
               {/* TODAY'S DEVOTION SHEET (Ivory design or twilight slate) */}
@@ -1805,12 +1824,9 @@ export default function App() {
                   </button>
                 </div>
 
-                {isLoadingReflection ? (
-                  <div className="py-12 text-center text-stone-500 flex flex-col items-center justify-center gap-2 font-mono text-xs">
-                    <RefreshCw className="h-6 w-6 animate-spin text-amber-600" />
-                    Discernment of daily scriptures in progress...
-                  </div>
-                ) : (
+             {isLoadingReflection ? (
+                               <SkeletonCard rows={4} showTitle={true} />
+                             ) : (
                   <div>
                     <h3 className="text-xl md:text-2xl font-heading font-bold text-stone-900 dark:text-stone-50 mb-3 tracking-wide">
                       {todayReflection?.title}
@@ -1818,17 +1834,17 @@ export default function App() {
 
                     {/* Holy Verse pullquote */}
                     <div className="my-5 pl-4 border-l-4 border-amber-600 dark:border-amber-550 italic bg-stone-50 dark:bg-stone-900/50 p-4 rounded-r-xl">
-                      <p className="text-sm md:text-base text-stone-700 dark:text-stone-300 leading-relaxed font-sans font-light">
-                        "{todayReflection?.verse}"
-                      </p>
+                     <p className="verse-text text-stone-700 dark:text-stone-300">
+                                             "{todayReflection?.verse}"
+                                           </p>
                       <cite className="block text-xs font-mono font-bold text-amber-700 dark:text-amber-400 mt-2 uppercase tracking-wide">
                         — {todayReflection?.reference || "Universal Liturgy"}
                       </cite>
                     </div>
 
-                    <div className="text-sm md:text-base text-stone-800 dark:text-stone-350 leading-relaxed font-sans space-y-3 font-normal max-w-3xl">
-                      {todayReflection?.reflectionText.split("\n\n").map((para, i) => (
-                        <p key={i}>{para}</p>
+                   <div className="prayer-text text-stone-800 dark:text-stone-350 space-y-3 max-w-3xl">
+                                         {todayReflection?.reflectionText.split("\n\n").map((para, i) => (
+                                           <p key={i}>{para}</p>
                       ))}
                     </div>
 
@@ -1838,17 +1854,17 @@ export default function App() {
                         <span className="text-[10px] font-mono text-emerald-700 dark:text-emerald-400 uppercase font-bold tracking-widest block mb-1">
                           🌅 Morning Prayer of Surrender
                         </span>
-                        <p className="text-xs text-stone-700 dark:text-stone-400 leading-relaxed italic">
-                          {todayReflection?.morningPrayer}
-                        </p>
+                      <p className="prayer-text text-stone-700 dark:text-stone-400">
+                                                {todayReflection?.morningPrayer}
+                                              </p>
                       </div>
                       <div className="bg-[#fcfbf9] dark:bg-stone-900/60 border border-stone-200 dark:border-stone-800 p-4 rounded-xl">
                         <span className="text-[10px] font-mono text-amber-700 dark:text-amber-400 uppercase font-bold tracking-widest block mb-1">
                           🌌 Evening Examen Resolution
                         </span>
-                        <p className="text-xs text-stone-700 dark:text-stone-400 leading-relaxed italic">
-                          {todayReflection?.eveningPrayer}
-                        </p>
+                      <p className="prayer-text text-stone-700 dark:text-stone-400">
+                                                {todayReflection?.eveningPrayer}
+                                              </p>
                       </div>
                     </div>
 
@@ -2215,11 +2231,8 @@ export default function App() {
                 </div>
 
                 {isGeneratingAffirmation ? (
-                  <div className="py-12 text-center text-stone-400 flex flex-col items-center justify-center gap-2 font-mono text-xs">
-                    <RefreshCw className="h-6 w-6 animate-spin text-amber-600" />
-                    Interceding with the saints via Gemini model...
-                  </div>
-                ) : affirmationData ? (
+                                  <SkeletonCard rows={3} showTitle={false} />
+                                ) : affirmationData ? (
                   <div className="space-y-5 animate-fadeIn">
                     {/* Season Banner */}
                     <div className="bg-stone-50 dark:bg-stone-900/40 border border-stone-200/40 dark:border-stone-800/40 rounded-xl px-4 py-3 flex items-center justify-between text-xs text-stone-700 dark:text-stone-300">
@@ -2238,9 +2251,9 @@ export default function App() {
                     {/* Saint Quote */}
                     <div className="relative p-5 bg-amber-50/15 dark:bg-amber-950/5 border border-amber-500/10 rounded-xl overflow-hidden font-sans">
                       <div className="absolute top-2 right-4 text-amber-500/10 dark:text-amber-500/5 font-serif text-8xl leading-none select-none pointer-events-none">“</div>
-                      <blockquote className="text-sm md:text-base text-stone-800 dark:text-stone-200 leading-relaxed font-sans font-light italic max-w-4xl">
-                        "{affirmationData.quote}"
-                      </blockquote>
+                     <blockquote className="verse-text text-stone-800 dark:text-stone-200 max-w-4xl">
+                                             "{affirmationData.quote}"
+                                           </blockquote>
                       <cite className="block text-xs font-mono font-bold text-amber-700 dark:text-amber-400 mt-2 uppercase tracking-wide">
                         — {affirmationData.saintName}
                       </cite>
@@ -2251,9 +2264,9 @@ export default function App() {
                       <span className="text-[10px] font-mono uppercase tracking-widest text-emerald-700 dark:text-emerald-400 block mb-2 font-bold font-heading">
                         My Saint-Inspired Daily Affirmation:
                       </span>
-                      <p className="text-sm font-sans font-medium text-stone-900 dark:text-stone-100 border-l-2 border-emerald-500 pl-3 leading-relaxed">
-                        {affirmationData.affirmation}
-                      </p>
+                     <p className="prayer-text text-stone-900 dark:text-stone-100 border-l-2 border-emerald-500 pl-3">
+                                             {affirmationData.affirmation}
+                                           </p>
                     </div>
 
                     {/* Spiritual Contemplation */}
@@ -2343,9 +2356,9 @@ export default function App() {
                     <span className="text-[9px] font-mono uppercase tracking-widest text-amber-700 bg-amber-100/40 px-2 py-0.5 rounded block w-max mb-3 font-bold">
                       {generatedDevotional.simulated ? "Static Meditative Prescription" : "Custom Guided Devotional Counsel"}
                     </span>
-                    <p className="text-xs text-stone-850 dark:text-stone-200 whitespace-pre-wrap leading-relaxed font-sans italic">
-                      {generatedDevotional.text}
-                    </p>
+                  <p className="prayer-text text-stone-850 dark:text-stone-200 whitespace-pre-wrap">
+                                        {generatedDevotional.text}
+                                      </p>
                   </div>
                 )}
               </div>
@@ -2548,9 +2561,9 @@ export default function App() {
                               </span>
                             </div>
 
-                            <p className="text-sm text-stone-850 dark:text-stone-200 italic leading-relaxed whitespace-pre-wrap py-3 border-t border-b border-stone-100 dark:border-stone-900">
-                              "{currentDayData.prayer}"
-                            </p>
+                           <p className="prayer-text text-stone-850 dark:text-stone-200 py-3 border-t border-b border-stone-100 dark:border-stone-900">
+                                                         "{currentDayData.prayer}"
+                                                       </p>
 
                             <div className="mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
                               <span className="text-xs text-stone-400">Make sure to recite with a quiet, loving heart.</span>
@@ -3097,9 +3110,9 @@ export default function App() {
                           </span>
                         </div>
 
-                        <p className="text-xs md:text-sm text-stone-800 dark:text-stone-200 font-sans leading-relaxed italic">
-                          "{item.content}"
-                        </p>
+                       <p className="prayer-text text-stone-800 dark:text-stone-200">
+                                                 "{item.content}"
+                                               </p>
 
                         <div className="mt-3.5 pt-3 border-t border-stone-100 dark:border-stone-900/60 flex items-center justify-between">
                           <span className="text-[11px] font-mono text-stone-500 dark:text-stone-500">
@@ -3170,14 +3183,16 @@ export default function App() {
             />
           )}
 
-          {/* TAB 12: CONFESSION PREPARATION & SACRAMENT COMPANION */}
-          {activeTab === "confession" && (
-            <ConfessionPrepTab triggerSound={triggerNotificationSound} />
-          )}
+         {/* TAB 12: CONFESSION PREPARATION & SACRAMENT COMPANION */}
+                   {activeTab === "confession" && (
+                     <ConfessionPrepTab triggerSound={triggerNotificationSound} />
+                   )}
 
-        </div>
+                   </div> {/* end tab-panel */}
 
-        {/* RIGHT COLUMN: USER GROWTH TRACKER & GENERAL STATS SIDEBAR (Sizing responsive to navigation style) */}
+                 </div>
+
+                 {/* RIGHT COLUMN: USER GROWTH TRACKER & GENERAL STATS SIDEBAR(Sizing responsive to navigation style) */}
         <div className={`${navStyle === "monastic_sidebar" ? "lg:col-span-3" : "lg:col-span-4"} flex flex-col gap-6`}>
           
           {/* USER SPIRITUAL COVENANT PROFILE */}
@@ -3700,9 +3715,9 @@ export default function App() {
                           Daily Intercessory Prayer
                         </span>
                       </div>
-                      <p className="text-xs text-stone-750 dark:text-stone-300 font-serif leading-relaxed italic whitespace-pre-line relative z-10">
-                        "{details.traditionalPrayer}"
-                      </p>
+                     <p className="prayer-text text-stone-750 dark:text-stone-300 whitespace-pre-line relative z-10">
+                                             "{details.traditionalPrayer}"
+                                           </p>
                     </div>
                   </div>
 
