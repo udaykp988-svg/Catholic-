@@ -350,7 +350,7 @@ export function AudioRosary({ onRosaryComplete, isTabActive = true, setActiveTab
           </button>
           <div className="flex items-center gap-3">
             <button onClick={()=>{prev();stopVoice();}} disabled={stepIdx===0} className="p-2 bg-[#131008] border border-[#1e1a10] rounded-xl text-[#6b5a30] disabled:opacity-30 cursor-pointer"><ChevronLeft className="w-3.5 h-3.5"/></button>
-            <button onClick={()=>setIsPlaying(!isPlaying)} className="p-3 bg-[#c9922a] rounded-full text-[#1a0f00] cursor-pointer"><{isPlaying?Pause:Play} className="w-4 h-4 fill-current"/></button>
+            <button onClick={()=>setIsPlaying(!isPlaying)} className="p-3 bg-[#c9922a] rounded-full text-[#1a0f00] cursor-pointer">{isPlaying ? <Pause className="w-4 h-4 fill-current"/> : <Play className="w-4 h-4 fill-current"/>}</button>
             <button onClick={()=>{next();stopVoice();}} className="p-2 bg-[#131008] border border-[#1e1a10] rounded-xl text-[#6b5a30] cursor-pointer"><ChevronRight className="w-3.5 h-3.5"/></button>
           </div>
           <label className="flex items-center gap-1.5 cursor-pointer">
