@@ -649,7 +649,7 @@ export default function App() {
               <div className="flex gap-3 items-center">
                 <button className="hallow-play-btn" onClick={() => { setIsPlaying(true); setMainTab("pray"); setPraySubTab("rosary"); triggerChime(); }}>
                   <Play className="w-4 h-4 fill-current" />
-                  Begin Morning Prayer
+                 {new Date().getHours() < 12 ? "Begin Morning Prayer" : new Date().getHours() < 17 ? "Begin Afternoon Prayer" : "Begin Evening Prayer"}
                 </button>
                 <button className="hallow-play-btn ghost" onClick={() => setIsFocusMode(true)}>
                   Focus Mode
