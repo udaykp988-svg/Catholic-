@@ -629,3 +629,42 @@ nav, button, [role="tab"] {
   0%, 100% { opacity: 0.6; transform: scale(1); }
   50%       { opacity: 1; transform: scale(1.08); }
 }
+
+/* Dark theme override for all sub-components */
+.hallow-content div,
+.hallow-content section,
+.hallow-content article {
+  --tw-bg-opacity: 1;
+}
+
+.hallow-content .bg-white,
+.hallow-content [class*="bg-white"],
+.hallow-content [class*="bg-stone-50"],
+.hallow-content [class*="bg-stone-100"],
+.hallow-content [class*="bg-gray-50"],
+.hallow-content [class*="bg-gray-100"] {
+  background-color: #131008 !important;
+}
+
+.hallow-content .text-stone-900,
+.hallow-content .text-stone-800,
+.hallow-content .text-stone-700,
+.hallow-content .text-stone-600,
+.hallow-content .text-gray-900,
+.hallow-content .text-gray-800,
+.hallow-content .text-black {
+  color: #d4c9a8 !important;
+}
+
+.hallow-content .border-stone-200,
+.hallow-content .border-stone-300,
+.hallow-content .border-gray-200 {
+  border-color: #2a1e08 !important;
+}
+
+.hallow-content .shadow,
+.hallow-content .shadow-md,
+.hallow-content .shadow-lg,
+.hallow-content .shadow-xl {
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4) !important;
+}
