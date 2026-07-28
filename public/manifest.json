@@ -1,0 +1,43 @@
+{
+  "name": "Catholic Prayer — Daily Devotions & Saints",
+  "short_name": "Catholic Prayer",
+  "description": "Daily Catholic reflections, morning and evening prayers, saint profiles, Rosary, Novenas, and a community prayer wall.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b090f",
+  "theme_color": "#0b090f",
+  "orientation": "portrait-primary",
+  "categories": ["lifestyle", "health", "education"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Today's Reflection",
+      "url": "/?tab=reflections",
+      "description": "Open today's daily reflection"
+    },
+    {
+      "name": "Rosary",
+      "url": "/?tab=rosary",
+      "description": "Pray the Holy Rosary"
+    },
+    {
+      "name": "Community Wall",
+      "url": "/?tab=wall",
+      "description": "Community prayer wall"
+    }
+  ]
+}
