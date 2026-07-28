@@ -815,64 +815,12 @@ export default function App() {
             </div>
 
             <div key={praySubTab} className="tab-panel">
-
-              {/* ROSARY */}
-              {praySubTab === "rosary" && (
-                <div>
-                  {/* Audio player UI */}
-                  <div className="hallow-player">
-                    <div className="text-[10px] font-bold tracking-widest uppercase text-[#c9922a] mb-3">
-                      {isPlaying ? "Now Playing" : "Ready to Pray"}
-                    </div>
-                    <div className="player-icon">
-                      <CrossIcon className="w-7 h-7 text-[#c9922a]" />
-                    </div>
-                    <div className="text-[17px] font-bold text-[#f5ead8] mt-3 mb-0.5">Holy Rosary</div>
-                    <div className="text-[11px] text-[#6b5a30]">Joyful Mysteries · Guided Meditation</div>
-                    <div className="player-progress-wrap">
-                      <div className="player-progress-track">
-                        <div className="player-progress-fill" style={{ width: `${playerProgress}%` }} />
-                      </div>
-                      <div className="player-time">
-                        <span>{formatProgress(playerProgress)}</span>
-                        <span>20:00</span>
-                      </div>
-                    </div>
-                    <div className="player-controls">
-                      <button className="player-ctrl" onClick={() => setPlayerProgress(Math.max(0, playerProgress - 10))}>
-                        <SkipBack className="w-5 h-5" />
-                      </button>
-                      <button className="player-ctrl" onClick={() => setPlayerProgress(Math.max(0, playerProgress - 5))}>
-                        <RefreshCw className="w-4 h-4" />
-                      </button>
-                      <button className="player-ctrl main" onClick={() => { setIsPlaying(!isPlaying); triggerChime(); }}>
-                        {isPlaying ? <Pause className="w-5 h-5 fill-current" /> : <Play className="w-5 h-5 fill-current" />}
-                      </button>
-                      <button className="player-ctrl" onClick={() => setPlayerProgress(Math.min(100, playerProgress + 5))}>
-                        <RefreshCw className="w-4 h-4 scale-x-[-1]" />
-                      </button>
-                      <button className="player-ctrl" onClick={() => setPlayerProgress(Math.min(100, playerProgress + 10))}>
-                        <SkipForward className="w-5 h-5" />
-                      </button>
-                    </div>
-                    <div className="flex items-center justify-center gap-2 mt-3">
-                      <button onClick={() => setIsCathedralSoundActive(!isCathedralSoundActive)}
-                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold border cursor-pointer transition-all ${isCathedralSoundActive ? "bg-[#c9922a]/15 border-[#3d2808] text-[#c9922a]" : "bg-[#131008] border-[#1e1a10] text-[#4a3318]"}`}>
-                        {isCathedralSoundActive ? <Volume2 className="w-3 h-3" /> : <VolumeX className="w-3 h-3" />}
-                        Cathedral Chants
-                      </button>
-                      <button onClick={() => setIsFocusMode(true)}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold border border-[#1e1a10] text-[#4a3318] bg-[#131008] cursor-pointer">
-                        <Sparkles className="w-3 h-3" /> Focus Mode
-                      </button>
-                    </div>
-                  </div>
-                  {/* Full AudioRosary component */}
-                  <div className="px-4 pt-4">
-                    <AudioRosary onRosaryComplete={incrementPrayerStats} isTabActive={mainTab === "pray" && praySubTab === "rosary"} setActiveTab={() => {}} isFocusMode={isFocusMode} setIsFocusMode={setIsFocusMode} />
-                  </div>
-                </div>
-              )}
+{/* ROSARY */}
+{praySubTab === "rosary" && (
+  <div className="px-4 pt-4">
+    <AudioRosary onRosaryComplete={incrementPrayerStats} isTabActive={mainTab === "pray" && praySubTab === "rosary"} setActiveTab={() => {}} isFocusMode={isFocusMode} setIsFocusMode={setIsFocusMode} />
+  </div>
+)}
 
               {/* NOVENAS */}
               {praySubTab === "novenas" && (
