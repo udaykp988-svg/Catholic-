@@ -186,23 +186,23 @@ export function SleepStoriesTab() {
     <div className="space-y-6 animate-fadeIn pb-12">
       
       {/* Immersive Midnight Starry Jumbotron */}
-      <div className="bg-gradient-to-br from-[#faf7f0] via-[#f5f0e8] to-[#f0e8d8] border border-[#8b4513]/10 rounded-3xl p-6 md:p-8 relative overflow-hidden shadow-2xl text-stone-800">
+      <div className="bg-gradient-to-br from-[#2c1810] via-[#3a2010] to-[#1e1008] border border-[#8b4513]/20 rounded-3xl p-6 md:p-8 relative overflow-hidden shadow-2xl text-stone-100">
         
         {/* Primal Star Points */}
-        <div className="absolute inset-0 opacity-40 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-indigo-950/40 via-transparent to-transparent pointer-events-none" />
-        <div className="absolute top-8 left-1/4 w-1 h-1 bg-[#faf7f0] rounded-full animate-ping opacity-60" />
-        <div className="absolute top-20 right-1/3 w-1.5 h-1.5 bg-[#faf7f0] rounded-full animate-pulse opacity-40" />
-        <div className="absolute bottom-12 left-1/2 w-1 h-1 bg-[#faf7f0] rounded-full animate-ping opacity-80" />
-        <div className="absolute -right-20 -top-20 w-80 h-80 rounded-full bg-[#8b4513]/[0.04] blur-3xl pointer-events-none" />
+        <div className="absolute inset-0 opacity-40 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-amber-950/20 via-transparent to-transparent pointer-events-none" />
+        <div className="absolute top-8 left-1/4 w-1 h-1 bg-white rounded-full animate-ping opacity-60" />
+        <div className="absolute top-20 right-1/3 w-1.5 h-1.5 bg-white rounded-full animate-pulse opacity-40" />
+        <div className="absolute bottom-12 left-1/2 w-1 h-1 bg-white rounded-full animate-ping opacity-80" />
+        <div className="absolute -right-20 -top-20 w-80 h-80 rounded-full bg-amber-500/[0.04] blur-3xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col md:flex-row gap-8 items-center justify-between">
           
           {/* Sleep Player Box Left */}
           <div className="w-full md:w-1/2 space-y-4">
             
-            <div className="flex items-center gap-2 text-[#a0520f]">
+            <div className="flex items-center gap-2 text-amber-400">
               <Moon className="h-5 w-5 fill-amber-400/30 animate-pulse shrink-0" />
-              <span className="text-[10px] font-mono tracking-widest uppercase font-bold text-[#a0520f]">
+              <span className="text-[10px] font-mono tracking-widest uppercase font-bold text-amber-400">
                 ⭐ HOLY REPOSE SANCTUARY ⭐
               </span>
             </div>
@@ -211,14 +211,14 @@ export function SleepStoriesTab() {
               <h2 className="text-2xl md:text-3xl font-heading font-semibold text-white tracking-wide">
                 {selectedStory.title}
               </h2>
-              <p className="text-xs text-indigo-205/80 font-sans">
+              <p className="text-xs text-amber-200/80 font-sans">
                 Devotional Lectio narrated by <strong className="text-amber-300 font-medium">{selectedStory.narrator}</strong> • {selectedStory.duration} repose
               </p>
             </div>
 
             {/* Simulated sound playback progress bar */}
             <div className="space-y-1.5 pt-2">
-              <div className="w-full bg-stone-200 rounded-full h-1.5 overflow-hidden">
+              <div className="w-full bg-white/20 rounded-full h-1.5 overflow-hidden">
                 <div 
                   className="bg-gradient-to-r from-amber-400 to-amber-200 h-full rounded-full transition-all duration-300"
                   style={{ width: `${playProgress}%` }}
@@ -248,7 +248,7 @@ export function SleepStoriesTab() {
                 <span className="text-xs font-heading font-semibold text-white tracking-wide">
                   {isPlaying ? "SACRED RECITAL UNVEILED" : "RECITAL PAUSED"}
                 </span>
-                <span className="text-[10px] font-mono text-indigo-200/70 leading-normal">
+                <span className="text-[10px] font-mono text-amber-200/70 leading-normal">
                   Toggle to companion your night rest.
                 </span>
               </div>
@@ -257,11 +257,11 @@ export function SleepStoriesTab() {
           </div>
 
           {/* Right Column: Audio details & Interactive synthetic White Noise */}
-          <div className="w-full md:w-1/2 bg-[#f5f0e8] backdrop-blur-md rounded-2xl p-5 border border-stone-200 space-y-4">
+          <div className="w-full md:w-1/2 bg-black/20 backdrop-blur-md rounded-2xl p-5 border border-white/10 space-y-4">
             
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Volume2 className="h-4 w-4 text-[#a0520f] shrink-0" />
+                <Volume2 className="h-4 w-4 text-amber-400 shrink-0" />
                 <span className="text-xs font-semibold text-white font-sans tracking-wide">
                   Primal Warm Ambient Sound:
                 </span>
@@ -270,18 +270,18 @@ export function SleepStoriesTab() {
                 type="checkbox"
                 checked={ambientSound}
                 onChange={() => setAmbientSound(!ambientSound)}
-                className="rounded text-amber-550 focus:ring-[#8b4513] h-4.5 w-4.5 cursor-pointer accent-amber-500"
+                className="rounded text-amber-550 focus:ring-amber-500 h-4.5 w-4.5 cursor-pointer accent-amber-500"
                 id="ambient-sound-toggle"
               />
             </div>
 
-            <p className="text-[11px] text-indigo-200/70 font-sans leading-relaxed">
+            <p className="text-[11px] text-amber-200/70 font-sans leading-relaxed">
               💡 **Sacred White Noise:** When enabled, this uses your browser's physical audio synthesis network to emit a very soft, serene 110Hz A-chord drone simulating the gentle hum of a quiet stone convent. Excellent for letting go of anxiety.
             </p>
 
-            <div className="flex items-center gap-1.5 bg-[#f5f0e8] p-3 rounded-xl border border-stone-200">
-              <BookOpen className="h-3.5 w-3.5 text-indigo-300 shrink-0" />
-              <span className="text-[11px] font-mono text-indigo-100">
+            <div className="flex items-center gap-1.5 bg-white/10 p-3 rounded-xl border border-white/10">
+              <BookOpen className="h-3.5 w-3.5 text-amber-300 shrink-0" />
+              <span className="text-[11px] font-mono text-amber-100">
                 <strong>Source:</strong> {selectedStory.scriptureRef}
               </span>
             </div>
@@ -289,7 +289,7 @@ export function SleepStoriesTab() {
             <div className="flex gap-2">
               <button
                 onClick={() => setShowFullText(!showFullText)}
-                className="w-full py-2 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-200 border border-indigo-500/20 rounded-xl text-xs font-semibold cursor-pointer transition-colors flex items-center justify-center gap-2"
+                className="w-full py-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-200 border border-amber-500/20 rounded-xl text-xs font-semibold cursor-pointer transition-colors flex items-center justify-center gap-2"
               >
                 <Eye className="h-3.5 w-3.5" />
                 {showFullText ? "Collapse Reading Board" : "Reveal Story Text"}
@@ -304,8 +304,8 @@ export function SleepStoriesTab() {
 
       {/* Story Board Text Drawer (when enabled) */}
       {showFullText && (
-        <div className="bg-[#faf7f0] border border-stone-200 p-6 rounded-2xl animate-slideDown shadow-sm max-w-3xl mx-auto leading-relaxed text-center">
-          <span className="text-[10px] font-mono text-indigo-650 bg-indigo-50 dark:bg-indigo-950/40 px-2 rounded-full font-bold uppercase tracking-widest">{selectedStory.title} READ-ALONG</span>
+        <div className="bg-[#f5f0e8] border border-[#e8dcc8] p-6 rounded-2xl animate-slideDown shadow-sm max-w-3xl mx-auto leading-relaxed text-center">
+          <span className="text-[10px] font-mono text-[#8b4513] bg-[#f0e8d8] px-2 rounded-full font-bold uppercase tracking-widest">{selectedStory.title} READ-ALONG</span>
           <div className="text-stone-300 text-2xl font-serif my-3 mb-1 select-none">†</div>
           <p className="text-sm md:text-base text-stone-750 font-sans italic max-w-xl mx-auto leading-relaxed select-text whitespace-pre-line text-left py-4 pt-1">
             {selectedStory.fullBodyText}
@@ -330,16 +330,16 @@ export function SleepStoriesTab() {
                   setPlayProgress(0); // reset progress on selection
                   setIsPlaying(false);
                 }}
-                className={`bg-[#faf7f0] p-5 rounded-2xl border text-left cursor-pointer hover:border-indigo-500/20 hover:scale-[1.01] transition-all flex flex-col justify-between h-44 ${
+                className={`bg-[#faf7f0] p-5 rounded-2xl border text-left cursor-pointer hover:border-[#8b4513]/20 hover:scale-[1.01] transition-all flex flex-col justify-between h-44 ${
                   isCurrent 
-                    ? "ring-1 ring-indigo-550 border-indigo-550 dark:border-indigo-500 shadow-md" 
+                    ? "ring-1 ring-indigo-550 border-indigo-550 shadow-md" 
                     : "border-stone-200 shadow-sm"
                 }`}
               >
                 
                 <div className="space-y-1">
                   <div className="flex justify-between items-start">
-                    <span className="text-[10px] font-mono bg-stone-100 text-stone-500 p-1 px-2 rounded-lg font-bold border border-stone-150">
+                    <span className="text-[10px] font-mono bg-[#f0e8d8] text-[#9a7a58] p-1 px-2 rounded-lg font-bold border border-[#e8dcc8]">
                       {story.duration}
                     </span>
                     {isCurrent && (
