@@ -335,7 +335,7 @@ export function ConfessionPrepTab({ triggerSound }: ConfessionPrepTabProps) {
               <span className="text-[10px] font-mono tracking-widest text-violet-400 uppercase font-black block mb-1.5">
                 Sacrament of Reconciliation
               </span>
-              <h2 className="font-heading text-2xl md:text-3xl font-bold text-stone-100 tracking-wider">
+              <h2 className="font-heading text-2xl md:text-3xl font-bold text-stone-800 tracking-wider">
                 Confession Preparation
               </h2>
               <p className="text-xs text-stone-400 mt-1 max-w-xl font-sans leading-relaxed">
@@ -354,7 +354,7 @@ export function ConfessionPrepTab({ triggerSound }: ConfessionPrepTabProps) {
             </div>
             <div>
               <div className="text-[10px] font-mono text-violet-400 uppercase font-bold">Selected Sins</div>
-              <div className="text-lg font-heading font-black text-stone-100">
+              <div className="text-lg font-heading font-black text-stone-800">
                 {checkedCount === 0 ? "None" : `${checkedCount} Items`}
               </div>
             </div>
@@ -369,7 +369,7 @@ export function ConfessionPrepTab({ triggerSound }: ConfessionPrepTabProps) {
       </div>
 
       {/* INNER TABS NAVIGATION */}
-      <div className="flex items-center justify-start border-b border-stone-200 dark:border-stone-850/80 gap-1.5 overflow-x-auto scrollbar-none pb-2">
+      <div className="flex items-center justify-start border-b border-stone-200 gap-1.5 overflow-x-auto scrollbar-none pb-2">
         {[
           { id: "examine", label: "1. Examination of Conscience", icon: ClipboardCheck },
           { id: "my_list", label: "2. My Selected Sins List", icon: CheckCircle2 },
@@ -388,10 +388,10 @@ export function ConfessionPrepTab({ triggerSound }: ConfessionPrepTabProps) {
               className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer border-none shrink-0 relative ${
                 isActive 
                   ? "text-violet-400 bg-violet-500/5 shadow-xs" 
-                  : "text-stone-500 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-105"
+                  : "text-stone-500 hover:text-stone-900"
               }`}
             >
-              <TabIcon className={`h-4 w-4 ${isActive ? "text-violet-400 stroke-[2]" : "text-stone-400 dark:text-stone-500"}`} />
+              <TabIcon className={`h-4 w-4 ${isActive ? "text-violet-400 stroke-[2]" : "text-stone-400"}`} />
               <span>{tab.label}</span>
               {isActive && (
                 <div className="absolute bottom-[-10px] left-0 right-0 h-0.5 bg-violet-500 rounded-full" />
@@ -412,10 +412,10 @@ export function ConfessionPrepTab({ triggerSound }: ConfessionPrepTabProps) {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-heading font-black text-stone-900 dark:text-stone-105 text-sm uppercase tracking-wider">
+                  <h3 className="font-heading font-black text-stone-900 text-sm uppercase tracking-wider">
                     The Ten Commandments Examination
                   </h3>
-                  <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">
+                  <p className="text-xs text-stone-500 mt-1">
                     Click each Commandment block to expand the detailed checklist, and select items you wish to confess.
                   </p>
                 </div>
@@ -442,8 +442,8 @@ export function ConfessionPrepTab({ triggerSound }: ConfessionPrepTabProps) {
                       key={cmd.id}
                       className={`border rounded-2xl overflow-hidden transition-all duration-200 ${
                         isExpanded 
-                          ? "border-violet-500/25 bg-white dark:bg-[#151224] shadow-md" 
-                          : "border-stone-200 dark:border-stone-850 bg-stone-50/50 hover:bg-stone-50 dark:bg-stone-950/20 dark:hover:bg-stone-950/45"
+                          ? "border-violet-500/25 bg-[#faf7f0] dark:bg-[#f5f0e8] shadow-md" 
+                          : "border-stone-200 bg-stone-50/50 hover:bg-stone-50"
                       }`}
                     >
                       {/* Accordion Trigger Header */}
@@ -455,13 +455,13 @@ export function ConfessionPrepTab({ triggerSound }: ConfessionPrepTabProps) {
                           <div className={`mt-0.5 shrink-0 flex items-center justify-center font-heading text-xs font-black min-w-[24px] h-[24px] rounded-lg border ${
                             isExpanded 
                               ? "bg-violet-500/10 text-violet-400 border-violet-500/30" 
-                              : "bg-stone-100 dark:bg-stone-900 text-stone-500 dark:text-stone-400 border-stone-200 dark:border-stone-800"
+                              : "bg-stone-100 text-stone-500 border-stone-200"
                           }`}>
                             {cmd.number}
                           </div>
                           <div>
                             <div className="flex items-center gap-2 flex-wrap">
-                              <h4 className="font-heading font-bold text-stone-850 dark:text-stone-150 text-sm">
+                              <h4 className="font-heading font-bold text-stone-850 text-sm">
                                 {cmd.title}
                               </h4>
                               {activeInCommandment > 0 && (
@@ -470,21 +470,21 @@ export function ConfessionPrepTab({ triggerSound }: ConfessionPrepTabProps) {
                                 </span>
                               )}
                             </div>
-                            <p className="text-[11px] font-sans italic text-stone-500 dark:text-stone-400 mt-1 max-w-xl">
+                            <p className="text-[11px] font-sans italic text-stone-500 mt-1 max-w-xl">
                               "{cmd.commandmentText}"
                             </p>
                           </div>
                         </div>
                         {isExpanded ? (
-                          <ChevronUp className="h-4.5 w-4.5 text-stone-400 dark:text-stone-600 shrink-0" />
+                          <ChevronUp className="h-4.5 w-4.5 text-stone-400 shrink-0" />
                         ) : (
-                          <ChevronDown className="h-4.5 w-4.5 text-stone-400 dark:text-stone-600 shrink-0" />
+                          <ChevronDown className="h-4.5 w-4.5 text-stone-400 shrink-0" />
                         )}
                       </button>
 
                       {/* Content Section */}
                       {isExpanded && (
-                        <div className="px-4 pb-4.5 border-t border-stone-200/50 dark:border-stone-800/40 pt-3 animate-slideDown">
+                        <div className="px-4 pb-4.5 border-t border-stone-200/50 pt-3 animate-slideDown">
                           <div className="flex flex-col gap-2">
                             {commandmentSins.map((sin) => {
                               const isChecked = !!checkedSins[sin.id];
@@ -493,8 +493,8 @@ export function ConfessionPrepTab({ triggerSound }: ConfessionPrepTabProps) {
                                   key={sin.id}
                                   className={`flex items-start gap-3 p-3 rounded-xl border text-xs cursor-pointer select-none transition-all ${
                                     isChecked 
-                                      ? "bg-violet-500/[0.04] dark:bg-violet-500/[0.02] border-violet-500/25 text-stone-850 dark:text-stone-150" 
-                                      : "bg-white dark:bg-stone-950/20 border-transparent text-stone-650 hover:text-stone-850 dark:text-stone-400 dark:hover:text-stone-200 hover:bg-stone-50/50 dark:hover:bg-stone-900/30"
+                                      ? "bg-violet-500/[0.04] dark:bg-violet-500/[0.02] border-violet-500/25 text-stone-850" 
+                                      : "bg-[#faf7f0] border-transparent text-stone-650 hover:text-stone-850 hover:bg-stone-50/50"
                                   }`}
                                 >
                                   {/* Checkbox Core */}
@@ -508,16 +508,16 @@ export function ConfessionPrepTab({ triggerSound }: ConfessionPrepTabProps) {
                                     <div className={`w-4.5 h-4.5 rounded-md border flex items-center justify-center transition-all ${
                                       isChecked 
                                         ? "bg-violet-500 border-violet-500 text-stone-950" 
-                                        : "border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-950"
+                                        : "border-stone-300 bg-[#faf7f0]"
                                     }`}>
-                                      {isChecked && <Check className="h-3 w-3 text-white dark:text-stone-950 stroke-[3]" />}
+                                      {isChecked && <Check className="h-3 w-3 text-white stroke-[3]" />}
                                     </div>
                                   </div>
 
                                   <div className="flex-1">
                                     <span className="leading-relaxed block">{sin.text}</span>
                                     {sin.gravity === "mortal_potential" && (
-                                      <span className="inline-flex items-center gap-1 mt-1 font-mono text-[9px] uppercase font-bold text-amber-600/90 dark:text-amber-500/80">
+                                      <span className="inline-flex items-center gap-1 mt-1 font-mono text-[9px] uppercase font-bold text-[#6b3410]/90/80">
                                         <AlertCircle className="h-2.5 w-2.5" />
                                         Mortal Potential
                                       </span>
@@ -541,13 +541,13 @@ export function ConfessionPrepTab({ triggerSound }: ConfessionPrepTabProps) {
             <div className="space-y-6">
               
               {/* Contrition & Heart Disposition Checklist */}
-              <div className="bg-[#fcfaf4] dark:bg-[#12101e] border border-amber-500/15 rounded-2xl p-5 shadow-xs relative overflow-hidden">
+              <div className="bg-[#faf7f0] dark:bg-[#f5f0e8] border border-[#8b4513]/15 rounded-2xl p-5 shadow-xs relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-amber-500/[0.02] to-transparent pointer-events-none" />
-                <h4 className="flex items-center gap-2 font-heading font-black text-stone-900 dark:text-stone-105 text-xs tracking-widest uppercase mb-1.5">
-                  <Heart className="h-4 w-4 text-amber-500" />
+                <h4 className="flex items-center gap-2 font-heading font-black text-stone-900 text-xs tracking-widest uppercase mb-1.5">
+                  <Heart className="h-4 w-4 text-[#8b4513]" />
                   Disposition of the Heart
                 </h4>
-                <p className="text-[11px] text-stone-500 dark:text-stone-400 font-sans leading-relaxed mb-4">
+                <p className="text-[11px] text-stone-500 font-sans leading-relaxed mb-4">
                   Sincere Confession requires continuous spiritual readiness. Reflect on these three interior steps before entering:
                 </p>
 
@@ -575,8 +575,8 @@ export function ConfessionPrepTab({ triggerSound }: ConfessionPrepTabProps) {
                         key={item.key}
                         className={`flex items-start gap-3 p-3 rounded-xl border text-xs cursor-pointer select-none transition-all ${
                           checked 
-                            ? "bg-amber-500/[0.04] border-amber-500/25 text-stone-900 dark:text-stone-100" 
-                            : "bg-white dark:bg-stone-950/20 border-transparent text-stone-600 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-900/10"
+                            ? "bg-[#8b4513]/[0.04] border-amber-500/25 text-stone-900" 
+                            : "bg-[#faf7f0] border-transparent text-stone-600 hover:bg-stone-50"
                         }`}
                       >
                         <div className="mt-0.5 flex-shrink-0">
@@ -588,15 +588,15 @@ export function ConfessionPrepTab({ triggerSound }: ConfessionPrepTabProps) {
                           />
                           <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition-all ${
                             checked 
-                              ? "bg-amber-500 border-amber-500 text-stone-950" 
-                              : "border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-950"
+                              ? "bg-[#8b4513] border-amber-500 text-stone-950" 
+                              : "border-stone-300 bg-[#faf7f0]"
                           }`}>
                             {checked && <Check className="h-2.5 w-2.5 text-stone-950 stroke-[3.5]" />}
                           </div>
                         </div>
                         <div>
-                          <span className="font-heading font-bold text-xs text-stone-850 dark:text-stone-150 block mb-0.5">{item.title}</span>
-                          <p className="text-[10.5px] text-stone-500 dark:text-stone-400 font-sans leading-relaxed">{item.desc}</p>
+                          <span className="font-heading font-bold text-xs text-stone-850 block mb-0.5">{item.title}</span>
+                          <p className="text-[10.5px] text-stone-500 font-sans leading-relaxed">{item.desc}</p>
                         </div>
                       </label>
                     );
@@ -608,10 +608,10 @@ export function ConfessionPrepTab({ triggerSound }: ConfessionPrepTabProps) {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="font-heading font-black text-stone-900 dark:text-stone-105 text-sm uppercase tracking-wider">
+                    <h3 className="font-heading font-black text-stone-900 text-sm uppercase tracking-wider">
                       Your Confession Checklist
                     </h3>
-                    <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">
+                    <p className="text-xs text-stone-500 mt-1">
                       Review your private checked sins. You can bring this secure list in your mind when preparing for the Sacrament.
                     </p>
                   </div>
@@ -627,30 +627,30 @@ export function ConfessionPrepTab({ triggerSound }: ConfessionPrepTabProps) {
                 </div>
 
                 {checkedCount === 0 ? (
-                  <div className="flex flex-col items-center justify-center text-center p-12 border-2 border-dashed border-stone-200 dark:border-stone-850 rounded-2xl bg-stone-50/50 dark:bg-stone-950/25">
+                  <div className="flex flex-col items-center justify-center text-center p-12 border-2 border-dashed border-stone-200 rounded-2xl bg-stone-50/50">
                     <div className="bg-violet-500/10 text-violet-400 p-3.5 rounded-full mb-3 shadow-inner">
                       <ShieldCheck className="h-6 w-6" />
                     </div>
-                    <span className="font-heading font-bold text-stone-800 dark:text-stone-200 text-sm block">
+                    <span className="font-heading font-bold text-stone-800 text-sm block">
                       No Sins Selected Yet
                     </span>
-                    <p className="text-xs text-stone-500 dark:text-stone-400 mt-1 max-w-xs leading-relaxed">
+                    <p className="text-xs text-stone-500 mt-1 max-w-xs leading-relaxed">
                       Go to the <strong className="text-violet-400">Examination of Conscience</strong> tab to select the items you would like to prepare.
                     </p>
                   </div>
                 ) : (
-                  <div className="bg-white dark:bg-[#151224] border border-stone-200 dark:border-stone-850/80 rounded-2xl p-4 md:p-6 space-y-4.5 shadow-sm">
+                  <div className="bg-[#faf7f0] dark:bg-[#f5f0e8] border border-stone-200 rounded-2xl p-4 md:p-6 space-y-4.5 shadow-sm">
                     {COMMANDMENTS_GUIDE.map(cmd => {
                       const selectedInCmd = cmd.sins.filter(sin => checkedSins[sin.id]);
                       if (selectedInCmd.length === 0) return null;
 
                       return (
-                        <div key={cmd.id} className="pb-4 border-b border-stone-200/50 dark:border-stone-800/30 last:border-0 last:pb-0">
+                        <div key={cmd.id} className="pb-4 border-b border-stone-200/50 last:border-0 last:pb-0">
                           <div className="flex items-center gap-1.5 mb-2">
                             <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-violet-500/10 text-violet-400 font-bold">
                               Cmd {cmd.number}
                             </span>
-                            <span className="text-xs font-heading font-extrabold text-stone-700 dark:text-stone-300">
+                            <span className="text-xs font-heading font-extrabold text-stone-700">
                               {cmd.title}
                             </span>
                           </div>
@@ -659,13 +659,13 @@ export function ConfessionPrepTab({ triggerSound }: ConfessionPrepTabProps) {
                             {selectedInCmd.map(sin => (
                               <div 
                                 key={sin.id} 
-                                className="flex items-start gap-2 text-xs text-stone-600 dark:text-stone-300 leading-relaxed md:pl-2"
+                                className="flex items-start gap-2 text-xs text-stone-600 leading-relaxed md:pl-2"
                               >
-                                <span className="text-amber-500 mt-0.5 shrink-0">•</span>
+                                <span className="text-[#8b4513] mt-0.5 shrink-0">•</span>
                                 <div className="flex-1">
                                   <span>{sin.text}</span>
                                   {sin.gravity === "mortal_potential" && (
-                                    <span className="inline-block border border-amber-500/15 bg-amber-500/[0.03] text-amber-600 dark:text-amber-500 text-[8.5px] px-1.5 py-0.3 rounded ml-2.5 font-mono">
+                                    <span className="inline-block border border-[#8b4513]/15 bg-[#8b4513]/[0.03] text-[#6b3410] text-[8.5px] px-1.5 py-0.3 rounded ml-2.5 font-mono">
                                       Mortal Potential
                                     </span>
                                   )}
@@ -688,10 +688,10 @@ export function ConfessionPrepTab({ triggerSound }: ConfessionPrepTabProps) {
                     <div className="bg-emerald-500/[0.02] border border-emerald-500/20 rounded-xl p-3.5 flex items-start gap-2.5 text-xs">
                       <ShieldCheck className="h-4.5 w-4.5 text-emerald-500 shrink-0 mt-0.5" />
                       <div>
-                        <span className="font-heading font-bold text-stone-850 dark:text-stone-150 block mb-0.5">
+                        <span className="font-heading font-bold text-stone-850 block mb-0.5">
                           Private Mind Check
                         </span>
-                        <p className="text-stone-500 dark:text-stone-400 font-sans leading-relaxed text-[11px]">
+                        <p className="text-stone-500 font-sans leading-relaxed text-[11px]">
                           Take this compiled list into prayer, seeking perfect contrition. Sins are confessed by kind (what type of sin) and estimated frequency. God is already waiting with absolute healing mercy.
                         </p>
                       </div>
@@ -706,10 +706,10 @@ export function ConfessionPrepTab({ triggerSound }: ConfessionPrepTabProps) {
           {innerTab === "how_to" && (
             <div className="space-y-6">
               <div>
-                <h3 className="font-heading font-black text-stone-900 dark:text-stone-105 text-sm uppercase tracking-wider">
+                <h3 className="font-heading font-black text-stone-900 text-sm uppercase tracking-wider">
                   How to make a Good Confession
                 </h3>
-                <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">
+                <p className="text-xs text-stone-500 mt-1">
                   If it has been a long time, do not be afraid. The priest or caretaker is always delighted to assist. Below is the traditional step-by-step guideline.
                 </p>
               </div>
@@ -718,25 +718,25 @@ export function ConfessionPrepTab({ triggerSound }: ConfessionPrepTabProps) {
                 {CONFESSION_FLOW_STEPS.map((step, idx) => (
                   <div 
                     key={idx}
-                    className="bg-white dark:bg-[#151224] border border-stone-200 dark:border-stone-850/80 rounded-2xl p-5 shadow-xs space-y-3 flex flex-col justify-between"
+                    className="bg-[#faf7f0] dark:bg-[#f5f0e8] border border-stone-200 rounded-2xl p-5 shadow-xs space-y-3 flex flex-col justify-between"
                   >
                     <div>
-                      <h4 className="font-heading font-black text-stone-850 dark:text-stone-150 text-xs tracking-wider uppercase flex items-center justify-between border-b border-stone-200/55 dark:border-stone-800/40 pb-2">
+                      <h4 className="font-heading font-black text-stone-850 text-xs tracking-wider uppercase flex items-center justify-between border-b border-stone-200/55 pb-2">
                         <span>{step.title}</span>
                         <span className="font-mono text-[10px] text-violet-400 font-bold">Step {idx + 1}</span>
                       </h4>
-                      <p className="text-[11px] leading-relaxed text-stone-500 dark:text-stone-400 mt-2.5 font-sans">
+                      <p className="text-[11px] leading-relaxed text-stone-500 mt-2.5 font-sans">
                         {step.instruction}
                       </p>
                     </div>
 
                     {step.quote && (
-                      <div className="bg-stone-50 dark:bg-stone-950 p-3 rounded-xl border border-stone-200/45 dark:border-stone-800/40 mt-1">
-                        <p className="font-mono text-xs text-orange-600 dark:text-amber-450 italic leading-relaxed select-all">
+                      <div className="bg-stone-50 p-3 rounded-xl border border-stone-200/45 mt-1">
+                        <p className="font-mono text-xs text-orange-600 italic leading-relaxed select-all">
                           {step.quote}
                         </p>
                         {step.extra && (
-                          <p className="text-[10px] text-stone-400 dark:text-stone-500 font-sans mt-2">
+                          <p className="text-[10px] text-stone-400 font-sans mt-2">
                             {step.extra}
                           </p>
                         )}
@@ -752,7 +752,7 @@ export function ConfessionPrepTab({ triggerSound }: ConfessionPrepTabProps) {
                   <Sparkles className="h-5 w-5 animate-spin-slow" />
                 </div>
                 <div>
-                  <h4 className="font-heading font-black text-stone-100 text-xs uppercase tracking-wider mb-1">
+                  <h4 className="font-heading font-black text-stone-800 text-xs uppercase tracking-wider mb-1">
                     An Encounter With Divine Love
                   </h4>
                   <p className="text-xs text-stone-400 font-sans leading-relaxed max-w-xl">
@@ -767,10 +767,10 @@ export function ConfessionPrepTab({ triggerSound }: ConfessionPrepTabProps) {
           {innerTab === "contrition" && (
             <div className="space-y-6">
               <div>
-                <h3 className="font-heading font-black text-stone-900 dark:text-stone-105 text-sm uppercase tracking-wider">
+                <h3 className="font-heading font-black text-stone-900 text-sm uppercase tracking-wider">
                   Acts of Contrition
                 </h3>
-                <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">
+                <p className="text-xs text-stone-500 mt-1">
                   Choose a traditional or modern version to recite aloud during the sacrament when the priest asks for your act of sorrow.
                 </p>
               </div>
@@ -779,7 +779,7 @@ export function ConfessionPrepTab({ triggerSound }: ConfessionPrepTabProps) {
                 {ACTS_OF_CONTRITION.map((prayer) => (
                   <div 
                     key={prayer.id}
-                    className="bg-white dark:bg-[#151224] border border-stone-200 dark:border-stone-850/80 rounded-2xl p-6 shadow-sm relative overflow-hidden group"
+                    className="bg-[#faf7f0] dark:bg-[#f5f0e8] border border-stone-200 rounded-2xl p-6 shadow-sm relative overflow-hidden group"
                   >
                     <div className="absolute top-0 right-0 w-2 h-full bg-violet-500/20 group-hover:bg-violet-400/40 transition-colors" />
                     
@@ -787,12 +787,12 @@ export function ConfessionPrepTab({ triggerSound }: ConfessionPrepTabProps) {
                       <div className="bg-violet-500/10 text-violet-400 p-1.5 rounded-lg border border-violet-500/10">
                         <Bookmark className="h-3.5 w-3.5" />
                       </div>
-                      <h4 className="font-heading font-black text-stone-850 dark:text-stone-150 text-xs uppercase tracking-widest">
+                      <h4 className="font-heading font-black text-stone-850 text-xs uppercase tracking-widest">
                         {prayer.name}
                       </h4>
                     </div>
 
-                    <p className="font-serif text-sm leading-relaxed text-stone-800 dark:text-stone-200 select-all border-l-2 border-amber-500/30 pl-4 py-1">
+                    <p className="font-serif text-sm leading-relaxed text-stone-800 select-all border-l-2 border-amber-500/30 pl-4 py-1">
                       "{prayer.text}"
                     </p>
                   </div>
@@ -807,21 +807,21 @@ export function ConfessionPrepTab({ triggerSound }: ConfessionPrepTabProps) {
         <div className="xl:col-span-4 space-y-6">
           
           {/* SECURE PLANNER widget */}
-          <div className="bg-gradient-to-b from-[#fbf9f4] to-stone-50 dark:from-[#110e1c] dark:to-stone-950/45 border border-violet-500/10 rounded-2xl p-5 shadow-xs relative overflow-hidden">
+          <div className="bg-gradient-to-b from-[#fbf9f4] to-stone-50 dark:to-stone-950/45 border border-violet-500/10 rounded-2xl p-5 shadow-xs relative overflow-hidden">
             <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-violet-500/[0.02] to-transparent pointer-events-none" />
             
-            <h4 className="flex items-center gap-2 font-heading font-black text-stone-900 dark:text-stone-105 text-xs tracking-widest uppercase mb-1.5">
+            <h4 className="flex items-center gap-2 font-heading font-black text-stone-900 text-xs tracking-widest uppercase mb-1.5">
               <Calendar className="h-4 w-4 text-violet-400" />
               Sacrament Planner
             </h4>
-            <p className="text-[10.5px] text-stone-500 dark:text-stone-400 font-sans leading-relaxed mb-4">
+            <p className="text-[10.5px] text-stone-500 font-sans leading-relaxed mb-4">
               Regular monthly Confession preserves deep clarity. Schedule your next planned time below.
             </p>
 
             <div className="space-y-3.5">
               {/* Planned Date input */}
               <div>
-                <label className="block text-[9px] font-mono uppercase font-bold text-stone-500 dark:text-stone-400 mb-1">
+                <label className="block text-[9px] font-mono uppercase font-bold text-stone-500 mb-1">
                   Target Date / Time
                 </label>
                 <input
@@ -833,13 +833,13 @@ export function ConfessionPrepTab({ triggerSound }: ConfessionPrepTabProps) {
                     savePlannerInfo(val, plannerLocation, notes);
                     if (triggerSound) triggerSound();
                   }}
-                  className="w-full text-xs p-2.5 rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-950 font-mono text-stone-800 dark:text-stone-100 focus:outline-none focus:border-violet-500"
+                  className="w-full text-xs p-2.5 rounded-xl border border-stone-200 bg-[#faf7f0] font-mono text-stone-800 focus:outline-none focus:border-violet-500"
                 />
               </div>
 
               {/* Planned Location input */}
               <div>
-                <label className="block text-[9px] font-mono uppercase font-bold text-stone-500 dark:text-stone-400 mb-1">
+                <label className="block text-[9px] font-mono uppercase font-bold text-stone-500 mb-1">
                   Parish Church / Location
                 </label>
                 <input
@@ -851,13 +851,13 @@ export function ConfessionPrepTab({ triggerSound }: ConfessionPrepTabProps) {
                     setPlannerLocation(val);
                     savePlannerInfo(plannerDate, val, notes);
                   }}
-                  className="w-full text-xs p-2.5 rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-950 font-sans text-stone-800 dark:text-stone-100 focus:outline-none focus:border-violet-500"
+                  className="w-full text-xs p-2.5 rounded-xl border border-stone-200 bg-[#faf7f0] font-sans text-stone-800 focus:outline-none focus:border-violet-500"
                 />
               </div>
 
               {/* Secure note notepad */}
               <div>
-                <label className="block text-[9px] font-mono uppercase font-bold text-stone-500 dark:text-stone-400 mb-1 flex items-center justify-between">
+                <label className="block text-[9px] font-mono uppercase font-bold text-stone-500 mb-1 flex items-center justify-between">
                   <span>Confession Notepad</span>
                   <span className="text-stone-400 text-[8.5px] font-normal lowercase italic">Private offline memo</span>
                 </label>
@@ -870,7 +870,7 @@ export function ConfessionPrepTab({ triggerSound }: ConfessionPrepTabProps) {
                     setNotes(val);
                     savePlannerInfo(plannerDate, plannerLocation, val);
                   }}
-                  className="w-full text-xs p-2.5 rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-950 font-sans text-stone-800 dark:text-stone-100 focus:outline-none focus:border-violet-500 resize-none whitespace-pre-wrap"
+                  className="w-full text-xs p-2.5 rounded-xl border border-stone-200 bg-[#faf7f0] font-sans text-stone-800 focus:outline-none focus:border-violet-500 resize-none whitespace-pre-wrap"
                 />
               </div>
             </div>
@@ -879,13 +879,13 @@ export function ConfessionPrepTab({ triggerSound }: ConfessionPrepTabProps) {
             {plannerDate && (
               <div className="mt-4 pt-4 border-t border-violet-500/10">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-mono uppercase text-stone-500 dark:text-stone-400">Time to sacrament:</span>
+                  <span className="text-[10px] font-mono uppercase text-stone-500">Time to sacrament:</span>
                   {daysLeft === "overdue" ? (
                     <span className="bg-rose-500/15 border border-rose-500/20 text-rose-600 dark:text-rose-400 font-mono text-[9px] uppercase font-black px-2.5 py-0.5 rounded-full">
                       Past Planned Time
                     </span>
                   ) : daysLeft === "today" ? (
-                    <span className="bg-amber-500/20 border border-amber-500/30 text-amber-600 dark:text-amber-450 font-mono text-[9px] uppercase font-black px-2.5 py-0.5 rounded-full animate-pulse">
+                    <span className="bg-[#8b4513]/20 border border-amber-500/30 text-[#6b3410] font-mono text-[9px] uppercase font-black px-2.5 py-0.5 rounded-full animate-pulse">
                       Today
                     </span>
                   ) : (
@@ -900,8 +900,8 @@ export function ConfessionPrepTab({ triggerSound }: ConfessionPrepTabProps) {
           </div>
 
           {/* SPIRITUAL STAGES CARD */}
-          <div className="bg-white dark:bg-[#12101e] border border-stone-200 dark:border-stone-850/80 rounded-2xl p-5 shadow-xs relative overflow-hidden">
-            <h4 className="font-heading font-black text-stone-900 dark:text-stone-105 text-xs tracking-widest uppercase mb-3 text-center border-b border-stone-100 dark:border-stone-800 pb-2.5">
+          <div className="bg-[#faf7f0] dark:bg-[#f5f0e8] border border-stone-200 rounded-2xl p-5 shadow-xs relative overflow-hidden">
+            <h4 className="font-heading font-black text-stone-900 text-xs tracking-widest uppercase mb-3 text-center border-b border-stone-100 pb-2.5">
               The Five Steps
             </h4>
             
@@ -914,14 +914,14 @@ export function ConfessionPrepTab({ triggerSound }: ConfessionPrepTabProps) {
                 { step: "V", title: "Performance of Penance", body: "Fulfill the spiritual prayers or repairs quickly with love." }
               ].map(st => (
                 <div key={st.step} className="flex gap-3">
-                  <div className="font-heading text-xs font-black min-w-[20px] max-h-[20px] rounded-md bg-stone-100 dark:bg-stone-900 flex items-center justify-center text-amber-500 border border-stone-200/50 dark:border-stone-850">
+                  <div className="font-heading text-xs font-black min-w-[20px] max-h-[20px] rounded-md bg-stone-100 flex items-center justify-center text-[#8b4513] border border-stone-200/50">
                     {st.step}
                   </div>
                   <div>
-                    <span className="font-heading font-bold text-[11px] text-stone-800 dark:text-stone-200 block">
+                    <span className="font-heading font-bold text-[11px] text-stone-800 block">
                       {st.title}
                     </span>
-                    <p className="text-[10px] text-stone-500 dark:text-stone-400 leading-relaxed font-sans mt-0.5">
+                    <p className="text-[10px] text-stone-500 leading-relaxed font-sans mt-0.5">
                       {st.body}
                     </p>
                   </div>

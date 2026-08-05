@@ -197,12 +197,12 @@ export default function SaintsCatalogTab({
         };
       default: // white / gold
         return {
-          bg: "bg-amber-500/5 dark:bg-amber-500/[0.02]",
-          border: "border-amber-500/15 dark:border-amber-500/10",
-          text: "text-amber-600 dark:text-amber-400",
+          bg: "bg-[#8b4513]/5 dark:bg-[#8b4513]/[0.02]",
+          border: "border-[#8b4513]/15",
+          text: "text-[#6b3410]",
           accent: "amber",
           glow: "shadow-amber-500/10",
-          badge: "bg-amber-100 hover:bg-amber-200 text-amber-800 dark:bg-amber-950/40 dark:text-amber-400"
+          badge: "bg-amber-100 hover:bg-amber-200 text-amber-800 dark:bg-amber-950/40"
         };
     }
   };
@@ -210,25 +210,25 @@ export default function SaintsCatalogTab({
   return (
     <div className="space-y-6">
       {/* Title Header Card */}
-      <div className="bg-white dark:bg-[#12101d] rounded-2xl border border-stone-200 dark:border-stone-850 p-6 shadow-sm">
+      <div className="bg-[#faf7f0] dark:bg-[#f5f0e8] rounded-2xl border border-stone-200 p-6 shadow-sm">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h2 className="text-xl md:text-2xl font-heading font-semibold text-stone-900 dark:text-white flex items-center gap-3">
-              <BookOpen className="h-6 w-6 text-[#d4af37]" />
+            <h2 className="text-xl md:text-2xl font-heading font-semibold text-stone-900 flex items-center gap-3">
+              <BookOpen className="h-6 w-6 text-[#8b4513]" />
               Saints & Intercessors Catalog
             </h2>
-            <p className="text-xs text-stone-500 dark:text-stone-400 font-sans mt-1.5 max-w-2xl leading-relaxed">
+            <p className="text-xs text-stone-500 font-sans mt-1.5 max-w-2xl leading-relaxed">
               Explore the lives, patrongages, and prayers of the saints referenced in the liturgical calendar. 
               Mark them as favorites to draft them as intercessory guardians on your spiritual trek.
             </p>
           </div>
-          <div className="flex bg-stone-100 dark:bg-stone-900 rounded-xl p-1 shrink-0 max-w-fit">
+          <div className="flex bg-stone-100 rounded-xl p-1 shrink-0 max-w-fit">
             <button
               onClick={() => setActiveSubTab("catalog")}
               className={`px-4 py-2 text-xs font-mono font-bold rounded-lg transition-all cursor-pointer ${
                 activeSubTab === "catalog"
-                  ? "bg-white dark:bg-stone-850 shadow-xs text-stone-900 dark:text-white"
-                  : "text-stone-500 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-200"
+                  ? "bg-[#faf7f0] shadow-xs text-stone-900"
+                  : "text-stone-500 hover:text-stone-800"
               }`}
             >
               Liturgical Calendar
@@ -237,11 +237,11 @@ export default function SaintsCatalogTab({
               onClick={() => setActiveSubTab("explore")}
               className={`px-4 py-2 text-xs font-mono font-bold rounded-lg transition-all cursor-pointer flex items-center gap-1 ${
                 activeSubTab === "explore"
-                  ? "bg-white dark:bg-stone-850 shadow-xs text-stone-900 dark:text-white"
-                  : "text-stone-500 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-200"
+                  ? "bg-[#faf7f0] shadow-xs text-stone-900"
+                  : "text-stone-500 hover:text-stone-800"
               }`}
             >
-              <Sparkles className="h-3 w-3 text-amber-500" />
+              <Sparkles className="h-3 w-3 text-[#8b4513]" />
               Explore Any Saint
             </button>
           </div>
@@ -254,15 +254,15 @@ export default function SaintsCatalogTab({
         {/* Left column: Favorites & Quick Index */}
         <div className="lg:col-span-1 space-y-6">
           {/* Favorites List */}
-          <div className="bg-white dark:bg-[#12101d] rounded-2xl border border-stone-200 dark:border-stone-850 p-4 shadow-sm">
-            <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-amber-600 dark:text-amber-450 mb-3 flex items-center gap-2">
-              <Star className="h-4 w-4 fill-amber-500 text-amber-500" />
+          <div className="bg-[#faf7f0] dark:bg-[#f5f0e8] rounded-2xl border border-stone-200 p-4 shadow-sm">
+            <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-[#6b3410] mb-3 flex items-center gap-2">
+              <Star className="h-4 w-4 fill-[#8b4513] text-[#8b4513]" />
               My Intercessors ({favoritedSaintsList.length})
             </h3>
             
             {favoritedSaintsList.length === 0 ? (
-              <div className="py-6 px-2 text-center border border-dashed border-stone-200 dark:border-stone-800 rounded-xl">
-                <p className="text-[11px] text-stone-400 dark:text-stone-500 italic">
+              <div className="py-6 px-2 text-center border border-dashed border-stone-200 rounded-xl">
+                <p className="text-[11px] text-stone-400 italic">
                   No favorited saints yet. Tap the star icon on any saint card to keep them close.
                 </p>
               </div>
@@ -274,13 +274,13 @@ export default function SaintsCatalogTab({
                     <button
                       key={s.id}
                       onClick={() => setSelectedSaint(s)}
-                      className={`w-full flex items-center justify-between p-2.5 rounded-xl border border-stone-150 dark:border-stone-800 bg-stone-50/50 hover:bg-stone-50 dark:bg-stone-900/40 dark:hover:bg-stone-900 transition-colors text-left cursor-pointer group`}
+                      className={`w-full flex items-center justify-between p-2.5 rounded-xl border border-stone-150 bg-stone-50/50 hover:bg-stone-50 transition-colors text-left cursor-pointer group`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className="font-heading font-medium text-xs text-stone-800 dark:text-stone-200 group-hover:text-amber-600 dark:group-hover:text-amber-400 truncate">
+                        <div className="font-heading font-medium text-xs text-stone-800 group-hover:text-[#6b3410] dark:group-hover:text-[#a0520f] truncate">
                           {s.name}
                         </div>
-                        <div className="text-[10px] text-stone-500 dark:text-stone-400 truncate font-sans">
+                        <div className="text-[10px] text-stone-500 truncate font-sans">
                           {s.patronage}
                         </div>
                       </div>
@@ -293,8 +293,8 @@ export default function SaintsCatalogTab({
           </div>
 
           {/* Core Tip Card */}
-          <div className="bg-gradient-to-br from-[#d4af37]/5 to-transparent border border-amber-500/10 rounded-2xl p-4 text-[11px] line-relaxed text-stone-500 dark:text-stone-400 font-sans space-y-2.5">
-            <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400 font-bold font-mono uppercase tracking-wider">
+          <div className="bg-gradient-to-br from-[#d4af37]/5 to-transparent border border-[#8b4513]/10 rounded-2xl p-4 text-[11px] line-relaxed text-stone-500 font-sans space-y-2.5">
+            <div className="flex items-center gap-2 text-amber-700 font-bold font-mono uppercase tracking-wider">
               <Flame className="h-4 w-4" />
               What is Intercession?
             </div>
@@ -311,7 +311,7 @@ export default function SaintsCatalogTab({
           {activeSubTab === "catalog" && (
             <>
               {/* Search & Filter bar */}
-              <div className="bg-white dark:bg-[#12101d] rounded-2xl border border-stone-200 dark:border-stone-850 p-4 flex gap-3 shadow-xs">
+              <div className="bg-[#faf7f0] dark:bg-[#f5f0e8] rounded-2xl border border-stone-200 p-4 flex gap-3 shadow-xs">
                 <div className="relative flex-1">
                   <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-stone-400">
                     <Search className="h-4 w-4" />
@@ -321,12 +321,12 @@ export default function SaintsCatalogTab({
                     placeholder="Search saints by name, patronage, or century (e.g. Peter, Lost Causes, 20th Century)..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-9 pr-4 py-2 bg-stone-50 dark:bg-stone-900/50 border border-stone-200 dark:border-stone-800 rounded-xl text-xs font-sans text-stone-800 dark:text-stone-100 placeholder-stone-400 dark:placeholder-stone-500 focus:outline-hidden focus:ring-1 focus:ring-[#d4af37] focus:border-transparent transition-all"
+                    className="w-full pl-9 pr-4 py-2 bg-stone-50 border border-stone-200 rounded-xl text-xs font-sans text-stone-800 placeholder-stone-400 focus:outline-hidden focus:ring-1 focus:ring-[#8b4513] focus:border-transparent transition-all"
                   />
                   {searchQuery && (
                     <button 
                       onClick={() => setSearchQuery("")}
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-stone-400 hover:text-stone-700 dark:hover:text-stone-200"
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-stone-400 hover:text-stone-700"
                     >
                       <X className="h-4.5 w-4.5" />
                     </button>
@@ -336,10 +336,10 @@ export default function SaintsCatalogTab({
 
               {/* Grid lists */}
               {filteredSaints.length === 0 ? (
-                <div className="bg-white dark:bg-[#12101d] rounded-2xl border border-stone-200 dark:border-stone-850 p-12 text-center">
+                <div className="bg-[#faf7f0] dark:bg-[#f5f0e8] rounded-2xl border border-stone-200 p-12 text-center">
                   <Info className="h-10 w-10 text-stone-400 mx-auto mb-3" />
-                  <h4 className="font-heading text-sm font-semibold text-stone-800 dark:text-white">No Saints Found</h4>
-                  <p className="text-xs text-stone-400 dark:text-stone-500 mt-1 max-w-sm mx-auto">
+                  <h4 className="font-heading text-sm font-semibold text-stone-800">No Saints Found</h4>
+                  <p className="text-xs text-stone-400 mt-1 max-w-sm mx-auto">
                     Try checking your spelling or explore any other saint in the top right "Explore Any Saint" tab where you can search the global roster!
                   </p>
                 </div>
@@ -352,20 +352,20 @@ export default function SaintsCatalogTab({
                     return (
                       <div 
                         key={saint.id}
-                        className={`bg-white dark:bg-[#12101d] rounded-2xl border ${stylistic.border} hover:border-[#d4af37]/45 p-5 shadow-inner/10 hover:shadow-lg transition-all duration-300 flex flex-col justify-between group relative`}
+                        className={`bg-[#faf7f0] dark:bg-[#f5f0e8] rounded-2xl border ${stylistic.border} hover:border-[#d4af37]/45 p-5 shadow-inner/10 hover:shadow-lg transition-all duration-300 flex flex-col justify-between group relative`}
                       >
                         {/* Upper Details */}
                         <div>
                           <div className="flex justify-between items-start gap-3">
                             <div>
-                              <span className="text-[9px] font-mono uppercase tracking-widest font-bold text-stone-400 dark:text-stone-500">
+                              <span className="text-[9px] font-mono uppercase tracking-widest font-bold text-stone-400">
                                 {saint.era} • FEAST: {saint.feastDay}
                               </span>
-                              <h3 className="font-heading text-[15px] font-semibold text-stone-900 dark:text-stone-50 mt-0.5 select-none inline-flex items-center gap-1.5">
+                              <h3 className="font-heading text-[15px] font-semibold text-stone-900 mt-0.5 select-none inline-flex items-center gap-1.5">
                                 <span className="w-2 h-2 rounded-full" style={{ backgroundColor: saint.color === 'blue' ? '#3B82F6' : saint.color === 'red' ? '#EF4444' : saint.color === 'green' ? '#10B981' : saint.color === 'violet' ? '#8B5CF6' : saint.color === 'rose' ? '#F43F5E' : '#F59E0B' }} />
                                 {saint.name}
                               </h3>
-                              <p className="text-[10px] text-amber-700 dark:text-amber-400 font-medium italic mt-0.5 line-clamp-1">
+                              <p className="text-[10px] text-amber-700 font-medium italic mt-0.5 line-clamp-1">
                                 {saint.title}
                               </p>
                             </div>
@@ -374,29 +374,29 @@ export default function SaintsCatalogTab({
                             <button
                               type="button"
                               onClick={() => toggleFavorite(saint.id)}
-                              className="p-2 rounded-full cursor-pointer transition-colors duration-200 bg-stone-50 hover:bg-stone-100 dark:bg-stone-900 dark:hover:bg-stone-800 hover:text-amber-500"
+                              className="p-2 rounded-full cursor-pointer transition-colors duration-200 bg-stone-50 hover:bg-stone-100 hover:text-[#8b4513]"
                               title={isFav ? "Remove from favorite intercessors" : "Mark as favorite intercessor"}
                             >
-                              <Star className={`h-4.5 w-4.5 transition-all ${isFav ? "fill-amber-500 text-amber-500" : "text-stone-400 dark:text-stone-600"}`} />
+                              <Star className={`h-4.5 w-4.5 transition-all ${isFav ? "fill-[#8b4513] text-[#8b4513]" : "text-stone-400"}`} />
                             </button>
                           </div>
 
                           {/* Patronage list */}
                           <div className="mt-3.5 space-y-1.5">
-                            <div className="text-[11px] font-sans text-stone-600 dark:text-stone-300 line-clamp-2 leading-relaxed">
+                            <div className="text-[11px] font-sans text-stone-600 line-clamp-2 leading-relaxed">
                               <strong>Patron of:</strong> {saint.patronage}
                             </div>
-                            <p className="text-[11px] text-stone-500 dark:text-stone-400 font-sans line-clamp-3 leading-relaxed">
+                            <p className="text-[11px] text-stone-500 font-sans line-clamp-3 leading-relaxed">
                               {saint.biography}
                             </p>
                           </div>
                         </div>
 
                         {/* Virtues and Action Buttons */}
-                        <div className="mt-5 pt-3 border-t border-stone-100 dark:border-stone-900 flex flex-wrap gap-1.5 justify-between items-center bg-stone-50/[0.01]">
+                        <div className="mt-5 pt-3 border-t border-stone-100 flex flex-wrap gap-1.5 justify-between items-center bg-stone-50/[0.01]">
                           <div className="flex gap-1">
                             {saint.virtues.slice(0, 2).map((v, idx) => (
-                              <span key={idx} className="text-[8.5px] font-mono font-bold px-2 py-0.5 rounded-full bg-stone-100 dark:bg-stone-900 text-stone-500 dark:text-stone-400 border border-stone-200/50 dark:border-stone-800">
+                              <span key={idx} className="text-[8.5px] font-mono font-bold px-2 py-0.5 rounded-full bg-stone-100 text-stone-500 border border-stone-200/50">
                                 {v}
                               </span>
                             ))}
@@ -405,7 +405,7 @@ export default function SaintsCatalogTab({
                           <div className="flex gap-1.5 shrink-0">
                             <button
                               onClick={() => handleLightCandle(saint)}
-                              className="px-2.5 py-1 text-[10px] font-mono font-bold text-amber-700 dark:text-amber-450 bg-amber-500/10 hover:bg-amber-500/20 rounded-lg cursor-pointer transition-all flex items-center gap-1"
+                              className="px-2.5 py-1 text-[10px] font-mono font-bold text-amber-700 bg-[#8b4513]/10 hover:bg-[#8b4513]/20 rounded-lg cursor-pointer transition-all flex items-center gap-1"
                               title="Light intersession candle"
                             >
                               <Flame className="h-3 w-3 animate-pulse" />
@@ -414,7 +414,7 @@ export default function SaintsCatalogTab({
                             
                             <button
                               onClick={() => setSelectedSaint(saint)}
-                              className="px-2.5 py-1 text-[10px] font-mono font-bold text-stone-700 hover:text-stone-950 dark:text-stone-300 dark:hover:text-white bg-stone-100 hover:bg-stone-200 dark:bg-stone-900 dark:hover:bg-stone-800 rounded-lg cursor-pointer transition-all"
+                              className="px-2.5 py-1 text-[10px] font-mono font-bold text-stone-700 hover:text-stone-950 bg-stone-100 hover:bg-stone-200 rounded-lg cursor-pointer transition-all"
                             >
                               Learn More
                             </button>
@@ -429,13 +429,13 @@ export default function SaintsCatalogTab({
           )}
 
           {activeSubTab === "explore" && (
-            <div className="bg-white dark:bg-[#12101d] rounded-2xl border border-stone-200 dark:border-stone-850 p-6 shadow-sm space-y-6">
+            <div className="bg-[#faf7f0] dark:bg-[#f5f0e8] rounded-2xl border border-stone-200 p-6 shadow-sm space-y-6">
               <div className="max-w-xl">
-                <h3 className="text-sm font-mono font-bold uppercase tracking-wider text-amber-600 dark:text-amber-450 flex items-center gap-1.5">
+                <h3 className="text-sm font-mono font-bold uppercase tracking-wider text-[#6b3410] flex items-center gap-1.5">
                   <Sparkles className="h-4 w-4" />
                   Dynamic AI Saint Hagiography
                 </h3>
-                <p className="text-[11px] text-stone-500 dark:text-stone-400 font-sans leading-relaxed mt-1">
+                <p className="text-[11px] text-stone-500 font-sans leading-relaxed mt-1">
                   Type the name of any Roman Catholic, Eastern, or historic saint (e.g., "Saint Thomas Aquinas", "Saint Benedict of Nursia", "Saint Dymphna", "Saint Joan of Arc"). Our server API will query a theological hagiographical model to fetch full patronages, history, virtues, and an intercessory prayer.
                 </p>
               </div>
@@ -449,12 +449,12 @@ export default function SaintsCatalogTab({
                   value={exploreQuery}
                   onChange={(e) => setExploreQuery(e.target.value)}
                   disabled={isExploring}
-                  className="flex-1 px-4 py-2.5 bg-stone-50 dark:bg-stone-900/50 border border-stone-200 dark:border-stone-850 rounded-xl text-xs font-sans text-stone-800 dark:text-stone-100 placeholder-stone-400 dark:placeholder-stone-500 focus:outline-hidden focus:ring-1 focus:ring-amber-500 focus:border-transparent"
+                  className="flex-1 px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs font-sans text-stone-800 placeholder-stone-400 focus:outline-hidden focus:ring-1 focus:ring-[#8b4513] focus:border-transparent"
                 />
                 <button
                   type="submit"
                   disabled={isExploring || !exploreQuery.trim()}
-                  className="px-5 py-2.5 bg-stone-900 text-[#d4af37] border border-stone-800 dark:bg-amber-500 dark:text-stone-950 text-xs font-mono font-bold rounded-xl hover:bg-stone-850 dark:hover:bg-amber-450 transition-all cursor-pointer flex items-center gap-1.5 shadow-sm disabled:opacity-50"
+                  className="px-5 py-2.5 bg-[#f0e8d8] text-[#8b4513] border border-stone-800 dark:bg-[#8b4513] text-xs font-mono font-bold rounded-xl hover:bg-[#f0e8d8] transition-all cursor-pointer flex items-center gap-1.5 shadow-sm disabled:opacity-50"
                 >
                   {isExploring ? (
                     <>
@@ -482,7 +482,7 @@ export default function SaintsCatalogTab({
 
               {/* Results View */}
               {exploreResult && (
-                <div className={`border p-6 rounded-2xl bg-stone-50/30 dark:bg-stone-900/25 animate-fadeIn max-w-2xl relative ${getColorStyles(exploreResult.color).border}`}>
+                <div className={`border p-6 rounded-2xl bg-stone-50/30 animate-fadeIn max-w-2xl relative ${getColorStyles(exploreResult.color).border}`}>
                   
                   {/* Category Accent Background Indicator */}
                   <div className="absolute top-4 right-4 flex items-center gap-1.5">
@@ -491,42 +491,42 @@ export default function SaintsCatalogTab({
                     </span>
                     <button
                       onClick={() => toggleFavorite(exploreResult.id)}
-                      className="p-1.5 rounded-full bg-white dark:bg-stone-950 border border-stone-100 dark:border-stone-850 shadow-sm text-stone-400 hover:text-amber-500"
+                      className="p-1.5 rounded-full bg-[#faf7f0] border border-stone-100 shadow-sm text-stone-400 hover:text-[#8b4513]"
                       title="Favorite this saint"
                     >
-                      <Star className={`h-4.5 w-4.5 ${favorites.includes(exploreResult.id) ? "fill-amber-500 text-amber-500" : ""}`} />
+                      <Star className={`h-4.5 w-4.5 ${favorites.includes(exploreResult.id) ? "fill-[#8b4513] text-[#8b4513]" : ""}`} />
                     </button>
                   </div>
 
                   <div className="space-y-4">
                     <div>
-                      <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#d4af37] dark:text-amber-400">
+                      <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#8b4513]">
                         {exploreResult.title}
                       </span>
-                      <h4 className="font-heading text-lg font-bold text-stone-900 dark:text-stone-50 mt-1">
+                      <h4 className="font-heading text-lg font-bold text-stone-900 mt-1">
                         {exploreResult.name}
                       </h4>
-                      <p className="text-[11px] font-sans text-stone-500 dark:text-stone-400">
+                      <p className="text-[11px] font-sans text-stone-500">
                         <strong>Feast Day:</strong> {exploreResult.feastDay} | <strong>Patron of:</strong> {exploreResult.patronage}
                       </p>
                     </div>
 
-                    <div className="space-y-2 border-t border-stone-250/20 dark:border-stone-800 pt-3">
-                      <h5 className="text-[10px] font-mono font-bold uppercase tracking-wider text-stone-400 dark:text-stone-500">
+                    <div className="space-y-2 border-t border-stone-250/20 pt-3">
+                      <h5 className="text-[10px] font-mono font-bold uppercase tracking-wider text-stone-400">
                         Spiritual Biography
                       </h5>
-                      <p className="text-xs text-stone-600 dark:text-stone-300 leading-relaxed font-sans">
+                      <p className="text-xs text-stone-600 leading-relaxed font-sans">
                         {exploreResult.biography}
                       </p>
                     </div>
 
-                    <div className="space-y-2 border-t border-stone-250/20 dark:border-stone-800 pt-3">
-                      <h5 className="text-[10px] font-mono font-bold uppercase tracking-wider text-stone-400 dark:text-stone-500">
+                    <div className="space-y-2 border-t border-stone-250/20 pt-3">
+                      <h5 className="text-[10px] font-mono font-bold uppercase tracking-wider text-stone-400">
                         Sanctuary Virtues
                       </h5>
                       <div className="flex flex-wrap gap-1.5">
                         {exploreResult.virtues.map((v, i) => (
-                          <span key={i} className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/10">
+                          <span key={i} className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#8b4513]/10 text-amber-700 border border-[#8b4513]/10">
                             {v}
                           </span>
                         ))}
@@ -534,16 +534,16 @@ export default function SaintsCatalogTab({
                     </div>
 
                     {exploreResult.traditionalPrayer && (
-                      <div className="space-y-2 border-t border-stone-250/20 dark:border-stone-800 pt-3">
+                      <div className="space-y-2 border-t border-stone-250/20 pt-3">
                         <div className="flex justify-between items-center">
-                          <h5 className="text-[10px] font-mono font-bold uppercase tracking-wider text-stone-400 dark:text-stone-300 flex items-center gap-1">
-                            <Star className="h-3 w-3 inline text-amber-500" />
+                          <h5 className="text-[10px] font-mono font-bold uppercase tracking-wider text-stone-400 flex items-center gap-1">
+                            <Star className="h-3 w-3 inline text-[#8b4513]" />
                             Intercessory Prayer
                           </h5>
                           <button
                             type="button"
                             onClick={() => handleCopyPrayer(exploreResult.traditionalPrayer, exploreResult.id)}
-                            className="text-[9px] font-mono font-bold text-stone-400 hover:text-stone-800 dark:text-stone-500 dark:hover:text-stone-200 flex items-center gap-1 cursor-pointer"
+                            className="text-[9px] font-mono font-bold text-stone-400 hover:text-stone-800 flex items-center gap-1 cursor-pointer"
                           >
                             {copied === exploreResult.id ? (
                               <>
@@ -558,8 +558,8 @@ export default function SaintsCatalogTab({
                             )}
                           </button>
                         </div>
-                        <div className="p-3 bg-stone-100/50 dark:bg-stone-950/45 rounded-xl border border-stone-150 dark:border-stone-850">
-                          <p className="text-xs leading-relaxed text-stone-600 dark:text-stone-350 italic font-sans">
+                        <div className="p-3 bg-stone-100/50 rounded-xl border border-stone-150">
+                          <p className="text-xs leading-relaxed text-stone-600 italic font-sans">
                             {exploreResult.traditionalPrayer}
                           </p>
                         </div>
@@ -585,53 +585,53 @@ export default function SaintsCatalogTab({
 
       {/* --- MODAL 1: SAINT LEARN MORE MODAL --- */}
       {selectedSaint && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 dark:bg-black/75 backdrop-blur-xs animate-fadeIn">
-          <div className="bg-white dark:bg-[#12101d] rounded-2xl border border-stone-200 dark:border-stone-850 p-6 max-w-xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative space-y-5">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#f0e8d8] backdrop-blur-xs animate-fadeIn">
+          <div className="bg-[#faf7f0] dark:bg-[#f5f0e8] rounded-2xl border border-stone-200 p-6 max-w-xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative space-y-5">
             <button
               onClick={() => setSelectedSaint(null)}
-              className="absolute top-4 right-4 p-1.5 text-stone-400 hover:text-stone-800 dark:hover:text-stone-200 transition-colors bg-stone-50 dark:bg-stone-900 rounded-lg cursor-pointer"
+              className="absolute top-4 right-4 p-1.5 text-stone-400 hover:text-stone-800 transition-colors bg-stone-50 rounded-lg cursor-pointer"
             >
               <X className="h-4.5 w-4.5" />
             </button>
 
             <div>
-              <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#d4af37] dark:text-amber-400">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#8b4513]">
                 {selectedSaint.era} • FEAST DAY: {selectedSaint.feastDay}
               </span>
-              <h3 className="font-heading text-xl font-bold text-stone-900 dark:text-stone-50 mt-1 select-none flex items-center gap-2">
+              <h3 className="font-heading text-xl font-bold text-stone-900 mt-1 select-none flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: selectedSaint.color === 'blue' ? '#3B82F6' : selectedSaint.color === 'red' ? '#EF4444' : selectedSaint.color === 'green' ? '#10B981' : selectedSaint.color === 'violet' ? '#8B5CF6' : selectedSaint.color === 'rose' ? '#F43F5E' : '#F59E0B' }} />
                 {selectedSaint.name}
               </h3>
-              <p className="text-xs text-amber-700 dark:text-amber-450 font-medium italic mt-1">
+              <p className="text-xs text-amber-700 font-medium italic mt-1">
                 {selectedSaint.title}
               </p>
             </div>
 
-            <div className="space-y-2 border-t border-stone-200/50 dark:border-stone-850 pt-4 text-xs">
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-stone-400 dark:text-stone-500">
+            <div className="space-y-2 border-t border-stone-200/50 pt-4 text-xs">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-stone-400">
                 Sanctuary Patronage
               </span>
-              <p className="text-stone-750 dark:text-stone-300 font-sans leading-relaxed">
+              <p className="text-stone-750 font-sans leading-relaxed">
                 {selectedSaint.patronage}
               </p>
             </div>
 
-            <div className="space-y-2 border-t border-stone-200/50 dark:border-stone-850 pt-4 text-xs">
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-stone-400 dark:text-stone-500">
+            <div className="space-y-2 border-t border-stone-200/50 pt-4 text-xs">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-stone-400">
                 Faith Biography Story
               </span>
-              <p className="text-stone-600 dark:text-stone-300 font-sans leading-relaxed text-xs">
+              <p className="text-stone-600 font-sans leading-relaxed text-xs">
                 {selectedSaint.biography}
               </p>
             </div>
 
-            <div className="space-y-2 border-t border-stone-200/50 dark:border-stone-850 pt-4 text-xs">
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-stone-400 dark:text-stone-500">
+            <div className="space-y-2 border-t border-stone-200/50 pt-4 text-xs">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-stone-400">
                 Core Virtues
               </span>
               <div className="flex flex-wrap gap-1.5">
                 {selectedSaint.virtues.map((v, i) => (
-                  <span key={i} className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-stone-100 dark:bg-stone-900 text-stone-600 dark:text-stone-400 border border-stone-200/50 dark:border-stone-800">
+                  <span key={i} className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-stone-100 text-stone-600 border border-stone-200/50">
                     {v}
                   </span>
                 ))}
@@ -639,15 +639,15 @@ export default function SaintsCatalogTab({
             </div>
 
             {selectedSaint.traditionalPrayer && (
-              <div className="space-y-2.5 border-t border-stone-200/50 dark:border-stone-850 pt-4 text-xs">
+              <div className="space-y-2.5 border-t border-stone-200/50 pt-4 text-xs">
                 <div className="flex justify-between items-center">
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-stone-400 dark:text-stone-500">
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-stone-400">
                     Traditional Intercession Prayer
                   </span>
                   <button
                     type="button"
                     onClick={() => handleCopyPrayer(selectedSaint.traditionalPrayer, selectedSaint.id)}
-                    className="text-[9px] font-mono font-bold text-stone-500 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-200 flex items-center gap-1 cursor-pointer"
+                    className="text-[9px] font-mono font-bold text-stone-500 hover:text-stone-800 flex items-center gap-1 cursor-pointer"
                   >
                     {copied === selectedSaint.id ? (
                       <>
@@ -662,13 +662,13 @@ export default function SaintsCatalogTab({
                     )}
                   </button>
                 </div>
-                <div className="p-3.5 bg-stone-50 dark:bg-stone-900/40 rounded-xl border border-stone-150 dark:border-stone-800 text-stone-600 dark:text-stone-350 italic font-sans leading-relaxed">
+                <div className="p-3.5 bg-stone-50 rounded-xl border border-stone-150 text-stone-600 italic font-sans leading-relaxed">
                   "{selectedSaint.traditionalPrayer}"
                 </div>
               </div>
             )}
 
-            <div className="border-t border-stone-200/50 dark:border-stone-800 pt-4 flex gap-2">
+            <div className="border-t border-stone-200/50 pt-4 flex gap-2">
               <button
                 onClick={() => {
                   setSelectedSaint(null);
@@ -686,11 +686,11 @@ export default function SaintsCatalogTab({
                 }}
                 className={`px-4 py-2.5 border text-xs font-mono font-bold rounded-xl cursor-pointer flex items-center gap-1.5 transition-colors ${
                   favorites.includes(selectedSaint.id)
-                    ? "border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-400"
-                    : "border-stone-200 dark:border-stone-800 text-stone-600 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-900"
+                    ? "border-[#8b4513]/20 bg-[#8b4513]/10 text-amber-700"
+                    : "border-stone-200 text-stone-600 hover:bg-stone-50"
                 }`}
               >
-                <Star className={`h-3.5 w-3.5 ${favorites.includes(selectedSaint.id) ? "fill-amber-500 text-amber-500" : ""}`} />
+                <Star className={`h-3.5 w-3.5 ${favorites.includes(selectedSaint.id) ? "fill-[#8b4513] text-[#8b4513]" : ""}`} />
                 <span>{favorites.includes(selectedSaint.id) ? "Favorited" : "Favorite"}</span>
               </button>
             </div>
@@ -700,8 +700,8 @@ export default function SaintsCatalogTab({
 
       {/* --- MODAL 2: INTERCESSORY ALtar CANDLE LIGHTING MODAL --- */}
       {isInterceding && selectedSaint && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 dark:bg-black/75 backdrop-blur-xs animate-fadeIn">
-          <div className="bg-white dark:bg-[#12101d] rounded-2xl border border-stone-200 dark:border-stone-850 p-6 max-w-md w-full shadow-2xl relative text-center space-y-5">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#f0e8d8] backdrop-blur-xs animate-fadeIn">
+          <div className="bg-[#faf7f0] dark:bg-[#f5f0e8] rounded-2xl border border-stone-200 p-6 max-w-md w-full shadow-2xl relative text-center space-y-5">
             
             <button
               onClick={() => {
@@ -709,7 +709,7 @@ export default function SaintsCatalogTab({
                 setCandleLit(false);
                 setCandleText("");
               }}
-              className="absolute top-4 right-4 p-1.5 text-stone-400 hover:text-stone-800 dark:hover:text-stone-200 transition-colors bg-stone-50 dark:bg-stone-900 rounded-lg cursor-pointer"
+              className="absolute top-4 right-4 p-1.5 text-stone-400 hover:text-stone-800 transition-colors bg-stone-50 rounded-lg cursor-pointer"
             >
               <X className="h-4.5 w-4.5" />
             </button>
@@ -720,7 +720,7 @@ export default function SaintsCatalogTab({
                 {/* Candle flame block */}
                 <div className={`w-3.5 h-[50px] bg-amber-100 dark:bg-amber-200/90 rounded-t-sm relative shadow-md ${candleLit ? "shadow-amber-500/40" : ""}`}>
                   {/* Wick */}
-                  <div className="absolute -top-1.5 left-1.5 w-[2px] h-2 bg-stone-900 dark:bg-stone-600" />
+                  <div className="absolute -top-1.5 left-1.5 w-[2px] h-2 bg-[#f0e8d8]" />
                 </div>
                 
                 {/* Animated flame */}
@@ -730,14 +730,14 @@ export default function SaintsCatalogTab({
                   </div>
                 )}
               </div>
-              <div className="h-0.5 w-[70px] bg-stone-200 dark:bg-stone-850 rounded-full shadow-md mt-1" />
+              <div className="h-0.5 w-[70px] bg-stone-200 rounded-full shadow-md mt-1" />
             </div>
 
             <div>
-              <h4 className="font-heading text-base font-bold text-stone-900 dark:text-stone-50">
+              <h4 className="font-heading text-base font-bold text-stone-900">
                 {candleLit ? "Candle is Burning" : "Altar of Intercession"}
               </h4>
-              <p className="text-[11px] text-stone-500 dark:text-stone-400 font-sans mt-1">
+              <p className="text-[11px] text-stone-500 font-sans mt-1">
                 Bring your personal intention before <strong>{selectedSaint.name}</strong>, Patron of {selectedSaint.patronage.split(',')[0]}.
               </p>
             </div>
@@ -745,13 +745,13 @@ export default function SaintsCatalogTab({
             {!candleLit ? (
               <div className="space-y-4 text-left max-h-[300px] overflow-y-auto">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-stone-400 dark:text-stone-500">
+                  <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-stone-400">
                     Connect to a Saved Intention:
                   </label>
                   
                   <div className="space-y-1.5">
                     {personalIntentions.filter(i => !i.answered).map(i => (
-                      <label key={i.id} className="flex items-start gap-2.5 p-2 rounded-xl border border-stone-150 bg-stone-50 hover:bg-stone-100 dark:border-stone-850 dark:bg-stone-900/30 dark:hover:bg-stone-900/60 cursor-pointer text-xs">
+                      <label key={i.id} className="flex items-start gap-2.5 p-2 rounded-xl border border-stone-150 bg-stone-50 hover:bg-stone-100 cursor-pointer text-xs">
                         <input
                           type="radio"
                           name="intention-select"
@@ -759,14 +759,14 @@ export default function SaintsCatalogTab({
                           onChange={() => setIntercedeIntention(i.id)}
                           className="mt-0.5"
                         />
-                        <div className="font-sans text-stone-800 dark:text-stone-200">
+                        <div className="font-sans text-stone-800">
                           <span className="font-semibold block truncate leading-tight">{i.title}</span>
                           <span className="text-[10px] block text-stone-400 truncate leading-snug">{i.description}</span>
                         </div>
                       </label>
                     ))}
 
-                    <label className="flex items-start gap-2.5 p-2 rounded-xl border border-stone-150 bg-stone-50 hover:bg-stone-100 dark:border-stone-850 dark:bg-stone-900/30 dark:hover:bg-stone-900/60 cursor-pointer text-xs">
+                    <label className="flex items-start gap-2.5 p-2 rounded-xl border border-stone-150 bg-stone-50 hover:bg-stone-100 cursor-pointer text-xs">
                       <input
                         type="radio"
                         name="intention-select"
@@ -774,7 +774,7 @@ export default function SaintsCatalogTab({
                         onChange={() => setIntercedeIntention("custom")}
                         className="mt-0.5"
                       />
-                      <div className="font-sans text-stone-800 dark:text-stone-200 w-full pr-1">
+                      <div className="font-sans text-stone-800 w-full pr-1">
                         <span className="font-semibold block leading-tight">State a custom intention:</span>
                         {intercedeIntention === "custom" && (
                           <input
@@ -783,7 +783,7 @@ export default function SaintsCatalogTab({
                             placeholder="Type your prayer need here (e.g. grandad's health or exam calm)..."
                             value={customIntentionText}
                             onChange={(e) => setCustomIntentionText(e.target.value)}
-                            className="w-full mt-1.5 px-3 py-1.5 bg-white border border-stone-200 dark:bg-stone-900 dark:border-stone-800 rounded-lg text-xs"
+                            className="w-full mt-1.5 px-3 py-1.5 bg-[#faf7f0] border border-stone-200 rounded-lg text-xs"
                           />
                         )}
                       </div>
@@ -794,7 +794,7 @@ export default function SaintsCatalogTab({
                 <button
                   type="button"
                   onClick={() => submitIntercession(selectedSaint)}
-                  className="w-full py-2.5 mt-2 bg-stone-900 hover:bg-stone-850 dark:bg-amber-500 hover:dark:bg-amber-450 dark:text-stone-950 font-mono font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 text-[#d4af37]"
+                  className="w-full py-2.5 mt-2 bg-[#f0e8d8] hover:bg-[#f0e8d8] dark:bg-[#8b4513] hover:dark:bg-amber-450 font-mono font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 text-[#8b4513]"
                 >
                   <Flame className="h-3.5 w-3.5" />
                   <span>Light Holy Votive Candle</span>
@@ -802,14 +802,14 @@ export default function SaintsCatalogTab({
               </div>
             ) : (
               <div className="space-y-4">
-                <div className="p-3.5 bg-amber-500/[0.03] border border-amber-500/20 text-xs text-stone-600 dark:text-stone-300 font-sans leading-relaxed rounded-xl italic">
+                <div className="p-3.5 bg-[#8b4513]/[0.03] border border-[#8b4513]/20 text-xs text-stone-600 font-sans leading-relaxed rounded-xl italic">
                   "{candleText}"
                 </div>
 
-                <div className="p-3 bg-stone-50 dark:bg-stone-900/40 rounded-xl border border-stone-150 dark:border-stone-800 text-left text-[11px] leading-relaxed font-sans text-stone-500">
-                  <span className="font-bold text-stone-700 dark:text-stone-300 uppercase block mb-1">Intercessory Counsel:</span>
+                <div className="p-3 bg-stone-50 rounded-xl border border-stone-150 text-left text-[11px] leading-relaxed font-sans text-stone-500">
+                  <span className="font-bold text-stone-700 uppercase block mb-1">Intercessory Counsel:</span>
                   As the candle burns, recite the intercession prayer to are beloved Saint:
-                  <p className="mt-1.5 text-stone-600 dark:text-stone-300 italic font-semibold">
+                  <p className="mt-1.5 text-stone-600 italic font-semibold">
                     "{selectedSaint.traditionalPrayer}"
                   </p>
                 </div>
@@ -820,7 +820,7 @@ export default function SaintsCatalogTab({
                     setCandleLit(false);
                     setCandleText("");
                   }}
-                  className="w-full py-2.5 bg-stone-100 hover:bg-stone-250 dark:bg-stone-900 hover:dark:bg-stone-800 text-stone-605 dark:text-stone-300 font-mono font-semibold text-xs rounded-xl cursor-pointer"
+                  className="w-full py-2.5 bg-stone-100 hover:bg-stone-250 hover: text-stone-605 font-mono font-semibold text-xs rounded-xl cursor-pointer"
                 >
                   Close & Continue Meditations
                 </button>

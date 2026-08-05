@@ -40,7 +40,7 @@ const TRENDING_ITEMS: TrendingItem[] = [
     participantsToday: 8201,
     incrementPercentage: 247,
     sparkline: [40, 48, 55, 68, 72, 85, 94],
-    color: "from-amber-500/20 to-amber-950/10 border-amber-500/35 dark:border-amber-500/20 text-amber-600 dark:text-amber-400",
+    color: "from-amber-500/20 to-amber-950/10 border-amber-500/35 text-[#6b3410]",
     glow: "rgba(245, 158, 11, 0.45)"
   },
   {
@@ -124,9 +124,9 @@ export function TrendingTab({ onAddStatsPrayer }: TrendingTabProps) {
     <div className="space-y-6 animate-fadeIn">
       
       {/* Heading Intro Bento banner */}
-      <div className="bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-850/80 rounded-2xl p-6 shadow-xl overflow-hidden relative">
+      <div className="bg-[#faf7f0] border border-stone-200 rounded-2xl p-6 shadow-xl overflow-hidden relative">
         <div className="absolute top-0 right-0 w-36 h-36 rounded-full bg-red-500/[0.04] blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-2 -left-2 text-[120px] font-serif text-stone-200/10 dark:text-stone-800/15 pointer-events-none select-none font-bold">†</div>
+        <div className="absolute -bottom-2 -left-2 text-[120px] font-serif text-stone-200/10 pointer-events-none select-none font-bold">†</div>
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
           <div className="flex items-start gap-4">
             <div className="bg-gradient-to-br from-red-500/20 to-red-600/5 p-3 rounded-2xl text-red-500 dark:text-red-400 mt-1 shadow-inner border border-red-500/25">
@@ -136,16 +136,16 @@ export function TrendingTab({ onAddStatsPrayer }: TrendingTabProps) {
               <span className="text-[10px] font-mono tracking-widest text-red-650 dark:text-red-400 font-bold uppercase block mb-1">
                 Pilgrims In Prayer
               </span>
-              <h3 className="text-xl font-heading font-semibold text-stone-900 dark:text-stone-50 tracking-wide">
+              <h3 className="text-xl font-heading font-semibold text-stone-900 tracking-wide">
                 Trending Devotional Intercessions
               </h3>
-              <p className="text-xs text-stone-500 dark:text-stone-400 mt-1 leading-relaxed font-sans">
+              <p className="text-xs text-stone-500 mt-1 leading-relaxed font-sans">
                 Real-time activity on Grace Sanctuary. Join thousands of pilgrims reciting powerful traditional prayers and starting critical novenas synchronously across the globe.
               </p>
             </div>
           </div>
           
-          <div className="flex items-center gap-2 bg-stone-100 dark:bg-stone-950 px-4 py-2 rounded-xl text-xs font-mono font-semibold text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-850 self-start md:self-auto shrink-0 shadow-sm">
+          <div className="flex items-center gap-2 bg-stone-100 px-4 py-2 rounded-xl text-xs font-mono font-semibold text-stone-600 border border-stone-200 self-start md:self-auto shrink-0 shadow-sm">
             <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping" />
             <span className="tracking-widest uppercase">GLOBAL RADAR LIVE</span>
           </div>
@@ -159,7 +159,7 @@ export function TrendingTab({ onAddStatsPrayer }: TrendingTabProps) {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search trending pleadings, traditional prayers, active saints..."
-          className="w-full text-xs rounded-xl border border-stone-200 dark:border-stone-850 bg-white dark:bg-stone-950 p-3.5 pl-10 text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-1 focus:ring-amber-500 shadow-sm"
+          className="w-full text-xs rounded-xl border border-stone-200 bg-[#faf7f0] p-3.5 pl-10 text-stone-900 focus:outline-none focus:ring-1 focus:ring-[#8b4513] shadow-sm"
         />
         <Search className="absolute left-3.5 top-3.5 h-4.5 w-4.5 text-stone-400" />
       </div>
@@ -177,40 +177,40 @@ export function TrendingTab({ onAddStatsPrayer }: TrendingTabProps) {
                 <div
                   key={item.id}
                   onClick={() => setSelectedItemId(isSelected ? null : item.id)}
-                  className={`bg-white dark:bg-stone-950 border rounded-2xl p-5 hover:scale-[1.01] transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between min-h-[190px] shadow-sm select-none ${
+                  className={`bg-[#faf7f0] border rounded-2xl p-5 hover:scale-[1.01] transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between min-h-[190px] shadow-sm select-none ${
                     isSelected 
                       ? "ring-1 ring-amber-500 border-amber-500/60" 
-                      : "border-stone-200 dark:border-stone-850"
+                      : "border-stone-200"
                   }`}
                 >
                   
                   {/* Subtle corner flame aesthetic */}
-                  <div className="absolute top-4 right-4 flex items-center gap-1.5 bg-stone-100 dark:bg-stone-900 px-2 py-1 rounded-lg text-[10px] font-mono text-stone-500">
-                    <Flame className="h-3.5 w-3.5 text-amber-500 animate-pulse fill-amber-500" />
+                  <div className="absolute top-4 right-4 flex items-center gap-1.5 bg-stone-100 px-2 py-1 rounded-lg text-[10px] font-mono text-stone-500">
+                    <Flame className="h-3.5 w-3.5 text-[#8b4513] animate-pulse fill-[#8b4513]" />
                     <span>#{index + 1} TRENDING</span>
                   </div>
 
                   <div className="space-y-1 max-w-[80%]">
-                    <span className="text-[9px] font-mono font-bold uppercase tracking-widest text-amber-600 dark:text-amber-400">
+                    <span className="text-[9px] font-mono font-bold uppercase tracking-widest text-[#6b3410]">
                       {item.type}
                     </span>
-                    <h4 className="text-base font-heading font-semibold text-stone-900 dark:text-stone-50 leading-snug">
+                    <h4 className="text-base font-heading font-semibold text-stone-900 leading-snug">
                       {item.title}
                     </h4>
-                    <p className="text-xs text-stone-500 dark:text-stone-400 leading-normal font-sans pt-0.5 max-w-[90%]">
+                    <p className="text-xs text-stone-500 leading-normal font-sans pt-0.5 max-w-[90%]">
                       {item.subtitle}
                     </p>
                   </div>
 
                   {/* Sparkline & Stats Row */}
-                  <div className="flex items-center justify-between gap-4 pt-4 border-t border-stone-100 dark:border-stone-900 mt-4 flex-wrap">
+                  <div className="flex items-center justify-between gap-4 pt-4 border-t border-stone-100 mt-4 flex-wrap">
                     
                     <div className="flex gap-4 items-center">
                       <div className="space-y-0.5">
                         <span className="text-[10px] font-mono text-stone-400 uppercase tracking-wider block">Pilgrims Today</span>
                         <div className="flex items-center gap-1">
                           <Users className="h-3.5 w-3.5 text-stone-400" />
-                          <span className="text-sm font-mono font-bold text-stone-800 dark:text-stone-205">
+                          <span className="text-sm font-mono font-bold text-stone-800">
                             {item.participantsToday.toLocaleString()}
                           </span>
                         </div>
@@ -229,7 +229,7 @@ export function TrendingTab({ onAddStatsPrayer }: TrendingTabProps) {
                       {item.sparkline.map((val, idx) => (
                         <div 
                           key={idx} 
-                          className="w-1.5 rounded-full bg-amber-500/20"
+                          className="w-1.5 rounded-full bg-[#8b4513]/20"
                           style={{ 
                             height: `${(val / 100) * 100}%`,
                             backgroundColor: idx === item.sparkline.length - 1 ? 'rgb(245, 158, 11)' : undefined
@@ -242,7 +242,7 @@ export function TrendingTab({ onAddStatsPrayer }: TrendingTabProps) {
 
                   {/* Join Prompt trigger overlay */}
                   {isSelected && (
-                    <div className="absolute inset-x-0 bottom-0 bg-stone-50/98 dark:bg-stone-900/98 p-3 border-t border-stone-250 dark:border-stone-800 flex items-center justify-between animate-slideUp">
+                    <div className="absolute inset-x-0 bottom-0 bg-stone-50/98 p-3 border-t border-stone-250 flex items-center justify-between animate-slideUp">
                       <span className="text-xs font-sans text-stone-500">Read & pledge your intercessory devotion?</span>
                       <div className="flex gap-1.5">
                         <button
@@ -250,7 +250,7 @@ export function TrendingTab({ onAddStatsPrayer }: TrendingTabProps) {
                             e.stopPropagation();
                             setSelectedItemId(item.id); // Triggers detail modal/view
                           }}
-                          className="px-2.5 py-1 bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 rounded font-sans text-[10px] font-bold cursor-pointer"
+                          className="px-2.5 py-1 bg-stone-100 text-stone-700 rounded font-sans text-[10px] font-bold cursor-pointer"
                         >
                           View Prayer Text
                         </button>
@@ -259,7 +259,7 @@ export function TrendingTab({ onAddStatsPrayer }: TrendingTabProps) {
                             e.stopPropagation();
                             handleJoinDevotion(item.id);
                           }}
-                          className="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white font-sans text-[10px] font-bold rounded cursor-pointer"
+                          className="px-2.5 py-1 bg-[#6b3410] hover:bg-amber-700 text-white font-sans text-[10px] font-bold rounded cursor-pointer"
                         >
                           {hasJoined ? "✓ Joined" : "🕯️ Join Devotion"}
                         </button>
@@ -277,11 +277,11 @@ export function TrendingTab({ onAddStatsPrayer }: TrendingTabProps) {
 
       {/* DETAILED PRAYER VIEW DRAWER MODAL */}
       {selectedItemId && selectedItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-stone-900/60 dark:bg-black/80 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="w-full max-w-xl bg-white dark:bg-stone-950 border border-stone-250 dark:border-stone-850 rounded-2xl shadow-xl relative overflow-hidden">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#f0e8d8] backdrop-blur-sm p-4 overflow-y-auto">
+          <div className="w-full max-w-xl bg-[#faf7f0] border border-stone-250 rounded-2xl shadow-xl relative overflow-hidden">
             
             {/* Visual Header */}
-            <div className="p-6 border-b border-stone-100 dark:border-stone-900 relative">
+            <div className="p-6 border-b border-stone-100 relative">
               <div 
                 className="absolute -top-10 -left-10 w-32 h-32 rounded-full blur-2xl opacity-20"
                 style={{ backgroundColor: selectedItem.glow }}
@@ -289,20 +289,20 @@ export function TrendingTab({ onAddStatsPrayer }: TrendingTabProps) {
 
               <div className="flex justify-between items-start gap-4">
                 <div>
-                  <span className="text-[10px] font-mono text-stone-400 capitalize bg-stone-50 dark:bg-stone-900 px-2.5 py-1 rounded-lg border border-stone-150 dark:border-stone-850 uppercase tracking-widest block mb-1">
+                  <span className="text-[10px] font-mono text-stone-400 capitalize bg-stone-50 px-2.5 py-1 rounded-lg border border-stone-150 uppercase tracking-widest block mb-1">
                     {selectedItem.type} devotion
                   </span>
-                  <h4 className="font-heading font-semibold text-lg text-stone-950 dark:text-stone-50">
+                  <h4 className="font-heading font-semibold text-lg text-stone-950">
                     {selectedItem.title}
                   </h4>
-                  <p className="text-xs text-stone-500 dark:text-stone-400 font-sans">
+                  <p className="text-xs text-stone-500 font-sans">
                     {selectedItem.subtitle}
                   </p>
                 </div>
 
                 <button 
                   onClick={() => setSelectedItemId(null)}
-                  className="p-1 px-2.5 bg-stone-100 dark:bg-stone-900 hover:bg-stone-200 text-stone-500 hover:text-stone-800 text-xs font-mono font-bold rounded-lg cursor-pointer transition-all border border-stone-200 dark:border-stone-800"
+                  className="p-1 px-2.5 bg-stone-100 hover:bg-stone-200 text-stone-500 hover:text-stone-800 text-xs font-mono font-bold rounded-lg cursor-pointer transition-all border border-stone-200"
                 >
                   ✕ Close
                 </button>
@@ -310,20 +310,20 @@ export function TrendingTab({ onAddStatsPrayer }: TrendingTabProps) {
             </div>
 
             {/* Central Text Panel */}
-            <div className="p-6 bg-[#fcfbf9]/40 dark:bg-stone-950/20 max-h-96 overflow-y-auto border-b border-stone-100 dark:border-stone-900">
-              <div className="p-5 rounded-2xl bg-white dark:bg-stone-950/80 border border-stone-150 dark:border-stone-850/50 leading-relaxed relative text-center">
+            <div className="p-6 bg-[#fcfbf9]/40 max-h-96 overflow-y-auto border-b border-stone-100">
+              <div className="p-5 rounded-2xl bg-[#faf7f0] border border-stone-150 leading-relaxed relative text-center">
                 
                 {/* Liturgical tiny cross */}
-                <div className="text-stone-300 dark:text-stone-750 text-xl font-serif mb-3 select-none">†</div>
+                <div className="text-stone-300 text-xl font-serif mb-3 select-none">†</div>
                 
-                <p className="text-sm md:text-base text-stone-800 dark:text-stone-200 font-sans italic max-w-md mx-auto leading-relaxed select-text whitespace-pre-line">
+                <p className="text-sm md:text-base text-stone-800 font-sans italic max-w-md mx-auto leading-relaxed select-text whitespace-pre-line">
                   "{selectedItem.text}"
                 </p>
               </div>
             </div>
 
             {/* Bottom Actions */}
-            <div className="p-6 bg-stone-50 dark:bg-stone-900/40 flex items-center justify-between gap-4">
+            <div className="p-6 bg-stone-50 flex items-center justify-between gap-4">
               
               <div className="text-xs font-mono text-stone-400 flex items-center gap-1">
                 <Users className="h-3.5 w-3.5 fill-current" />
@@ -334,7 +334,7 @@ export function TrendingTab({ onAddStatsPrayer }: TrendingTabProps) {
                 <button
                   type="button"
                   onClick={() => handleJoinDevotion(selectedItem.id)}
-                  className="px-4 py-2 bg-amber-600 hover:bg-amber-700 dark:bg-amber-550 dark:hover:bg-amber-450 text-white dark:text-stone-950 font-sans text-xs font-bold rounded-xl shadow-md transition-all cursor-pointer flex items-center gap-1.5"
+                  className="px-4 py-2 bg-[#6b3410] hover:bg-amber-700 dark:bg-amber-550 text-white font-sans text-xs font-bold rounded-xl shadow-md transition-all cursor-pointer flex items-center gap-1.5"
                 >
                   {joinedItemId === selectedItem.id ? (
                     <>

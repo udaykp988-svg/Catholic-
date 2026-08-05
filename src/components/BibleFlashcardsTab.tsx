@@ -400,27 +400,27 @@ export default function BibleFlashcardsTab({ triggerSound }: BibleFlashcardsTabP
   const masteryPercentage = Math.round((masteredCount / totalCards) * 100) || 0;
 
   return (
-    <div className="flex flex-col gap-6 animate-fadeIn text-stone-800 dark:text-stone-100">
+    <div className="flex flex-col gap-6 animate-fadeIn text-stone-800">
       
       {/* 1. HEADER SECTION & NAVIGATION SEGMENT */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-stone-200 dark:border-stone-850 pb-5">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-stone-200 pb-5">
         <div>
           <div className="flex items-center gap-2 mb-1.5">
-            <span className="p-1 px-2.5 bg-amber-500/10 text-[#d4af37] dark:text-amber-400 font-mono text-[9px] tracking-widest font-bold uppercase rounded-full border border-amber-500/20 shadow-xs">
+            <span className="p-1 px-2.5 bg-[#8b4513]/10 text-[#8b4513] font-mono text-[9px] tracking-widest font-bold uppercase rounded-full border border-[#8b4513]/20 shadow-xs">
               MEMENTO VERBUM
             </span>
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#8b4513] animate-pulse" />
           </div>
-          <h2 className="text-2xl font-heading font-semibold tracking-tight text-stone-900 dark:text-stone-50">
+          <h2 className="text-2xl font-heading font-semibold tracking-tight text-stone-900">
             Scripture Flashcards
           </h2>
-          <p className="text-xs text-stone-500 dark:text-stone-400 font-sans mt-0.5">
+          <p className="text-xs text-stone-500 font-sans mt-0.5">
             Memorize the Word of God through elegant repetition, spatial feedback, and interactive quizzes.
           </p>
         </div>
 
         {/* View Toggle (Study vs Quiz) */}
-        <div className="flex items-center gap-1 bg-stone-100 dark:bg-stone-900/60 p-1 rounded-xl border border-stone-200/60 dark:border-stone-850 shadow-inner max-w-fit self-start md:self-auto">
+        <div className="flex items-center gap-1 bg-stone-100 p-1 rounded-xl border border-stone-200/60 shadow-inner max-w-fit self-start md:self-auto">
           <button
             onClick={() => {
               setActiveMode("study");
@@ -428,8 +428,8 @@ export default function BibleFlashcardsTab({ triggerSound }: BibleFlashcardsTabP
             }}
             className={`flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-mono font-bold tracking-wider rounded-lg cursor-pointer transition-all ${
               activeMode === "study"
-                ? "bg-amber-600 dark:bg-amber-550 text-white dark:text-stone-950 shadow-xs"
-                : "text-stone-500 hover:text-stone-700 dark:text-stone-400 dark:hover:text-stone-105"
+                ? "bg-[#6b3410] dark:bg-amber-550 text-white shadow-xs"
+                : "text-stone-500 hover:text-stone-700"
             }`}
           >
             <BookOpen className="h-3.5 w-3.5" />
@@ -443,8 +443,8 @@ export default function BibleFlashcardsTab({ triggerSound }: BibleFlashcardsTabP
             }}
             className={`flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-mono font-bold tracking-wider rounded-lg cursor-pointer transition-all ${
               activeMode === "quiz"
-                ? "bg-amber-600 dark:bg-amber-550 text-white dark:text-stone-950 shadow-xs"
-                : "text-stone-500 hover:text-stone-700 dark:text-stone-400 dark:hover:text-stone-105"
+                ? "bg-[#6b3410] dark:bg-amber-550 text-white shadow-xs"
+                : "text-stone-500 hover:text-stone-700"
             }`}
           >
             <Trophy className="h-3.5 w-3.5" />
@@ -454,29 +454,29 @@ export default function BibleFlashcardsTab({ triggerSound }: BibleFlashcardsTabP
       </div>
 
       {/* 2. MASTERY BAR COMPONENT */}
-      <div className="bg-gradient-to-r from-[#fdfbf7] md:from-[#fcf9f0] to-[#f7f3e8] dark:from-[#12101e] dark:to-[#171428] border border-amber-500/10 rounded-2xl p-5 shadow-xs flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+      <div className="bg-gradient-to-r from-[#faf7f0] md:from-[#faf7f0] to-[#f5f0e8]   border border-[#8b4513]/10 rounded-2xl p-5 shadow-xs flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-gradient-to-bl from-amber-500/[0.04] to-transparent pointer-events-none blur-2xl" />
         <div className="flex items-center gap-4 relative z-10 w-full md:w-auto">
-          <div className="relative flex-shrink-0 w-12 h-12 flex items-center justify-center bg-white dark:bg-stone-950 rounded-full border border-amber-500/20 shadow-inner">
-            <Award className="h-6 w-6 text-[#d4af37]" />
+          <div className="relative flex-shrink-0 w-12 h-12 flex items-center justify-center bg-[#faf7f0] rounded-full border border-[#8b4513]/20 shadow-inner">
+            <Award className="h-6 w-6 text-[#8b4513]" />
           </div>
           <div>
-            <h3 className="font-heading font-semibold text-xs tracking-wider uppercase text-stone-900 dark:text-stone-100 mb-0.5">
+            <h3 className="font-heading font-semibold text-xs tracking-wider uppercase text-stone-900 mb-0.5">
               SCRIPTURE MASTERY
             </h3>
-            <p className="text-[11px] text-stone-550 dark:text-stone-400 leading-relaxed max-w-sm">
-              You marked <strong className="text-stone-800 dark:text-stone-200">{masteredCount}</strong> of <strong className="text-stone-800 dark:text-stone-200">{totalCards}</strong> standard bible verses as memorized. Keep practicing!
+            <p className="text-[11px] text-stone-550 leading-relaxed max-w-sm">
+              You marked <strong className="text-stone-800">{masteredCount}</strong> of <strong className="text-stone-800">{totalCards}</strong> standard bible verses as memorized. Keep practicing!
             </p>
           </div>
         </div>
 
         {/* Dynamic mastery bar */}
         <div className="flex flex-col gap-1.5 w-full md:w-56 shrink-0 z-10">
-          <div className="flex items-center justify-between text-[10px] font-mono font-bold text-stone-600 dark:text-stone-400">
+          <div className="flex items-center justify-between text-[10px] font-mono font-bold text-stone-600">
             <span>Progress</span>
-            <span className="text-[#d4af37]">{masteryPercentage}%</span>
+            <span className="text-[#8b4513]">{masteryPercentage}%</span>
           </div>
-          <div className="h-2 w-full bg-stone-200 dark:bg-stone-850 rounded-full overflow-hidden">
+          <div className="h-2 w-full bg-stone-200 rounded-full overflow-hidden">
             <motion.div 
               className="h-full bg-gradient-to-r from-amber-500 to-amber-600 dark:from-amber-400 dark:to-amber-500 rounded-full"
               initial={{ width: 0 }}
@@ -495,13 +495,13 @@ export default function BibleFlashcardsTab({ triggerSound }: BibleFlashcardsTabP
           <div className="md:col-span-4 flex flex-col gap-4">
             
             {/* Category Filter Group */}
-            <div className="bg-white dark:bg-[#12101d] border border-stone-200 dark:border-stone-850 rounded-2xl p-5 shadow-xs">
-              <div className="flex items-center justify-between pb-3 mb-4 border-b border-stone-100 dark:border-stone-850">
-                <span className="text-[10px] font-mono tracking-widest text-[#d4af37] font-bold uppercase flex items-center gap-2">
+            <div className="bg-[#faf7f0] dark:bg-[#f5f0e8] border border-stone-200 rounded-2xl p-5 shadow-xs">
+              <div className="flex items-center justify-between pb-3 mb-4 border-b border-stone-100">
+                <span className="text-[10px] font-mono tracking-widest text-[#8b4513] font-bold uppercase flex items-center gap-2">
                   <ListFilter className="h-3.5 w-3.5" />
                   Filter Category
                 </span>
-                <span className="text-[10px] font-mono text-stone-400 bg-stone-150/40 dark:bg-stone-900 px-2 py-0.5 rounded-md">
+                <span className="text-[10px] font-mono text-stone-400 bg-stone-150/40 px-2 py-0.5 rounded-md">
                   {filteredCards.length} Cards
                 </span>
               </div>
@@ -526,15 +526,15 @@ export default function BibleFlashcardsTab({ triggerSound }: BibleFlashcardsTabP
                       onClick={() => onCategoryChange(cat.id as any)}
                       className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-mono font-semibold transition-all cursor-pointer ${
                         isSelected
-                          ? "bg-amber-500/10 dark:bg-amber-500/5 text-[#d4af37] border border-amber-500/20 shadow-2xs"
-                          : "text-stone-500 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-100 hover:bg-stone-100/50 dark:hover:bg-white/[0.01] border border-transparent"
+                          ? "bg-[#8b4513]/10 dark:bg-[#8b4513]/5 text-[#8b4513] border border-[#8b4513]/20 shadow-2xs"
+                          : "text-stone-500 hover:text-stone-800 hover:bg-stone-100/50 border border-transparent"
                       }`}
                     >
                       <span>{cat.label}</span>
                       <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded-md ${
                         isSelected 
-                          ? "bg-amber-500/20 text-[#d4af37]" 
-                          : "bg-stone-100 dark:bg-stone-900 text-stone-400"
+                          ? "bg-[#8b4513]/20 text-[#8b4513]" 
+                          : "bg-stone-100 text-stone-400"
                       }`}>
                         {count}
                       </span>
@@ -545,8 +545,8 @@ export default function BibleFlashcardsTab({ triggerSound }: BibleFlashcardsTabP
             </div>
 
             {/* Pivot configuration */}
-            <div className="bg-white dark:bg-[#12101d] border border-stone-200 dark:border-stone-850 rounded-2xl p-5 shadow-xs">
-              <span className="text-[10px] font-mono tracking-widest text-[#d4af37] font-bold uppercase block mb-3.5">
+            <div className="bg-[#faf7f0] dark:bg-[#f5f0e8] border border-stone-200 rounded-2xl p-5 shadow-xs">
+              <span className="text-[10px] font-mono tracking-widest text-[#8b4513] font-bold uppercase block mb-3.5">
                 Test Focus
               </span>
 
@@ -564,12 +564,12 @@ export default function BibleFlashcardsTab({ triggerSound }: BibleFlashcardsTabP
                     className="accent-amber-500 scale-110"
                   />
                   <div>
-                    <span className="text-xs font-medium text-stone-800 dark:text-stone-200 block">Verse on Front</span>
+                    <span className="text-xs font-medium text-stone-800 block">Verse on Front</span>
                     <span className="text-[10px] text-stone-400 font-sans">Read full scripture quotes, recall references on back.</span>
                   </div>
                 </label>
 
-                <label className="flex items-center gap-3 cursor-pointer border-t border-stone-100 dark:border-stone-850/60 pt-3">
+                <label className="flex items-center gap-3 cursor-pointer border-t border-stone-100 pt-3">
                   <input
                     type="radio"
                     name="faceFocus"
@@ -582,7 +582,7 @@ export default function BibleFlashcardsTab({ triggerSound }: BibleFlashcardsTabP
                     className="accent-amber-500 scale-110"
                   />
                   <div>
-                    <span className="text-xs font-medium text-stone-800 dark:text-stone-200 block">Reference on Front</span>
+                    <span className="text-xs font-medium text-stone-800 block">Reference on Front</span>
                     <span className="text-[10px] text-stone-400 font-sans">See book and chapter verse coordinates, quote scripture passages.</span>
                   </div>
                 </label>
@@ -590,8 +590,8 @@ export default function BibleFlashcardsTab({ triggerSound }: BibleFlashcardsTabP
             </div>
 
             {/* Quick reminder help */}
-            <div className="bg-amber-500/[0.02] border border-amber-500/10 p-4 rounded-xl text-[10.5px] leading-relaxed text-stone-500 dark:text-stone-400 font-sans">
-              <strong className="text-stone-700 dark:text-stone-300 font-semibold block mb-0.5">⛪ MEMORIZATION PRINCIPLE:</strong>
+            <div className="bg-[#8b4513]/[0.02] border border-[#8b4513]/10 p-4 rounded-xl text-[10.5px] leading-relaxed text-stone-500 font-sans">
+              <strong className="text-stone-700 font-semibold block mb-0.5">⛪ MEMORIZATION PRINCIPLE:</strong>
               Spaced repetition of short chapters acts directly on focus. Give each verse 10 seconds of active gaze before flipping!
             </div>
           </div>
@@ -619,7 +619,7 @@ export default function BibleFlashcardsTab({ triggerSound }: BibleFlashcardsTabP
                     
                     {/* FRONT OF THE CARD */}
                     <div 
-                      className="absolute inset-0 w-full h-full bg-white dark:bg-[#12101e] border-2 border-stone-200/80 dark:border-stone-850 rounded-3xl p-6 md:p-8 shadow-xl flex flex-col justify-between overflow-hidden"
+                      className="absolute inset-0 w-full h-full bg-[#faf7f0] dark:bg-[#f5f0e8] border-2 border-stone-200/80 rounded-3xl p-6 md:p-8 shadow-xl flex flex-col justify-between overflow-hidden"
                       style={{ 
                         backfaceVisibility: "hidden", 
                         WebkitBackfaceVisibility: "hidden",
@@ -627,13 +627,13 @@ export default function BibleFlashcardsTab({ triggerSound }: BibleFlashcardsTabP
                       }}
                     >
                       {/* Artistic backgrounds */}
-                      <div className="absolute top-0 right-0 w-36 h-36 border-b border-l border-amber-500/[0.03] dark:border-amber-500/[0.02] rounded-bl-full pointer-events-none" />
-                      <div className="absolute bottom-0 left-0 w-36 h-36 border-t border-r border-amber-500/[0.03] dark:border-amber-500/[0.02] rounded-tr-full pointer-events-none" />
+                      <div className="absolute top-0 right-0 w-36 h-36 border-b border-l border-amber-500/[0.03]/[0.02] rounded-bl-full pointer-events-none" />
+                      <div className="absolute bottom-0 left-0 w-36 h-36 border-t border-r border-amber-500/[0.03]/[0.02] rounded-tr-full pointer-events-none" />
                       
                       {/* Top Header */}
-                      <div className="flex items-center justify-between border-b border-stone-100 dark:border-stone-850 pb-3 relative z-10">
+                      <div className="flex items-center justify-between border-b border-stone-100 pb-3 relative z-10">
                         <div className="flex items-center gap-2">
-                          <span className="p-1 px-2.5 bg-stone-100 dark:bg-stone-900 border border-stone-200/50 dark:border-stone-800 text-[9px] font-mono text-stone-500 dark:text-stone-400 tracking-widest font-bold rounded-md uppercase">
+                          <span className="p-1 px-2.5 bg-stone-100 border border-stone-200/50 text-[9px] font-mono text-stone-500 tracking-widest font-bold rounded-md uppercase">
                             {currentCard.category.toUpperCase()}
                           </span>
                         </div>
@@ -645,15 +645,15 @@ export default function BibleFlashcardsTab({ triggerSound }: BibleFlashcardsTabP
                       {/* Core Content */}
                       <div className="py-6 flex flex-col items-center justify-center text-center flex-1 max-w-xl mx-auto relative z-10 px-2">
                         {showVerseFirst ? (
-                          <blockquote className="text-lg md:text-xl font-serif text-stone-800 dark:text-stone-100 leading-relaxed tracking-wide italic select-all">
+                          <blockquote className="text-lg md:text-xl font-serif text-stone-800 leading-relaxed tracking-wide italic select-all">
                             "{currentCard.verse}"
                           </blockquote>
                         ) : (
                           <div className="flex flex-col items-center gap-3">
-                            <span className="p-3 bg-amber-500/10 text-[#d4af37] rounded-2xl border border-amber-500/25 mb-1 animate-pulse">
+                            <span className="p-3 bg-[#8b4513]/10 text-[#8b4513] rounded-2xl border border-amber-500/25 mb-1 animate-pulse">
                               <BookOpen className="h-7 w-7" />
                             </span>
-                            <h3 className="text-2xl font-heading font-semibold text-[#d4af37] dark:text-amber-400 tracking-wider">
+                            <h3 className="text-2xl font-heading font-semibold text-[#8b4513] tracking-wider">
                               {currentCard.reference}
                             </h3>
                             <span className="text-[10px] font-mono tracking-widest text-stone-400 uppercase">
@@ -664,7 +664,7 @@ export default function BibleFlashcardsTab({ triggerSound }: BibleFlashcardsTabP
                       </div>
 
                       {/* Bottom Footer */}
-                      <div className="flex items-center justify-between border-t border-stone-100 dark:border-stone-850 pt-3.5 relative z-10 text-[10px] font-mono tracking-widest uppercase text-[#d4af37] font-semibold">
+                      <div className="flex items-center justify-between border-t border-stone-100 pt-3.5 relative z-10 text-[10px] font-mono tracking-widest uppercase text-[#8b4513] font-semibold">
                         <span className="flex items-center gap-1">
                           <RotateCw className="h-3.5 w-3.5 text-stone-400 mr-1 animate-spin-slow" />
                           TAP TO REVEAL
@@ -677,7 +677,7 @@ export default function BibleFlashcardsTab({ triggerSound }: BibleFlashcardsTabP
 
                     {/* BACK OF THE CARD */}
                     <div 
-                      className="absolute inset-0 w-full h-full bg-[#faf8f4] dark:bg-[#151225] border-2 border-[#d4af37]/30 dark:border-[#d4af37]/20 rounded-3xl p-6 md:p-8 shadow-xl flex flex-col justify-between overflow-hidden"
+                      className="absolute inset-0 w-full h-full bg-[#faf7f0] dark:bg-[#f5f0e8] border-2 border-[#d4af37]/30 dark:border-[#d4af37]/20 rounded-3xl p-6 md:p-8 shadow-xl flex flex-col justify-between overflow-hidden"
                       style={{ 
                         transform: "rotateY(180deg)",
                         backfaceVisibility: "hidden", 
@@ -687,12 +687,12 @@ export default function BibleFlashcardsTab({ triggerSound }: BibleFlashcardsTabP
                     >
                       {/* Sacred watermarks */}
                       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.015] dark:opacity-[0.03] select-none pointer-events-none">
-                        <BookOpen className="h-56 w-56 text-[#d4af37]" />
+                        <BookOpen className="h-56 w-56 text-[#8b4513]" />
                       </div>
                       
                       {/* Top Header */}
-                      <div className="flex items-center justify-between border-b border-stone-200/50 dark:border-stone-850 pb-3 relative z-10">
-                        <span className="px-2.5 py-1 bg-[#d4af37]/10 dark:bg-amber-400/5 text-[#d4af37] text-[9px] font-mono tracking-wider font-bold rounded-md">
+                      <div className="flex items-center justify-between border-b border-stone-200/50 pb-3 relative z-10">
+                        <span className="px-2.5 py-1 bg-[#d4af37]/10 dark:bg-amber-400/5 text-[#8b4513] text-[9px] font-mono tracking-wider font-bold rounded-md">
                           ANSWER REVEALED
                         </span>
                         <div className="flex items-center gap-1.5 text-[10px] font-mono text-stone-400">
@@ -704,27 +704,27 @@ export default function BibleFlashcardsTab({ triggerSound }: BibleFlashcardsTabP
                       <div className="py-6 flex flex-col items-center justify-center text-center flex-1 max-w-xl mx-auto relative z-10 px-2">
                         {!showVerseFirst ? (
                           <div className="flex flex-col gap-3">
-                            <blockquote className="text-base md:text-lg font-serif text-stone-800 dark:text-stone-105 leading-relaxed tracking-wide italic">
+                            <blockquote className="text-base md:text-lg font-serif text-stone-800 leading-relaxed tracking-wide italic">
                               "{currentCard.verse}"
                             </blockquote>
-                            <div className="h-px w-20 bg-amber-500/20 mx-auto my-1" />
-                            <h4 className="text-xs font-semibold text-[#d4af37] dark:text-amber-450 tracking-wider font-heading uppercase">
+                            <div className="h-px w-20 bg-[#8b4513]/20 mx-auto my-1" />
+                            <h4 className="text-xs font-semibold text-[#8b4513] tracking-wider font-heading uppercase">
                               {currentCard.reference}
                             </h4>
                           </div>
                         ) : (
                           <div className="flex flex-col items-center gap-1 text-center">
-                            <h3 className="text-2xl font-heading font-semibold text-[#d4af37] dark:text-amber-400 tracking-wider">
+                            <h3 className="text-2xl font-heading font-semibold text-[#8b4513] tracking-wider">
                               {currentCard.reference}
                             </h3>
                             <span className="text-[10px] font-mono text-stone-400 tracking-widest uppercase mb-4 block">
                               {currentCard.testment}
                             </span>
-                            <div className="p-4 bg-white/70 dark:bg-stone-950/70 border border-stone-200/50 dark:border-stone-850/80 rounded-2xl text-left max-w-md shadow-xs">
-                              <span className="text-[9px] font-mono tracking-wider text-[#d4af37] dark:text-amber-450 uppercase font-bold block mb-1">
+                            <div className="p-4 bg-[#faf7f0]/70 border border-stone-200/50 rounded-2xl text-left max-w-md shadow-xs">
+                              <span className="text-[9px] font-mono tracking-wider text-[#8b4513] uppercase font-bold block mb-1">
                                 Devotional Contemplation
                               </span>
-                              <p className="text-[10.5px] leading-relaxed text-stone-650 dark:text-stone-300 font-sans">
+                              <p className="text-[10.5px] leading-relaxed text-stone-650 font-sans">
                                 {currentCard.devotional}
                               </p>
                             </div>
@@ -733,9 +733,9 @@ export default function BibleFlashcardsTab({ triggerSound }: BibleFlashcardsTabP
                       </div>
 
                       {/* Bottom Footer */}
-                      <div className="flex items-center justify-between border-t border-stone-200/50 dark:border-stone-850 pt-3.5 relative z-10 text-[10px] font-mono tracking-widest uppercase text-[#d4af37] font-semibold">
+                      <div className="flex items-center justify-between border-t border-stone-200/50 pt-3.5 relative z-10 text-[10px] font-mono tracking-widest uppercase text-[#8b4513] font-semibold">
                         <span className="flex items-center gap-1">
-                          <RotateCw className="h-3.5 w-3.5 text-[#d4af37]/60 mr-1 animate-spin-slow" />
+                          <RotateCw className="h-3.5 w-3.5 text-[#8b4513]/60 mr-1 animate-spin-slow" />
                           TAP TO RE-FLIP
                         </span>
                         <span className="text-stone-400">
@@ -750,18 +750,18 @@ export default function BibleFlashcardsTab({ triggerSound }: BibleFlashcardsTabP
                 {/* Study Deck Navigation controls */}
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                   {/* Left-Right Steppers */}
-                  <div className="flex items-center gap-2 bg-white dark:bg-[#12101e] border border-stone-200 dark:border-stone-850 p-1 rounded-xl shadow-xs">
+                  <div className="flex items-center gap-2 bg-[#faf7f0] dark:bg-[#f5f0e8] border border-stone-200 p-1 rounded-xl shadow-xs">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         handlePrev();
                       }}
-                      className="p-2.5 rounded-lg text-stone-500 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-105 hover:bg-stone-50 dark:hover:bg-white/[0.02] cursor-pointer"
+                      className="p-2.5 rounded-lg text-stone-500 hover:text-stone-800 hover:bg-stone-50 cursor-pointer"
                       title="Previous Card"
                     >
                       <ChevronLeft className="h-5 w-5" />
                     </button>
-                    <span className="text-xs font-mono font-bold text-stone-600 dark:text-stone-400 px-4 min-w-[70px] text-center select-none border-x border-stone-105 dark:border-stone-850/80">
+                    <span className="text-xs font-mono font-bold text-stone-600 px-4 min-w-[70px] text-center select-none border-x border-stone-105">
                       {currentIndex + 1} / {filteredCards.length}
                     </span>
                     <button
@@ -769,7 +769,7 @@ export default function BibleFlashcardsTab({ triggerSound }: BibleFlashcardsTabP
                         e.stopPropagation();
                         handleNext();
                       }}
-                      className="p-2.5 rounded-lg text-stone-500 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-105 hover:bg-stone-50 dark:hover:bg-white/[0.02] cursor-pointer"
+                      className="p-2.5 rounded-lg text-stone-500 hover:text-stone-800 hover:bg-stone-50 cursor-pointer"
                       title="Next Card"
                     >
                       <ChevronRight className="h-5 w-5" />
@@ -783,7 +783,7 @@ export default function BibleFlashcardsTab({ triggerSound }: BibleFlashcardsTabP
                         e.stopPropagation();
                         handleShuffle();
                       }}
-                      className="flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl border border-stone-250 dark:border-stone-850 bg-white dark:bg-stone-950 text-xs font-mono font-bold text-stone-650 dark:text-stone-300 hover:text-stone-900 dark:hover:text-stone-100 hover:bg-stone-50 dark:hover:bg-white/[0.01] cursor-pointer h-10 shadow-3xs"
+                      className="flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl border border-stone-250 bg-[#faf7f0] text-xs font-mono font-bold text-stone-650 hover:text-stone-900 hover:bg-stone-50 cursor-pointer h-10 shadow-3xs"
                     >
                       <RefreshCw className="h-3.5 w-3.5 fill-transparent" />
                       SHUFFLE DECK
@@ -797,7 +797,7 @@ export default function BibleFlashcardsTab({ triggerSound }: BibleFlashcardsTabP
                       className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-mono font-bold cursor-pointer h-10 transition-all ${
                         masteredIds.includes(currentCard.id)
                           ? "bg-emerald-500/10 border border-emerald-500/35 text-emerald-600 dark:text-emerald-450 shadow-inner"
-                          : "bg-gradient-to-r from-amber-500 to-amber-600 text-stone-950 dark:from-amber-400 dark:to-amber-500 dark:text-stone-950 font-bold shadow-xs hover:scale-[1.01]"
+                          : "bg-gradient-to-r from-amber-500 to-amber-600 text-stone-950 dark:from-amber-400 dark:to-amber-500 font-bold shadow-xs hover:scale-[1.01]"
                       }`}
                     >
                       {masteredIds.includes(currentCard.id) ? (
@@ -818,12 +818,12 @@ export default function BibleFlashcardsTab({ triggerSound }: BibleFlashcardsTabP
 
               </div>
             ) : (
-              <div className="bg-white dark:bg-[#12101d] border border-stone-250/60 dark:border-stone-850 p-10 rounded-2xl text-center shadow-xs">
-                <AlertCircle className="h-10 w-10 text-stone-400 dark:text-stone-500 mx-auto mb-3" />
-                <h4 className="text-sm font-bold text-stone-700 dark:text-stone-300 uppercase font-mono mb-1">
+              <div className="bg-[#faf7f0] dark:bg-[#f5f0e8] border border-stone-250/60 p-10 rounded-2xl text-center shadow-xs">
+                <AlertCircle className="h-10 w-10 text-stone-400 mx-auto mb-3" />
+                <h4 className="text-sm font-bold text-stone-700 uppercase font-mono mb-1">
                   No Bible Cards Available
                 </h4>
-                <p className="text-xs text-stone-500 dark:text-stone-400 max-w-sm mx-auto leading-relaxed">
+                <p className="text-xs text-stone-500 max-w-sm mx-auto leading-relaxed">
                   No cards matched that particular theological filter. Expand your selection to load all categories.
                 </p>
               </div>
@@ -836,18 +836,18 @@ export default function BibleFlashcardsTab({ triggerSound }: BibleFlashcardsTabP
 
       {/* --- RENDER MULTIPLE CHOICE QUIZ --- */}
       {activeMode === "quiz" && quizQuestion && (
-        <div className="max-w-2xl mx-auto w-full bg-white dark:bg-[#12101d] border border-stone-200 dark:border-stone-850 rounded-2xl shadow-xl overflow-hidden p-6 md:p-8 animate-fadeIn relative">
+        <div className="max-w-2xl mx-auto w-full bg-[#faf7f0] dark:bg-[#f5f0e8] border border-stone-200 rounded-2xl shadow-xl overflow-hidden p-6 md:p-8 animate-fadeIn relative">
           
           {/* Sacred design watermark lines */}
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 via-amber-250 to-amber-500" />
           
           {/* Score header widgets */}
-          <div className="flex items-center justify-between pb-4 mb-6 border-b border-stone-150/60 dark:border-stone-850/80">
+          <div className="flex items-center justify-between pb-4 mb-6 border-b border-stone-150/60">
             <div className="flex items-center gap-2">
-              <span className="p-1 px-2.5 bg-amber-500/10 text-[#d4af37] rounded-md font-mono text-[9px] font-bold tracking-wider">
+              <span className="p-1 px-2.5 bg-[#8b4513]/10 text-[#8b4513] rounded-md font-mono text-[9px] font-bold tracking-wider">
                 CARD GAME
               </span>
-              <span className="text-xs font-mono text-stone-500 dark:text-stone-400">
+              <span className="text-xs font-mono text-stone-500">
                 Test your knowledge of the Word
               </span>
             </div>
@@ -855,7 +855,7 @@ export default function BibleFlashcardsTab({ triggerSound }: BibleFlashcardsTabP
             <div className="flex items-center gap-3">
               <div className="text-right">
                 <span className="text-[10px] font-mono text-stone-400 uppercase tracking-wider block">SCORE</span>
-                <span className="font-mono font-bold text-[#d4af37] text-sm">
+                <span className="font-mono font-bold text-[#8b4513] text-sm">
                   {quizScore} <span className="text-stone-400 text-xs">/ {quizTotal}</span>
                 </span>
               </div>
@@ -866,7 +866,7 @@ export default function BibleFlashcardsTab({ triggerSound }: BibleFlashcardsTabP
                   generateQuizQuestion();
                 }}
                 title="Reset Quiz Score"
-                className="p-1.5 hover:bg-stone-105 dark:hover:bg-stone-900 rounded-lg text-stone-400 hover:text-[#d4af37] transition-colors cursor-pointer"
+                className="p-1.5 hover:bg-stone-105 rounded-lg text-stone-400 hover:text-[#8b4513] transition-colors cursor-pointer"
               >
                 <RotateCcw className="h-4 w-4" />
               </button>
@@ -874,11 +874,11 @@ export default function BibleFlashcardsTab({ triggerSound }: BibleFlashcardsTabP
           </div>
 
           {/* Question Segment */}
-          <div className="text-center py-4 mb-6 px-4 bg-stone-50 dark:bg-stone-950/60 rounded-2xl border border-stone-200/55 dark:border-stone-850">
+          <div className="text-center py-4 mb-6 px-4 bg-stone-50 rounded-2xl border border-stone-200/55">
             <span className="text-[10px] font-mono tracking-widest text-stone-400 uppercase font-semibold block mb-3">
               Identify the source coordinates of this holy passage:
             </span>
-            <blockquote className="text-lg font-serif italic text-stone-800 dark:text-stone-50 leading-relaxed max-w-lg mx-auto">
+            <blockquote className="text-lg font-serif italic text-stone-800 leading-relaxed max-w-lg mx-auto">
               "{quizQuestion.verse}"
             </blockquote>
           </div>
@@ -890,17 +890,17 @@ export default function BibleFlashcardsTab({ triggerSound }: BibleFlashcardsTabP
               const isCorrectOpt = opt === quizQuestion.reference;
               
               // Styling helper logic
-              let optionStyle = "border-stone-200 dark:border-stone-850 hover:bg-stone-50 dark:hover:bg-white/[0.01] hover:border-amber-500/30";
+              let optionStyle = "border-stone-200 hover:bg-stone-50 hover:border-amber-500/30";
               if (hasAnsweredQuiz) {
                 if (isCorrectOpt) {
                   optionStyle = "bg-emerald-500/10 border-emerald-500/50 text-emerald-600 dark:text-emerald-450 font-bold";
                 } else if (isSelected) {
                   optionStyle = "bg-rose-500/10 border-rose-500/40 text-rose-600 dark:text-rose-450";
                 } else {
-                  optionStyle = "opacity-50 border-stone-200/60 dark:border-stone-900/60";
+                  optionStyle = "opacity-50 border-stone-200/60";
                 }
               } else if (isSelected) {
-                optionStyle = "border-amber-500 bg-amber-500/5 text-[#d4af37]";
+                optionStyle = "border-amber-500 bg-[#8b4513]/5 text-[#8b4513]";
               }
 
               return (
@@ -911,7 +911,7 @@ export default function BibleFlashcardsTab({ triggerSound }: BibleFlashcardsTabP
                   className={`w-full flex items-center justify-between p-4 rounded-xl border text-xs font-mono font-bold tracking-wider text-left transition-all cursor-pointer select-none ${optionStyle}`}
                 >
                   <span className="flex items-center gap-3">
-                    <span className="text-[10px] text-stone-400 dark:text-stone-500">
+                    <span className="text-[10px] text-stone-400">
                       {String.fromCharCode(65 + idx)}.
                     </span>
                     <span>{opt}</span>
@@ -932,10 +932,10 @@ export default function BibleFlashcardsTab({ triggerSound }: BibleFlashcardsTabP
             <motion.div 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex flex-col gap-4 border-t border-stone-150/60 dark:border-stone-850 pt-5 mt-5"
+              className="flex flex-col gap-4 border-t border-stone-150/60 pt-5 mt-5"
             >
-              <div className="flex items-start gap-3.5 p-4 rounded-xl bg-stone-50/50 dark:bg-stone-950/40 border border-stone-200/50 dark:border-stone-850">
-                <span className={`p-2 rounded-lg shrink-0 ${isAnswerCorrect ? "bg-emerald-500/10 text-emerald-500" : "bg-amber-500/10 text-[#d4af37]"}`}>
+              <div className="flex items-start gap-3.5 p-4 rounded-xl bg-stone-50/50 border border-stone-200/50">
+                <span className={`p-2 rounded-lg shrink-0 ${isAnswerCorrect ? "bg-emerald-500/10 text-emerald-500" : "bg-[#8b4513]/10 text-[#8b4513]"}`}>
                   {isAnswerCorrect ? (
                     <Trophy className="h-5 w-5 animate-bounce" />
                   ) : (
@@ -943,16 +943,16 @@ export default function BibleFlashcardsTab({ triggerSound }: BibleFlashcardsTabP
                   )}
                 </span>
                 <div>
-                  <h4 className="text-xs font-bold text-stone-900 dark:text-stone-100 uppercase tracking-wide mb-1 font-mono">
+                  <h4 className="text-xs font-bold text-stone-900 uppercase tracking-wide mb-1 font-mono">
                     {isAnswerCorrect ? "Acolyte Answer Correct!" : "Reviewing the Scriptures"}
                   </h4>
-                  <p className="text-[10.5px] leading-relaxed text-stone-550 dark:text-stone-405 font-sans">
+                  <p className="text-[10.5px] leading-relaxed text-stone-550 font-sans">
                     {isAnswerCorrect 
                       ? `Indeed, this wonderful passage is written in ${quizQuestion.book}. Blessed are those who reflect on His scripture.`
                       : `The correct answer was ${quizQuestion.reference}. This is from the book of ${quizQuestion.book}. Let us meditate on it again.`
                     }
                   </p>
-                  <p className="text-[10px] italic text-stone-400 dark:text-stone-400 mt-2">
+                  <p className="text-[10px] italic text-stone-400 mt-2">
                     "{quizQuestion.devotional}"
                   </p>
                 </div>

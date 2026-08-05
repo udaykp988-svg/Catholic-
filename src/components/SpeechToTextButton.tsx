@@ -85,7 +85,7 @@ export function SpeechToTextButton({ onTranscript, className = "", placeholder =
         <button
           disabled
           type="button"
-          className="p-1.5 rounded-lg text-stone-300 dark:text-stone-700 cursor-not-allowed"
+          className="p-1.5 rounded-lg text-stone-300 cursor-not-allowed"
           title="Voice input not supported in this browser"
         >
           <Mic className="h-4 w-4" />
@@ -103,8 +103,8 @@ export function SpeechToTextButton({ onTranscript, className = "", placeholder =
           isListening 
             ? "bg-red-500/10 text-red-500 ring-2 ring-red-500/30 animate-pulse" 
             : permissionError
-            ? "bg-amber-500/10 text-amber-500 ring-1 ring-amber-500/20"
-            : "hover:bg-stone-100 dark:hover:bg-stone-900 text-stone-500 dark:text-stone-400 hover:text-amber-500 dark:hover:text-amber-400"
+            ? "bg-[#8b4513]/10 text-[#8b4513] ring-1 ring-amber-500/20"
+            : "hover:bg-stone-100 text-stone-500 hover:text-[#8b4513]"
         }`}
         title={isListening ? "Stop listening" : permissionError ? "Microphone permission denied (click to retry or open in new tab)" : "Hands-free voice to text"}
       >
@@ -113,9 +113,9 @@ export function SpeechToTextButton({ onTranscript, className = "", placeholder =
 
       {/* Mini notification helper for iframe permission issues */}
       {permissionError && (
-        <div className="absolute bottom-full right-0 mb-2 w-48 bg-stone-900 text-stone-100 text-[9px] rounded-lg p-2 shadow-xl border border-amber-500/30 z-50">
-          <p className="font-sans flex items-center gap-1 font-semibold text-amber-400 mb-0.5">
-            <AlertCircle className="h-3.5 w-3.5 inline text-amber-500" /> Mic Permission Needed
+        <div className="absolute bottom-full right-0 mb-2 w-48 bg-[#f0e8d8] text-stone-800 text-[9px] rounded-lg p-2 shadow-xl border border-amber-500/30 z-50">
+          <p className="font-sans flex items-center gap-1 font-semibold text-[#a0520f] mb-0.5">
+            <AlertCircle className="h-3.5 w-3.5 inline text-[#8b4513]" /> Mic Permission Needed
           </p>
           <p className="text-[8px] text-stone-300 leading-normal">
             Please allow microphone access. If within a preview iframe, you may need to **open the app in a new tab** via the top right icon to speak your prayers.

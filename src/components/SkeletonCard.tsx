@@ -1,9 +1,3 @@
-/**
- * SkeletonCard — drop-in replacement for spinner loading states.
- *
- * Usage:
- *   {isLoadingReflection ? <SkeletonCard rows={4} /> : <ReflectionContent />}
- */
 import React from "react";
 
 interface Props {
@@ -15,8 +9,8 @@ export function SkeletonCard({ rows = 3, showTitle = true }: Props) {
   return (
     <div
       style={{
-        background: "rgba(19,17,28,0.8)",
-        border: "1px solid rgba(212,175,55,0.1)",
+        background: "#f5f0e8",
+        border: "1px solid #e8dcc8",
         borderRadius: 12,
         padding: "20px 20px 16px",
         display: "flex",
@@ -45,8 +39,8 @@ export function SkeletonCard({ rows = 3, showTitle = true }: Props) {
         />
       ))}
 
-      {/* Footer divider + action */}
-      <div style={{ marginTop: 8, paddingTop: 14, borderTop: "1px solid rgba(212,175,55,0.08)", display: "flex", gap: 10 }}>
+      {/* Footer */}
+      <div style={{ marginTop: 8, paddingTop: 14, borderTop: "1px solid #e8dcc8", display: "flex", gap: 10 }}>
         <div className="skeleton" style={{ height: 30, width: 90, borderRadius: 20 }} />
         <div className="skeleton" style={{ height: 30, width: 90, borderRadius: 20 }} />
       </div>

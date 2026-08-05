@@ -314,9 +314,9 @@ export function AudioRosary({ onRosaryComplete, isTabActive = true, setActiveTab
   const progress=Math.round((stepIdx/(ROSARY_STEPS.length-1))*100);
 
   const beadColor=(i:number)=>{
-    if(i===stepIdx) return "bg-[#c9922a] scale-125 ring-4 ring-[#c9922a]/30 text-[#1a0f00] font-bold";
-    if(i<stepIdx) return "bg-[#8a5a15] text-[#f5ead8]/70";
-    return "bg-[#1e1a10] text-[#4a3318] hover:bg-[#2a1e08]";
+    if(i===stepIdx) return "bg-[#8b4513] scale-125 ring-4 ring-[#c9922a]/30 text-[#1a0f00] font-bold";
+    if(i<stepIdx) return "bg-[#8a5a15] text-[#2c1810]/70";
+    return "bg-[#e8dcc8] text-[#9a7a58] hover:bg-[#2a1e08]";
   };
 
   /* Mini player (when tab not active) */
@@ -324,38 +324,38 @@ export function AudioRosary({ onRosaryComplete, isTabActive = true, setActiveTab
     const active=isPlaying||droneOn||stepIdx>0;
     if(!active) return null;
     return createPortal(
-      <div className="fixed bottom-6 left-4 right-4 md:left-auto md:right-6 md:w-[400px] bg-[#131008] border border-[#2a1e08] shadow-2xl rounded-2xl p-4 z-[9999] flex flex-col gap-3">
-        <div className="flex items-center justify-between border-b border-[#1e1a10] pb-2">
+      <div className="fixed bottom-6 left-4 right-4 md:left-auto md:right-6 md:w-[400px] bg-[#f5f0e8] border border-[#d4b896] shadow-2xl rounded-2xl p-4 z-[9999] flex flex-col gap-3">
+        <div className="flex items-center justify-between border-b border-[#e8dcc8] pb-2">
           <div className="flex items-center gap-2">
-            <span className={`w-2 h-2 rounded-full ${isPlaying?"bg-[#c9922a] animate-pulse":"bg-[#4a3318]"}`}/>
-            <span className="text-[10px] uppercase font-mono font-bold tracking-wider text-[#6b5a30]">{isPlaying?"Playing Rosary":"Rosary Paused"}</span>
+            <span className={`w-2 h-2 rounded-full ${isPlaying?"bg-[#8b4513] animate-pulse":"bg-[#4a3318]"}`}/>
+            <span className="text-[10px] uppercase font-mono font-bold tracking-wider text-[#6b4c30]">{isPlaying?"Playing Rosary":"Rosary Paused"}</span>
           </div>
           <div className="flex gap-1">
-            <button onClick={()=>setActiveTab?.("pray")} className="p-1.5 rounded-lg text-[#4a3318] hover:text-[#c9922a] cursor-pointer bg-none border-none"><Maximize2 className="w-4 h-4"/></button>
-            <button onClick={()=>{ setIsPlaying(false); stopVoice(); synthRef.current?.stopDrone(); setDroneOn(false); setStepIdx(0); }} className="p-1.5 rounded-lg text-[#4a3318] hover:text-[#e05050] cursor-pointer bg-none border-none"><X className="w-4 h-4"/></button>
+            <button onClick={()=>setActiveTab?.("pray")} className="p-1.5 rounded-lg text-[#9a7a58] hover:text-[#8b4513] cursor-pointer bg-none border-none"><Maximize2 className="w-4 h-4"/></button>
+            <button onClick={()=>{ setIsPlaying(false); stopVoice(); synthRef.current?.stopDrone(); setDroneOn(false); setStepIdx(0); }} className="p-1.5 rounded-lg text-[#9a7a58] hover:text-[#e05050] cursor-pointer bg-none border-none"><X className="w-4 h-4"/></button>
           </div>
         </div>
         <div>
-          <div className="text-[12px] font-bold text-[#ddc98a]">{step.name}</div>
-          {mystery&&<div className="text-[10px] text-[#c9922a] mt-0.5">Mystery: {mystery.name} · {mystery.fruit}</div>}
-          <div className="text-[10px] text-[#4a3318] italic mt-1 line-clamp-1">"{step.text}"</div>
+          <div className="text-[12px] font-bold text-[#2c1810]">{step.name}</div>
+          {mystery&&<div className="text-[10px] text-[#8b4513] mt-0.5">Mystery: {mystery.name} · {mystery.fruit}</div>}
+          <div className="text-[10px] text-[#9a7a58] italic mt-1 line-clamp-1">"{step.text}"</div>
         </div>
-        <div ref={miniVizRef} className="flex items-end gap-1 h-5 bg-[#0c0a07] rounded-lg px-2 py-1">
-          {Array.from({length:16}).map((_,i)=><div key={i} className="w-1 h-full rounded-full bg-[#c9922a] origin-bottom" style={{transform:"scaleY(0.08)",opacity:0.3}}/>)}
+        <div ref={miniVizRef} className="flex items-end gap-1 h-5 bg-[#faf7f0] rounded-lg px-2 py-1">
+          {Array.from({length:16}).map((_,i)=><div key={i} className="w-1 h-full rounded-full bg-[#8b4513] origin-bottom" style={{transform:"scaleY(0.08)",opacity:0.3}}/>)}
         </div>
-        <div className="h-1.5 bg-[#1e1a10] rounded-full overflow-hidden"><div className="h-full bg-[#c9922a] rounded-full transition-all" style={{width:`${progress}%`}}/></div>
+        <div className="h-1.5 bg-[#e8dcc8] rounded-full overflow-hidden"><div className="h-full bg-[#8b4513] rounded-full transition-all" style={{width:`${progress}%`}}/></div>
         <div className="flex items-center justify-between">
-          <button onClick={()=>{droneOn?synthRef.current?.stopDrone():synthRef.current?.startDrone();setDroneOn(!droneOn);}} className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-[10px] font-bold cursor-pointer ${droneOn?"bg-[#c9922a]/15 border-[#3d2808] text-[#c9922a]":"bg-[#131008] border-[#1e1a10] text-[#4a3318]"}`}>
+          <button onClick={()=>{droneOn?synthRef.current?.stopDrone():synthRef.current?.startDrone();setDroneOn(!droneOn);}} className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-[10px] font-bold cursor-pointer ${droneOn?"bg-[#8b4513]/15 border-[#d4b896] text-[#8b4513]":"bg-[#f5f0e8] border-[#e8dcc8] text-[#9a7a58]"}`}>
             {droneOn?<Volume2 className="w-3 h-3"/>:<VolumeX className="w-3 h-3"/>} Chants
           </button>
           <div className="flex items-center gap-3">
-            <button onClick={()=>{prev();stopVoice();}} disabled={stepIdx===0} className="p-2 bg-[#131008] border border-[#1e1a10] rounded-xl text-[#6b5a30] disabled:opacity-30 cursor-pointer"><ChevronLeft className="w-3.5 h-3.5"/></button>
-            <button onClick={()=>setIsPlaying(!isPlaying)} className="p-3 bg-[#c9922a] rounded-full text-[#1a0f00] cursor-pointer">{isPlaying ? <Pause className="w-4 h-4 fill-current"/> : <Play className="w-4 h-4 fill-current"/>}</button>
-            <button onClick={()=>{next();stopVoice();}} className="p-2 bg-[#131008] border border-[#1e1a10] rounded-xl text-[#6b5a30] cursor-pointer"><ChevronRight className="w-3.5 h-3.5"/></button>
+            <button onClick={()=>{prev();stopVoice();}} disabled={stepIdx===0} className="p-2 bg-[#f5f0e8] border border-[#e8dcc8] rounded-xl text-[#6b4c30] disabled:opacity-30 cursor-pointer"><ChevronLeft className="w-3.5 h-3.5"/></button>
+            <button onClick={()=>setIsPlaying(!isPlaying)} className="p-3 bg-[#8b4513] rounded-full text-[#1a0f00] cursor-pointer">{isPlaying ? <Pause className="w-4 h-4 fill-current"/> : <Play className="w-4 h-4 fill-current"/>}</button>
+            <button onClick={()=>{next();stopVoice();}} className="p-2 bg-[#f5f0e8] border border-[#e8dcc8] rounded-xl text-[#6b4c30] cursor-pointer"><ChevronRight className="w-3.5 h-3.5"/></button>
           </div>
           <label className="flex items-center gap-1.5 cursor-pointer">
             <input type="checkbox" checked={autoAdvance} onChange={e=>setAutoAdvance(e.target.checked)} className="accent-amber-600 w-3.5 h-3.5"/>
-            <span className="text-[10px] text-[#4a3318] font-mono">Auto</span>
+            <span className="text-[10px] text-[#9a7a58] font-mono">Auto</span>
           </label>
         </div>
       </div>,
@@ -365,18 +365,18 @@ export function AudioRosary({ onRosaryComplete, isTabActive = true, setActiveTab
 
   /* Full player */
   return (
-    <div className="bg-[#0e0b05] rounded-2xl border border-[#2a1e08] p-5 max-w-2xl mx-auto">
+    <div className="bg-[#faf7f0] rounded-2xl border border-[#d4b896] p-5 max-w-2xl mx-auto">
 
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#1e1a10] pb-4 mb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#e8dcc8] pb-4 mb-5">
         <div>
-          <div className="text-[10px] font-mono font-bold tracking-widest text-[#c9922a] uppercase mb-1">Rosary Companion</div>
-          <h2 className="text-[17px] font-bold text-[#f5ead8] flex items-center gap-2"><Compass className="w-5 h-5 text-[#c9922a]"/>Celestial Audio Rosary</h2>
-          <p className="text-[10.5px] text-[#4a3318] mt-1">Vocal guide to recite the Rosary with prayer prompts and ambient drone chords.</p>
+          <div className="text-[10px] font-mono font-bold tracking-widest text-[#8b4513] uppercase mb-1">Rosary Companion</div>
+          <h2 className="text-[17px] font-bold text-[#2c1810] flex items-center gap-2"><Compass className="w-5 h-5 text-[#8b4513]"/>Celestial Audio Rosary</h2>
+          <p className="text-[10.5px] text-[#9a7a58] mt-1">Vocal guide to recite the Rosary with prayer prompts and ambient drone chords.</p>
         </div>
-        <div className="flex items-center gap-2 bg-[#131008] border border-[#1e1a10] p-2 rounded-xl">
-          <label className="text-[10px] font-mono text-[#4a3318] uppercase tracking-wide">Daily Mystery:</label>
-          <select value={mysteryKey} onChange={e=>{setMysteryKey(e.target.value);setStepIdx(0);stopVoice();}} className="text-[11px] font-semibold border-none rounded-lg px-2 py-1 bg-[#0c0a07] text-[#c9922a] cursor-pointer focus:outline-none">
+        <div className="flex items-center gap-2 bg-[#f5f0e8] border border-[#e8dcc8] p-2 rounded-xl">
+          <label className="text-[10px] font-mono text-[#9a7a58] uppercase tracking-wide">Daily Mystery:</label>
+          <select value={mysteryKey} onChange={e=>{setMysteryKey(e.target.value);setStepIdx(0);stopVoice();}} className="text-[11px] font-semibold border-none rounded-lg px-2 py-1 bg-[#faf7f0] text-[#8b4513] cursor-pointer focus:outline-none">
             <option value="Joyful">Joyful (Mon/Sat)</option>
             <option value="Sorrowful">Sorrowful (Tue/Fri)</option>
             <option value="Glorious">Glorious (Wed/Sun)</option>
@@ -388,38 +388,38 @@ export function AudioRosary({ onRosaryComplete, isTabActive = true, setActiveTab
       {/* Settings grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
         {/* Voice guide */}
-        <div className="bg-[#131008] border border-[#1e1a10] rounded-xl p-4">
-          <div className="text-[9.5px] font-mono font-bold text-[#6b5a30] uppercase tracking-widest flex items-center gap-1.5 mb-3"><Volume2 className="w-3.5 h-3.5 text-[#c9922a]"/>1. Vocal Guide</div>
-          <button onClick={()=>{setVoiceOn(!voiceOn);stopVoice();}} className={`w-full p-3 rounded-xl border text-left flex items-center justify-between cursor-pointer transition-all ${voiceOn?"bg-[#1e1405] border-[#c9922a]/30 text-[#ddc98a]":"bg-[#0c0a07] border-[#1e1a10] text-[#4a3318]"}`}>
+        <div className="bg-[#f5f0e8] border border-[#e8dcc8] rounded-xl p-4">
+          <div className="text-[9.5px] font-mono font-bold text-[#6b4c30] uppercase tracking-widest flex items-center gap-1.5 mb-3"><Volume2 className="w-3.5 h-3.5 text-[#8b4513]"/>1. Vocal Guide</div>
+          <button onClick={()=>{setVoiceOn(!voiceOn);stopVoice();}} className={`w-full p-3 rounded-xl border text-left flex items-center justify-between cursor-pointer transition-all ${voiceOn?"bg-[#f0e8d8] border-[#8b4513]/30 text-[#2c1810]":"bg-[#faf7f0] border-[#e8dcc8] text-[#9a7a58]"}`}>
             <div className="flex items-center gap-2.5">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-[11px] ${voiceOn?"bg-[#c9922a]/20 text-[#c9922a]":"bg-[#1e1a10] text-[#4a3318]"}`}>{voiceOn?"ON":"OFF"}</div>
-              <div><div className="text-[11px] font-semibold">Vocal Guide {voiceOn?"Enabled":"Disabled"}</div><div className="text-[9.5px] text-[#4a3318]">Read prayers aloud automatically</div></div>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-[11px] ${voiceOn?"bg-[#8b4513]/20 text-[#8b4513]":"bg-[#e8dcc8] text-[#9a7a58]"}`}>{voiceOn?"ON":"OFF"}</div>
+              <div><div className="text-[11px] font-semibold">Vocal Guide {voiceOn?"Enabled":"Disabled"}</div><div className="text-[9.5px] text-[#9a7a58]">Read prayers aloud automatically</div></div>
             </div>
             <span className={`w-2.5 h-2.5 rounded-full ${voiceOn?"bg-[#50b870]":"bg-[#2a1e08]"}`}/>
           </button>
           {voiceOn&&(
-            <div className="mt-2 p-2.5 bg-[#0c0a07] border border-[#1e1a10] rounded-xl text-[10px] text-[#4a3318]">
-              <div className="flex justify-between mb-1"><span className="text-[#6b5a30] font-semibold">Voice:</span><span className="font-mono text-[#8a6a30] truncate max-w-[120px]">{getDefaultVoice(voices)?.name||"System default"}</span></div>
+            <div className="mt-2 p-2.5 bg-[#faf7f0] border border-[#e8dcc8] rounded-xl text-[10px] text-[#9a7a58]">
+              <div className="flex justify-between mb-1"><span className="text-[#6b4c30] font-semibold">Voice:</span><span className="font-mono text-[#9a7a58] truncate max-w-[120px]">{getDefaultVoice(voices)?.name||"System default"}</span></div>
               <p className="text-[9px] leading-relaxed text-[#3d2808]">Plays using your device's default English speaker.</p>
             </div>
           )}
-          <div className="mt-2 text-[9.5px] text-[#2a1e08] flex items-center gap-1 pt-2 border-t border-[#1e1a10]"><ShieldCheck className="w-3 h-3 text-[#50b870]"/>Recitations read live on your device.</div>
+          <div className="mt-2 text-[9.5px] text-[#2a1e08] flex items-center gap-1 pt-2 border-t border-[#e8dcc8]"><ShieldCheck className="w-3 h-3 text-[#50b870]"/>Recitations read live on your device.</div>
         </div>
 
         {/* Mode */}
-        <div className="bg-[#131008] border border-[#1e1a10] rounded-xl p-4">
-          <div className="text-[9.5px] font-mono font-bold text-[#6b5a30] uppercase tracking-widest flex items-center gap-1.5 mb-3"><MessageCircle className="w-3.5 h-3.5 text-[#c9922a]"/>2. Recitation Style</div>
+        <div className="bg-[#f5f0e8] border border-[#e8dcc8] rounded-xl p-4">
+          <div className="text-[9.5px] font-mono font-bold text-[#6b4c30] uppercase tracking-widest flex items-center gap-1.5 mb-3"><MessageCircle className="w-3.5 h-3.5 text-[#8b4513]"/>2. Recitation Style</div>
           <div className="flex flex-col gap-2">
             {(["full","leader"] as const).map(m=>(
-              <button key={m} onClick={()=>setMode(m)} className={`p-2.5 rounded-xl border text-left flex items-center justify-between cursor-pointer transition-all ${mode===m?"bg-[#1e1405] border-[#c9922a]/30 text-[#ddc98a]":"bg-[#0c0a07] border-[#1e1a10] text-[#4a3318] hover:border-[#2a1e08]"}`}>
+              <button key={m} onClick={()=>setMode(m)} className={`p-2.5 rounded-xl border text-left flex items-center justify-between cursor-pointer transition-all ${mode===m?"bg-[#f0e8d8] border-[#8b4513]/30 text-[#2c1810]":"bg-[#faf7f0] border-[#e8dcc8] text-[#9a7a58] hover:border-[#d4b896]"}`}>
                 <div><div className="text-[11px] font-semibold">{m==="full"?"Companion Mode":"Leader / Response"}</div><div className="text-[9px] text-[#3d2808] mt-0.5">{m==="full"?"Voice recites 100% with you":"Voice leads 1st half; you recite response"}</div></div>
-                {mode===m&&<Check className="w-3.5 h-3.5 text-[#c9922a] flex-shrink-0"/>}
+                {mode===m&&<Check className="w-3.5 h-3.5 text-[#8b4513] flex-shrink-0"/>}
               </button>
             ))}
           </div>
-          <div className="mt-3 pt-2 border-t border-[#1e1a10] flex items-center justify-between">
-            <span className="text-[10px] text-[#4a3318]">Speed:</span>
-            <select value={rate} onChange={e=>{setRate(Number(e.target.value));stopVoice();}} className="text-[10px] bg-[#0c0a07] border border-[#1e1a10] rounded px-2 py-1 text-[#8a6a30] focus:outline-none">
+          <div className="mt-3 pt-2 border-t border-[#e8dcc8] flex items-center justify-between">
+            <span className="text-[10px] text-[#9a7a58]">Speed:</span>
+            <select value={rate} onChange={e=>{setRate(Number(e.target.value));stopVoice();}} className="text-[10px] bg-[#faf7f0] border border-[#e8dcc8] rounded px-2 py-1 text-[#9a7a58] focus:outline-none">
               <option value={0.75}>Very Reverent (0.75x)</option>
               <option value={0.88}>Reverent (0.88x)</option>
               <option value={1.0}>Standard (1.0x)</option>
@@ -431,75 +431,75 @@ export function AudioRosary({ onRosaryComplete, isTabActive = true, setActiveTab
 
       {/* Active mystery */}
       {mystery?(
-        <div className="mb-5 bg-[#1a1405] border border-[#2a1e08] rounded-xl p-4">
+        <div className="mb-5 bg-[#1a1405] border border-[#d4b896] rounded-xl p-4">
           <div className="flex items-start gap-3">
-            <div className="w-9 h-9 bg-[#c9922a]/10 border border-[#c9922a]/20 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-[#c9922a]">#{mystery.num}</div>
+            <div className="w-9 h-9 bg-[#8b4513]/10 border border-[#8b4513]/20 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-[#8b4513]">#{mystery.num}</div>
             <div>
-              <div className="text-[9.5px] font-mono font-bold text-[#c9922a] uppercase tracking-widest mb-0.5">Fruit: {mystery.fruit}</div>
-              <div className="text-[13px] font-bold text-[#f5ead8]">The {mystery.num} Mystery: {mystery.name}</div>
-              <div className="text-[10.5px] text-[#6b5a30] mt-1 italic">{mystery.description}</div>
+              <div className="text-[9.5px] font-mono font-bold text-[#8b4513] uppercase tracking-widest mb-0.5">Fruit: {mystery.fruit}</div>
+              <div className="text-[13px] font-bold text-[#2c1810]">The {mystery.num} Mystery: {mystery.name}</div>
+              <div className="text-[10.5px] text-[#6b4c30] mt-1 italic">{mystery.description}</div>
             </div>
           </div>
         </div>
       ):(
-        <div className="mb-5 bg-[#131008] border border-[#1e1a10] rounded-xl p-4 text-center text-[10.5px] text-[#4a3318] italic">
+        <div className="mb-5 bg-[#f5f0e8] border border-[#e8dcc8] rounded-xl p-4 text-center text-[10.5px] text-[#9a7a58] italic">
           Currently reciting the opening prayers. Hold Saint Mary's hand to begin.
         </div>
       )}
 
       {/* Prayer viewer */}
-      <div className="bg-[#131008] border border-[#1e1a10] rounded-xl p-5 mb-5">
+      <div className="bg-[#f5f0e8] border border-[#e8dcc8] rounded-xl p-5 mb-5">
         <div className="flex items-center justify-between mb-4">
-          <span className="text-[9.5px] font-mono bg-[#0c0a07] border border-[#1e1a10] text-[#4a3318] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider">Bead {stepIdx+1}/{ROSARY_STEPS.length} · {step.beadType}</span>
+          <span className="text-[9.5px] font-mono bg-[#faf7f0] border border-[#e8dcc8] text-[#9a7a58] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider">Bead {stepIdx+1}/{ROSARY_STEPS.length} · {step.beadType}</span>
           <div className="flex items-center gap-2">
-            {isPlaying&&<span className={`text-[10px] font-mono flex items-center gap-1.5 ${speaking?"text-[#c9922a]":"text-[#4a3318]"}`}>{speaking?"🔊 Guide speaking...":"⏸ Listening..."}</span>}
-            <button onClick={()=>setShowText(!showText)} className="flex items-center gap-1 text-[10px] font-mono text-[#4a3318] hover:text-[#8a6a30] cursor-pointer bg-none border-none">
+            {isPlaying&&<span className={`text-[10px] font-mono flex items-center gap-1.5 ${speaking?"text-[#8b4513]":"text-[#9a7a58]"}`}>{speaking?"🔊 Guide speaking...":"⏸ Listening..."}</span>}
+            <button onClick={()=>setShowText(!showText)} className="flex items-center gap-1 text-[10px] font-mono text-[#9a7a58] hover:text-[#9a7a58] cursor-pointer bg-none border-none">
               {showText?<EyeOff className="w-3 h-3"/>:<Eye className="w-3 h-3"/>}{showText?"Hide":"Show"}
             </button>
           </div>
         </div>
 
-        <div className="text-[10px] font-bold text-[#c9922a] uppercase tracking-widest text-center mb-3">{step.name}</div>
+        <div className="text-[10px] font-bold text-[#8b4513] uppercase tracking-widest text-center mb-3">{step.name}</div>
 
         {showText?(
           mode==="leader"?(
             <div className="flex flex-col gap-3">
-              <div className="bg-[#0e0b05] border border-[#1e1a10] rounded-xl p-3">
-                <div className="text-[9px] font-mono font-bold text-[#c9922a] uppercase tracking-widest flex items-center gap-1 mb-1.5"><span className={`w-1.5 h-1.5 rounded-full ${speaking?"bg-[#c9922a] animate-ping":"bg-[#3d2808]"}`}/>Leader (Voice Speaks):</div>
-                <p className={`prayer-text text-[12px] ${speaking?"text-[#ddc98a]":"text-[#4a3318]"}`}>"{prayer.leader}"</p>
+              <div className="bg-[#faf7f0] border border-[#e8dcc8] rounded-xl p-3">
+                <div className="text-[9px] font-mono font-bold text-[#8b4513] uppercase tracking-widest flex items-center gap-1 mb-1.5"><span className={`w-1.5 h-1.5 rounded-full ${speaking?"bg-[#8b4513] animate-ping":"bg-[#3d2808]"}`}/>Leader (Voice Speaks):</div>
+                <p className={`prayer-text text-[12px] ${speaking?"text-[#2c1810]":"text-[#9a7a58]"}`}>"{prayer.leader}"</p>
               </div>
-              <div className="bg-[#1a1405] border border-[#2a1e08] rounded-xl p-3">
-                <div className="text-[9px] font-mono font-bold text-[#c9922a] uppercase tracking-widest flex items-center gap-1 mb-1.5"><Heart className="w-2.5 h-2.5 text-[#c9922a]"/>Your Response:</div>
-                <p className={`prayer-text text-[12px] ${!speaking&&isPlaying?"text-[#f5ead8]":"text-[#6b5a30]"}`}>"{prayer.response}"</p>
+              <div className="bg-[#1a1405] border border-[#d4b896] rounded-xl p-3">
+                <div className="text-[9px] font-mono font-bold text-[#8b4513] uppercase tracking-widest flex items-center gap-1 mb-1.5"><Heart className="w-2.5 h-2.5 text-[#8b4513]"/>Your Response:</div>
+                <p className={`prayer-text text-[12px] ${!speaking&&isPlaying?"text-[#2c1810]":"text-[#6b4c30]"}`}>"{prayer.response}"</p>
               </div>
             </div>
           ):(
-            <p className="prayer-text text-[13px] text-[#c9b888] text-center leading-relaxed">"{prayer.full}"</p>
+            <p className="prayer-text text-[13px] text-[#4a2c10] text-center leading-relaxed">"{prayer.full}"</p>
           )
         ):(
           <div className="py-8 text-center">
-            <Flame className="w-8 h-8 text-[#c9922a] mx-auto mb-2 animate-pulse"/>
-            <p className="text-[10.5px] text-[#4a3318] italic">Prayer text hidden for focused meditation.</p>
+            <Flame className="w-8 h-8 text-[#8b4513] mx-auto mb-2 animate-pulse"/>
+            <p className="text-[10.5px] text-[#9a7a58] italic">Prayer text hidden for focused meditation.</p>
           </div>
         )}
 
         {/* Visualizer */}
         <div className="mt-4 flex flex-col items-center">
           <div ref={vizRef} className="flex items-end gap-1 h-8 w-40">
-            {Array.from({length:16}).map((_,i)=><div key={i} className="w-1.5 h-full rounded-full bg-[#c9922a] origin-bottom" style={{transform:"scaleY(0.08)",opacity:0.3}}/>)}
+            {Array.from({length:16}).map((_,i)=><div key={i} className="w-1.5 h-full rounded-full bg-[#8b4513] origin-bottom" style={{transform:"scaleY(0.08)",opacity:0.3}}/>)}
           </div>
           <span className="text-[8.5px] font-mono text-[#2a1e08] tracking-wider mt-1 uppercase">{isPlaying||droneOn?"Meditation Audio Pulse":"Visualizer Standby"}</span>
         </div>
 
-        <div className="mt-4 pt-3 border-t border-[#1e1a10] flex items-center justify-between">
+        <div className="mt-4 pt-3 border-t border-[#e8dcc8] flex items-center justify-between">
           <span className="text-[9.5px] italic text-[#2a1e08]">Liturgical devotion of the {mysteryKey} Holy Mystery.</span>
-          <button onClick={()=>alert(prayer.full)} className="text-[9.5px] font-mono text-[#c9922a] hover:underline cursor-pointer bg-none border-none">Show Full Text</button>
+          <button onClick={()=>alert(prayer.full)} className="text-[9.5px] font-mono text-[#8b4513] hover:underline cursor-pointer bg-none border-none">Show Full Text</button>
         </div>
       </div>
 
       {/* Bead tracker */}
-      <div className="text-[9px] font-mono uppercase tracking-widest text-[#2a1e08] text-center mb-2 flex items-center justify-center gap-1.5"><Sparkles className="w-3 h-3 text-[#c9922a]"/>Bead Trail</div>
-      <div className="flex flex-wrap justify-center gap-1.5 p-3 bg-[#0c0a07] border border-[#1e1a10] rounded-xl max-h-28 overflow-y-auto mb-5">
+      <div className="text-[9px] font-mono uppercase tracking-widest text-[#2a1e08] text-center mb-2 flex items-center justify-center gap-1.5"><Sparkles className="w-3 h-3 text-[#8b4513]"/>Bead Trail</div>
+      <div className="flex flex-wrap justify-center gap-1.5 p-3 bg-[#faf7f0] border border-[#e8dcc8] rounded-xl max-h-28 overflow-y-auto mb-5">
         {ROSARY_STEPS.map((s,i)=>{
           if(s.id.includes("glory")) return null;
           const large=s.beadType==="Large Bead"||s.beadType==="Cross";
@@ -513,30 +513,30 @@ export function AudioRosary({ onRosaryComplete, isTabActive = true, setActiveTab
       </div>
 
       {/* Controls */}
-      <div className="grid grid-cols-3 items-center gap-4 border-t border-[#1e1a10] pt-4">
+      <div className="grid grid-cols-3 items-center gap-4 border-t border-[#e8dcc8] pt-4">
         <div className="flex items-center gap-2">
-          <button onClick={()=>{droneOn?synthRef.current?.stopDrone():synthRef.current?.startDrone();setDroneOn(!droneOn);}} className={`p-2.5 rounded-xl border flex items-center gap-1.5 text-[11px] cursor-pointer transition-all ${droneOn?"bg-[#1e1405] border-[#c9922a]/30 text-[#c9922a]":"bg-[#131008] border-[#1e1a10] text-[#4a3318] hover:border-[#2a1e08]"}`}>
+          <button onClick={()=>{droneOn?synthRef.current?.stopDrone():synthRef.current?.startDrone();setDroneOn(!droneOn);}} className={`p-2.5 rounded-xl border flex items-center gap-1.5 text-[11px] cursor-pointer transition-all ${droneOn?"bg-[#f0e8d8] border-[#8b4513]/30 text-[#8b4513]":"bg-[#f5f0e8] border-[#e8dcc8] text-[#9a7a58] hover:border-[#d4b896]"}`}>
             {droneOn?<Volume2 className="w-4 h-4"/>:<VolumeX className="w-4 h-4"/>}<span className="hidden sm:inline">Ambient Chords</span>
           </button>
         </div>
 
         <div className="flex items-center justify-center gap-3">
-          <button onClick={()=>{prev();stopVoice();}} disabled={stepIdx===0} className="p-2.5 bg-[#131008] border border-[#1e1a10] rounded-xl text-[#6b5a30] disabled:opacity-30 cursor-pointer hover:border-[#2a1e08]"><ChevronLeft className="w-5 h-5"/></button>
-          <button onClick={()=>setIsPlaying(!isPlaying)} className="p-4 bg-[#c9922a] hover:bg-[#e5b04a] rounded-full text-[#1a0f00] cursor-pointer shadow-lg transition-all hover:scale-105">
+          <button onClick={()=>{prev();stopVoice();}} disabled={stepIdx===0} className="p-2.5 bg-[#f5f0e8] border border-[#e8dcc8] rounded-xl text-[#6b4c30] disabled:opacity-30 cursor-pointer hover:border-[#d4b896]"><ChevronLeft className="w-5 h-5"/></button>
+          <button onClick={()=>setIsPlaying(!isPlaying)} className="p-4 bg-[#8b4513] hover:bg-[#e5b04a] rounded-full text-[#1a0f00] cursor-pointer shadow-lg transition-all hover:scale-105">
             {isPlaying?<Pause className="w-5 h-5 fill-current"/>:<Play className="w-5 h-5 fill-current"/>}
           </button>
-          <button onClick={()=>{next();stopVoice();}} className="p-2.5 bg-[#131008] border border-[#1e1a10] rounded-xl text-[#6b5a30] cursor-pointer hover:border-[#2a1e08]"><ChevronRight className="w-5 h-5"/></button>
-          <button onClick={()=>{setStepIdx(0);setIsPlaying(false);stopVoice();}} className="p-2 text-[#2a1e08] hover:text-[#6b5a30] cursor-pointer bg-none border-none"><RotateCcw className="w-4 h-4"/></button>
+          <button onClick={()=>{next();stopVoice();}} className="p-2.5 bg-[#f5f0e8] border border-[#e8dcc8] rounded-xl text-[#6b4c30] cursor-pointer hover:border-[#d4b896]"><ChevronRight className="w-5 h-5"/></button>
+          <button onClick={()=>{setStepIdx(0);setIsPlaying(false);stopVoice();}} className="p-2 text-[#2a1e08] hover:text-[#6b4c30] cursor-pointer bg-none border-none"><RotateCcw className="w-4 h-4"/></button>
         </div>
 
         <div className="flex flex-col items-end gap-1.5">
           <label className="flex items-center gap-2 cursor-pointer">
-            <span className="text-[10px] text-[#4a3318]">Auto-Advance:</span>
+            <span className="text-[10px] text-[#9a7a58]">Auto-Advance:</span>
             <input type="checkbox" checked={autoAdvance} onChange={e=>setAutoAdvance(e.target.checked)} className="accent-amber-600 w-4 h-4"/>
           </label>
           <div className="flex items-center gap-2">
             <span className="text-[9.5px] text-[#2a1e08]">Volume:</span>
-            <input type="range" min="0.2" max="1" step="0.05" value={volume} onChange={e=>setVolume(Number(e.target.value))} className="w-20 accent-amber-600 h-1 bg-[#1e1a10] rounded cursor-pointer"/>
+            <input type="range" min="0.2" max="1" step="0.05" value={volume} onChange={e=>setVolume(Number(e.target.value))} className="w-20 accent-amber-600 h-1 bg-[#e8dcc8] rounded cursor-pointer"/>
           </div>
         </div>
       </div>
